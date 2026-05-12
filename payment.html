@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Payment Entry</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#eef3ef;
+padding:30px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+background:#fff;
+padding:30px;
+border-radius:15px;
+border:3px solid #0b5d2a;
+}
+
+h1{
+text-align:center;
+color:#0b5d2a;
+margin-bottom:30px;
+}
+
+input{
+width:100%;
+padding:14px;
+margin-bottom:18px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:15px;
+background:#0b5d2a;
+color:#fff;
+border:none;
+border-radius:10px;
+font-size:18px;
+cursor:pointer;
+}
+
+button:hover{
+background:#094821;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Monthly Payment Entry</h1>
+
+<input type="text" id="memberId" placeholder="Member ID">
+
+<input type="text" id="name" placeholder="Member Name">
+
+<input type="text" id="month" placeholder="Month">
+
+<input type="number" id="amount" placeholder="Amount">
+
+<button onclick="submitPayment()">
+Generate Receipt
+</button>
+
+</div>
+
+<script>
+
+const API_URL =
+"YOUR_WEB_APP_URL";
+
+async function submitPayment(){
+
+const data = {
+
+action:"payment",
+
+memberId:
+document.getElementById("memberId").value,
+
+name:
+document.getElementById("name").value,
+
+month:
+document.getElementById("month").value,
+
+amount:
+document.getElementById("amount").value
+
+};
+
+const response = await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify(data)
+
+});
+
+const result = await response.json();
+
+alert(result.message);
+
+}
+
+</script>
+
+</body>
+
+</html>

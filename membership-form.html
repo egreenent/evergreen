@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EverGreen Enterprise Membership Form</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#edf3ee;
+padding:30px;
+}
+
+.form-container{
+max-width:1100px;
+margin:auto;
+background:#fff;
+border-radius:15px;
+overflow:hidden;
+border:3px solid #0b5d2a;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+.top-border{
+height:8px;
+background:linear-gradient(to right,#c99a2e,#0b5d2a,#c99a2e);
+}
+
+.header{
+padding:25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:2px solid #e5e5e5;
+}
+
+.logo-section{
+display:flex;
+align-items:center;
+gap:20px;
+}
+
+.logo-section img{
+width:130px;
+}
+
+.company-info h1{
+font-size:48px;
+color:#0b5d2a;
+font-weight:700;
+line-height:1;
+}
+
+.company-info h2{
+font-size:22px;
+color:#c99a2e;
+font-weight:500;
+margin-top:5px;
+}
+
+.company-info p{
+margin-top:10px;
+font-size:14px;
+color:#555;
+}
+
+.photo-box{
+width:140px;
+height:170px;
+border:2px solid #0b5d2a;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:14px;
+color:#777;
+text-align:center;
+}
+
+.form-title{
+background:#0b5d2a;
+color:#fff;
+padding:14px;
+text-align:center;
+font-size:28px;
+font-weight:600;
+letter-spacing:1px;
+}
+
+.section{
+padding:25px;
+border-bottom:1px solid #ddd;
+}
+
+.section-title{
+background:#0b5d2a;
+color:#fff;
+padding:10px 18px;
+display:inline-block;
+border-radius:8px;
+font-size:18px;
+margin-bottom:20px;
+font-weight:600;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+.form-group{
+display:flex;
+flex-direction:column;
+}
+
+.form-group label{
+margin-bottom:8px;
+font-weight:500;
+color:#222;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:15px;
+outline:none;
+transition:0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+border-color:#0b5d2a;
+box-shadow:0 0 5px rgba(11,93,42,0.3);
+}
+
+textarea{
+resize:vertical;
+min-height:80px;
+}
+
+.radio-group{
+display:flex;
+gap:20px;
+margin-top:10px;
+}
+
+.signature-area{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+.upload-box{
+border:2px dashed #bbb;
+padding:20px;
+border-radius:10px;
+text-align:center;
+background:#fafafa;
+}
+
+.declaration{
+padding:20px;
+background:#f8f8f8;
+border-radius:10px;
+font-size:14px;
+line-height:1.7;
+color:#444;
+}
+
+.signature-section{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:25px;
+margin-top:30px;
+}
+
+.signature-box{
+text-align:center;
+}
+
+.signature-line{
+height:80px;
+border:2px dashed #ccc;
+border-radius:10px;
+margin-bottom:12px;
+}
+
+.signature-box h4{
+font-size:16px;
+color:#0b5d2a;
+}
+
+.btn-area{
+padding:30px;
+display:flex;
+justify-content:center;
+gap:20px;
+}
+
+.submit-btn{
+background:#0b5d2a;
+color:#fff;
+border:none;
+padding:15px 35px;
+font-size:16px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+transition:0.3s;
+}
+
+.submit-btn:hover{
+background:#094821;
+}
+
+.reset-btn{
+background:#c99a2e;
+color:#fff;
+border:none;
+padding:15px 35px;
+font-size:16px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+transition:0.3s;
+}
+
+.reset-btn:hover{
+background:#aa8126;
+}
+
+.footer{
+background:#0b5d2a;
+color:#fff;
+text-align:center;
+padding:18px;
+font-size:18px;
+font-weight:500;
+}
+
+@media(max-width:768px){
+
+.header{
+flex-direction:column;
+gap:20px;
+text-align:center;
+}
+
+.company-info h1{
+font-size:34px;
+}
+
+.form-grid{
+grid-template-columns:1fr;
+}
+
+.signature-area{
+grid-template-columns:1fr;
+}
+
+.signature-section{
+grid-template-columns:1fr;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="form-container">
+
+<div class="top-border"></div>
+
+<div class="header">
+
+<div class="logo-section">
+
+<img src="logo.png" alt="Logo">
+
+<div class="company-info">
+
+<h1>EVERGREEN</h1>
+<h2>ENTERPRISE</h2>
+
+<p>
+Tangail, Bangladesh <br>
++88017XXXXXXXX <br>
+evergreenenterprise@gmail.com
+</p>
+
+</div>
+
+</div>
+
+<div class="photo-box" id="photo">
+Member Photo
+</div>
+
+</div>
+
+<div class="form-title">
+MEMBERSHIP APPLICATION FORM
+</div>
+
+<!-- Personal Information -->
+
+<div class="section">
+
+<div class="section-title">
+1. Personal Information
+</div>
+
+<div class="form-grid">
+
+<div class="form-group">
+<label>Full Name</label>
+<input type="text" id="fullName">
+</div>
+
+<div class="form-group">
+<label>NID / ID Card No</label>
+<input type="text" id="nid">
+</div>
+
+<div class="form-group">
+<label>Father's Name</label>
+<input type="text" id="fathername">
+</div>
+
+<div class="form-group">
+<label>Mobile Number</label>
+<input type="text" id="mobile">
+</div>
+
+<div class="form-group">
+<label>Mother's Name</label>
+<input type="text" id="mothername">
+</div>
+
+<div class="form-group">
+<label>Email Address</label>
+<input type="email"  id="email">
+</div>
+
+<div class="form-group">
+<label>Date of Birth</label>
+<input type="date"  id="dateofbirth">
+</div>
+
+<div class="form-group"  id="blood">
+<label>Blood Group</label>
+<select>
+<option>Select</option>
+<option>A+</option>
+<option>B+</option>
+<option>O+</option>
+<option>AB+</option>
+</select>
+</div>
+
+<div class="form-group"  id="gender">
+<label>Gender</label>
+
+<div class="radio-group">
+<label><input type="radio" name="gender"> Male</label>
+<label><input type="radio" name="gender"> Female</label>
+</div>
+
+</div>
+
+<div class="form-group" id="religion">
+<label>Religion</label>
+
+<select>
+<option>Select</option>
+<option>Islam</option>
+<option>Hindu</option>
+<option>Christian</option>
+</select>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Address -->
+
+<div class="section">
+
+<div class="section-title" id="addinfo">
+2. Address Information
+</div>
+
+<div class="form-grid">
+
+<div class="form-group" id="preadd">
+<label>Present Address</label>
+<textarea></textarea>
+</div>
+
+<div class="form-group" id="permadd">
+<label>Permanent Address</label>
+<textarea></textarea>
+</div>
+
+<div class="form-group">
+<label>Post Office</label>
+<input type="text">
+</div>
+
+<div class="form-group">
+<label>District</label>
+<input type="text">
+</div>
+
+</div>
+
+</div>
+
+<!-- Nominee -->
+
+<div class="section">
+
+<div class="section-title">
+3. Nominee Information
+</div>
+
+<div class="form-grid">
+
+<div class="form-group" id="nominee">
+<label>Nominee Name</label>
+<input type="text">
+</div>
+
+<div class="form-group" id="relation">
+<label>Relation</label>
+<input type="text">
+</div>
+
+<div class="form-group" id="nomineemobile">
+<label>Nominee Mobile Number</label>
+<input type="text">
+</div>
+
+<div class="form-group" id="nomineenid">
+<label>Nominee NID</label>
+<input type="text">
+</div>
+
+</div>
+
+</div>
+
+<!-- Membership -->
+
+<div class="section" id="memberinfo">
+
+<div class="section-title">
+4. Membership Information
+</div>
+
+<div class="form-grid">
+
+<div class="form-group" id="membertype">
+<label>Membership Type</label>
+
+<select>
+<option>General</option>
+<option>VIP</option>
+<option>Executive</option>
+<option>Life Member</option>
+</select>
+
+</div>
+
+<div class="form-group" id="monthlyfee">
+<label>Monthly Fee</label>
+<input type="number" value="500">
+</div>
+
+</div>
+
+</div>
+
+<!-- Documents -->
+
+<div class="section">
+
+<div class="section-title" id="documentup">
+5. Documents Upload
+</div>
+
+<div class="signature-area">
+
+<div class="upload-box" id="photo">
+
+<label>Upload Photo</label><br><br>
+
+<input type="file">
+
+</div>
+
+<div class="upload-box" id="signature">
+
+<label>Upload Signature</label><br><br>
+
+<input type="file">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Declaration -->
+
+<div class="section">
+
+<div class="section-title">
+6. Declaration
+</div>
+
+<div class="declaration" id="declaration">
+
+I hereby declare that all the above information is true and correct to the best of my knowledge. I agree to abide by all rules and regulations of EverGreen Enterprise.
+
+</div>
+
+<div class="signature-section">
+
+<div class="signature-box">
+
+<div class="signature-line" id="appsign"></div>
+
+<h4>Applicant Signature</h4>
+
+</div>
+
+<div class="signature-box" id="verified">
+
+<div class="signature-line"></div>
+
+<h4>Verified By</h4>
+
+</div>
+
+<div class="signature-box" id="chairmansign">
+
+<div class="signature-line"></div>
+
+<h4>Chairman Signature</h4>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Buttons -->
+
+<div class="btn-area">
+
+<button class="submit-btn" onclick="submitForm()">
+Submit Application
+</button>
+
+<button class="reset-btn">
+Reset Form
+</button>
+
+</div>
+
+<div class="footer">
+Together We Grow, Together We Succeed
+</div>
+
+</div>
+
+</body>
+
+<script>
+
+const API_URL =
+"YOUR_WEB_APP_URL";
+async function fileToBase64(file){
+
+return new Promise((resolve,reject)=>{
+const reader = new FileReader();
+reader.readAsDataURL(file);
+reader.onload = () => resolve(reader.result);
+reader.onerror = error => reject(error);
+});
+}
+
+async function submitForm(){
+const photoFile =
+document.getElementById("photo").files[0];
+
+const signatureFile =
+document.getElementById("signature").files[0];
+
+const photoBase64 =
+await fileToBase64(photoFile);
+
+const signatureBase64 =
+await fileToBase64(signatureFile);
+
+const data = {
+
+action:"register",
+
+name:
+document.getElementById("fullName").value,
+
+nid:
+document.getElementById("nid").value,
+
+mobile:
+document.getElementById("mobile").value,
+
+email:
+document.getElementById("email").value,
+
+address:
+document.getElementById("address").value,
+
+nominee:
+document.getElementById("nominee").value,
+
+photo:photoBase64,
+signature:signatureBase64
+
+};
+
+const response = await fetch(API_URL,{
+method:"POST",
+body:JSON.stringify(data)
+});
+
+const result = await response.json();
+alert(result.message);
+
+}
+
+if(action === "register"){
+return registerMember(data);
+}
+
+function registerMember(data){
+
+const ss =
+SpreadsheetApp.openById(SHEET_ID);
+
+const sheet =
+ss.getSheetByName("Members");
+
+const memberId =
+"EGE-" + Math.floor(Math.random()*100000);
+
+const password =
+Math.floor(1000 + Math.random()*9000);
+
+const photoUrl =
+uploadFile(data.photo,"Member Photos");
+
+const signatureUrl =
+uploadFile(data.signature,"Member Signatures");
+
+const pdfUrl =
+function generatePDF(memberData){
+
+const folder =
+DriveApp.getFoldersByName(
+"Membership PDFs"
+).next();
+
+const logo =
+"https://drive.google.com/uc?export=view&id=1Jlgc7LCK4Up1y3tIrQx2SDJ21uHYeqOw";
+
+const html = `
+
+<html>
+
+<head>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+padding:35px;
+color:#222;
+}
+
+.container{
+border:4px solid #0b5d2a;
+border-radius:15px;
+overflow:hidden;
+}
+
+.top{
+background:#0b5d2a;
+padding:20px;
+text-align:center;
+color:#fff;
+}
+
+.top img{
+width:120px;
+margin-bottom:10px;
+}
+
+.top h1{
+margin:0;
+font-size:38px;
+letter-spacing:2px;
+}
+
+.top h2{
+margin-top:8px;
+font-size:20px;
+color:#d4af37;
+}
+
+.title{
+background:#d4af37;
+padding:14px;
+text-align:center;
+font-size:24px;
+font-weight:bold;
+color:#0b5d2a;
+}
+
+.content{
+padding:30px;
+}
+
+.info-table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+.info-table th{
+background:#0b5d2a;
+color:#fff;
+padding:12px;
+text-align:left;
+width:30%;
+}
+
+.info-table td{
+padding:12px;
+border:1px solid #ccc;
+}
+
+.section{
+margin-top:30px;
+}
+
+.section h3{
+background:#0b5d2a;
+color:#fff;
+padding:10px;
+border-radius:8px;
+}
+
+.signature-section{
+margin-top:60px;
+display:flex;
+justify-content:space-between;
+text-align:center;
+}
+
+.sign-box{
+width:30%;
+}
+
+.line{
+border-top:2px solid #333;
+margin-bottom:10px;
+padding-top:10px;
+}
+
+.footer{
+margin-top:40px;
+text-align:center;
+font-size:14px;
+color:#777;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="top">
+
+<img src="${logo}">
+
+<h1>EVERGREEN</h1>
+
+<h2>ENTERPRISE</h2>
+
+</div>
+
+<div class="title">
+MEMBERSHIP APPLICATION FORM
+</div>
+
+<div class="content">
+
+<div class="section">
+
+<h3>Personal Information</h3>
+
+<table class="info-table">
+
+<tr>
+<th>Member ID</th>
+<td>${memberData.memberId}</td>
+</tr>
+
+<tr>
+<th>Full Name</th>
+<td>${memberData.name}</td>
+</tr>
+
+<tr>
+<th>Phone Number</th>
+<td>${memberData.phone}</td>
+</tr>
+
+<tr>
+<th>Email</th>
+<td>${memberData.email}</td>
+</tr>
+
+<tr>
+<th>NID Number</th>
+<td>${memberData.nid}</td>
+</tr>
+
+<tr>
+<th>Address</th>
+<td>${memberData.address}</td>
+</tr>
+
+</table>
+
+</div>
+
+<div class="section">
+
+<h3>Membership Details</h3>
+
+<table class="info-table">
+
+<tr>
+<th>Membership Type</th>
+<td>General Member</td>
+</tr>
+
+<tr>
+<th>Monthly Fee</th>
+<td>500 BDT</td>
+</tr>
+
+<tr>
+<th>Status</th>
+<td>Active</td>
+</tr>
+
+<tr>
+<th>Registration Date</th>
+<td>${new Date()}</td>
+</tr>
+
+</table>
+
+</div>
+
+<div class="signature-section">
+
+<div class="sign-box">
+<div class="line"></div>
+Applicant Signature
+</div>
+
+<div class="sign-box">
+<div class="line"></div>
+Verified By
+</div>
+
+<div class="sign-box">
+<div class="line"></div>
+Chairman Signature
+</div>
+
+</div>
+
+<div class="footer">
+
+Together We Grow, Together We Succeed
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
+
+`;
+
+const blob =
+Utilities.newBlob(
+html,
+"text/html"
+);
+
+const pdf =
+blob.getAs("application/pdf");
+
+const file =
+folder.createFile(pdf);
+
+file.setName(
+memberData.memberId + ".pdf"
+);
+
+file.setSharing(
+DriveApp.Access.ANYONE_WITH_LINK,
+DriveApp.Permission.VIEW
+);
+
+return file.getUrl();
+
+}
+
+const idCardUrl =
+generateIDCard({
+
+memberId:memberId,
+name:data.name,
+phone:data.phone,
+email:data.email,
+address:data.address,
+photoUrl:photoUrl
+
+});
+
+sheet.appendRow([
+
+memberId,
+data.name,
+data.phone,
+data.email,
+data.nid,
+"",
+data.address,
+data.nominee,
+"",
+new Date(),
+500,
+password,
+photoUrl,
+signatureUrl,
+pdfUrl,
+idCardUrl,
+"Active"
+
+]);
+
+return ContentService
+.createTextOutput(
+
+JSON.stringify({
+
+status:"success",
+
+message:
+"Registration Successful"
+
+})
+
+)
+
+.setMimeType(
+ContentService.MimeType.JSON
+);
+
+}
+
+</script>
+</html>
