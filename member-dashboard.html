@@ -172,6 +172,18 @@ text-align:center;
 
 }
 
+  .logout-btn{
+
+background:#d62828;
+color:#fff;
+border:none;
+padding:12px 22px;
+border-radius:10px;
+cursor:pointer;
+font-size:15px;
+font-weight:600;
+
+}
 </style>
 
 </head>
@@ -186,6 +198,11 @@ text-align:center;
 Member ID
 </h2>
 
+<button onclick="memberLogout()"
+class="logout-btn">
+Logout
+</button>
+  
 </div>
 
 <!-- Profile -->
@@ -454,6 +471,21 @@ window.open(
 result.whatsapp,
 "_blank"
 );
+
+  function memberLogout(){
+
+localStorage.removeItem(
+"memberLoggedIn"
+);
+
+localStorage.removeItem(
+"memberId"
+);
+
+window.location.href =
+"login.html";
+
+}
 </script>
 
 </body>
