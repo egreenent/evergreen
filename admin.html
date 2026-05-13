@@ -148,6 +148,24 @@ font-size:13px;
 
 }
 
+  .logout-btn{
+
+background:#d62828;
+color:#fff;
+border:none;
+padding:12px 22px;
+border-radius:10px;
+cursor:pointer;
+font-size:15px;
+font-weight:600;
+
+}
+
+.logout-btn:hover{
+
+background:#b71c1c;
+
+}
 </style>
 
 </head>
@@ -162,6 +180,11 @@ font-size:13px;
 Refresh Data
 </button>
 
+<button onclick="adminLogout()"
+class="logout-btn">
+Logout
+</button>
+  
 </div>
 
 <!-- Dashboard Cards -->
@@ -403,6 +426,20 @@ ID Card
 
 loadDashboard();
 
+  function adminLogout(){
+
+localStorage.removeItem(
+"adminLoggedIn"
+);
+
+localStorage.removeItem(
+"adminId"
+);
+
+window.location.href =
+"login.html";
+
+}
 </script>
 
 </body>
