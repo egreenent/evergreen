@@ -188,26 +188,36 @@ Print Receipt
 
 <script>
 
+<script>
+
 const params =
 new URLSearchParams(window.location.search);
 
-document.getElementById("memberId")
-.innerText =
+const memberId =
 params.get("memberId");
 
-document.getElementById("name")
-.innerText =
+const name =
 params.get("name");
 
-document.getElementById("month")
-.innerText =
+const month =
 params.get("month");
 
-document.getElementById("amount")
-.innerText =
+const amount =
 params.get("amount");
 
-</script>
+document.getElementById("memberId")
+.innerText = memberId;
+
+document.getElementById("name")
+.innerText = name;
+
+document.getElementById("month")
+.innerText = month;
+
+document.getElementById("amount")
+.innerText = amount + " BDT";
+
+</script></script>
 
 </body>
 </html>
