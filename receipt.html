@@ -1,127 +1,109 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>EverGreen Payment Receipt</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<link rel="manifest"
+href="manifest.json">
+
+<title>EverGreen Payment Entry</title>
 
 <style>
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
 body{
 
-margin:0;
+background:#eef3ef;
 padding:30px;
-font-family:Arial, sans-serif;
-background:#eef5ef;
 
 }
 
-.receipt{
+.container{
 
 max-width:700px;
 margin:auto;
 background:#fff;
-padding:40px;
-border-radius:15px;
+padding:35px;
+border-radius:18px;
+border:3px solid #0b5d2a;
 box-shadow:0 5px 20px rgba(0,0,0,0.1);
-
-}
-
-.top{
-
-text-align:center;
-border-bottom:2px solid #0b5d2a;
-padding-bottom:20px;
-margin-bottom:30px;
-
-}
-
-.logo{
-
-width:120px;
-margin-bottom:10px;
 
 }
 
 h1{
 
-margin:0;
-color:#0b5d2a;
-font-size:36px;
-
-}
-
-.subtitle{
-
-color:#555;
-margin-top:8px;
-
-}
-
-.row{
-
-display:flex;
-justify-content:space-between;
-margin:18px 0;
-padding:15px;
-background:#f7f7f7;
-border-radius:10px;
-
-}
-
-.label{
-
-font-weight:bold;
-color:#0b5d2a;
-
-}
-
-.value{
-
-font-weight:bold;
-color:#222;
-
-}
-
-.status{
-
 text-align:center;
-margin-top:30px;
-font-size:28px;
-font-weight:bold;
-color:green;
+color:#0b5d2a;
+margin-bottom:30px;
+font-size:34px;
 
 }
 
-.print-btn{
+input{
+
+width:100%;
+padding:15px;
+margin-bottom:18px;
+border:1px solid #ccc;
+border-radius:10px;
+font-size:16px;
+
+}
+
+button{
 
 width:100%;
 padding:16px;
-border:none;
 background:#0b5d2a;
-color:white;
-font-size:18px;
+color:#fff;
+border:none;
 border-radius:10px;
+font-size:18px;
 cursor:pointer;
-margin-top:30px;
+transition:0.3s;
 
 }
 
-.print-btn:hover{
-background:#09481f;
+button:hover{
+
+background:#094821;
+transform:translateY(-2px);
+
 }
 
-@media print{
+#loader{
 
-.print-btn{
 display:none;
+text-align:center;
+margin-top:20px;
+font-size:18px;
+color:#0b5d2a;
+
 }
 
-body{
-background:white;
+@media(max-width:768px){
+
+.container{
+
+padding:22px;
+
+}
+
+h1{
+
+font-size:28px;
+
 }
 
 }
@@ -129,85 +111,160 @@ background:white;
 </style>
 
 </head>
+
 <body>
 
-<div class="receipt">
+<div class="container">
 
-<div class="top">
+<h1>Monthly Payment Entry</h1>
 
-<img src="logo.png" class="logo">
+<input
+type="text"
+id="memberId"
+placeholder="Member ID">
 
-<h1>EverGreen Enterprise</h1>
+<input
+type="text"
+id="name"
+placeholder="Member Name">
 
-<p class="subtitle">
-Digital Payment Receipt
-</p>
+<input
+type="text"
+id="month"
+placeholder="Month">
 
-</div>
+<input
+type="number"
+id="amount"
+placeholder="Amount">
 
-<div class="row">
-<span class="label">Receipt No</span>
-<span class="value" id="receiptNo"></span>
-</div>
+<input
+type="number"
+id="fine"
+placeholder="Fine Amount">
 
-<div class="row">
-<span class="label">Member ID</span>
-<span class="value" id="memberId"></span>
-</div>
+<button onclick="generateReceipt()">
 
-<div class="row">
-<span class="label">Member Name</span>
-<span class="value" id="name"></span>
-</div>
+Generate Receipt
 
-<div class="row">
-<span class="label">Month</span>
-<span class="value" id="month"></span>
-</div>
-
-<div class="row">
-<span class="label">Amount</span>
-<span class="value" id="amount"></span>
-</div>
-
-<div class="row">
-<span class="label">Payment Date</span>
-<span class="value" id="date"></span>
-</div>
-
-<div class="status">
-PAID
-</div>
-
-<button class="print-btn"
-onclick="window.print()">
-Print Receipt
 </button>
+
+<div id="loader">
+
+Processing Payment...
+
+</div>
 
 </div>
 
 <script>
 
-const params =
-new URLSearchParams(window.location.search);
+const API_URL =
+"https://script.google.com/macros/s/AKfycbxwksTf-ZgPHpA1ubCXZM2QFIuHuNyWpiwH2y7lTHYPV9Cvp6pv7oIlwuqwuOigJFTw/exec";
 
-document.getElementById("memberId")
-.innerText =
-params.get("memberId");
+async function generateReceipt(){
 
-document.getElementById("name")
-.innerText =
-params.get("name");
+try{
 
-document.getElementById("month")
-.innerText =
-params.get("month");
+const memberId =
+document.getElementById("memberId").value.trim();
 
-document.getElementById("amount")
-.innerText =
-params.get("amount");
+const name =
+document.getElementById("name").value.trim();
+
+const month =
+document.getElementById("month").value.trim();
+
+const amount =
+document.getElementById("amount").value.trim();
+
+const fine =
+document.getElementById("fine").value.trim();
+
+if(
+memberId === "" ||
+name === "" ||
+month === "" ||
+amount === ""
+){
+
+alert("Please Fill All Fields");
+
+return;
+
+}
+
+document.getElementById("loader")
+.style.display = "block";
+
+const data = {
+
+action:"payment",
+memberId:memberId,
+name:name,
+month:month,
+amount:amount,
+fine:fine
+
+};
+
+const response =
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify(data)
+
+});
+
+const result =
+await response.json();
+
+document.getElementById("loader")
+.style.display = "none";
+
+console.log(result);
+
+if(result.status === "success"){
+
+alert("✅ Payment Saved Successfully");
+
+const receiptLink =
+
+`https://egreenent.netlify.app/receipt.html?memberId=${encodeURIComponent(memberId)}&name=${encodeURIComponent(name)}&month=${encodeURIComponent(month)}&amount=${encodeURIComponent(amount)}&fine=${encodeURIComponent(fine)}`;
+
+window.location.href =
+receiptLink;
+
+}else{
+
+alert("❌ Payment Failed");
+
+}
+
+}catch(error){
+
+console.log(error);
+
+document.getElementById("loader")
+.style.display = "none";
+
+alert("Server Error");
+
+}
+
+}
+
+if('serviceWorker' in navigator){
+
+navigator.serviceWorker.register(
+'service-worker.js'
+);
+
+}
 
 </script>
 
 </body>
+
 </html>
