@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>EverGreen Login Portal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+
+background:#edf5ef;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+
+}
+
+.login-container{
+
+width:100%;
+max-width:460px;
+background:#ffffff;
+padding:40px;
+border-radius:22px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+
+}
+
+.logo{
+
+text-align:center;
+margin-bottom:20px;
+
+}
+
+.logo img{
+
+width:90px;
+height:90px;
+object-fit:contain;
+
+}
+
+.title{
+
+text-align:center;
+font-size:40px;
+font-weight:700;
+color:#111;
+margin-bottom:30px;
+
+}
+
+.tab-box{
+
+display:flex;
+background:#ececf0;
+border-radius:12px;
+padding:5px;
+margin-bottom:28px;
+
+}
+
+.tab{
+
+flex:1;
+padding:12px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+transition:0.3s;
+
+}
+
+.active{
+
+background:#2f8732;
+color:#fff;
+
+}
+
+.inactive{
+
+background:transparent;
+color:#111;
+
+}
+
+.input-group{
+
+margin-bottom:22px;
+
+}
+
+.input-group label{
+
+display:block;
+margin-bottom:8px;
+font-size:17px;
+font-weight:500;
+color:#111;
+
+}
+
+.input-group input{
+
+width:100%;
+padding:15px;
+border-radius:10px;
+border:1px solid #ddd89a;
+background:#efefbe;
+font-size:16px;
+outline:none;
+
+}
+
+.login-btn{
+
+width:100%;
+padding:16px;
+background:#2f8732;
+color:#fff;
+border:none;
+border-radius:12px;
+font-size:20px;
+font-weight:500;
+cursor:pointer;
+transition:0.3s;
+
+}
+
+.login-btn:hover{
+
+background:#256d28;
+
+}
+
+@media(max-width:500px){
+
+.login-container{
+
+margin:20px;
+padding:30px 22px;
+
+}
+
+.title{
+
+font-size:32px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-container">
+
+<div class="logo">
+
+<img src="logo.png"
+alt="EverGreen Logo">
+
+</div>
+
+<h1 class="title">
+
+Member Portal
+
+</h1>
+
+<div class="tab-box">
+
+<button id="memberTab"
+class="tab active"
+onclick="switchTab('member')">
+
+Member Login
+
+</button>
+
+<button id="adminTab"
+class="tab inactive"
+onclick="switchTab('admin')">
+
+Admin Login
+
+</button>
+
+</div>
+
+<div class="input-group">
+
+<label>
+
+User ID
+
+</label>
+
+<input type="text"
+id="userId"
+placeholder="ege0101">
+
+</div>
+
+<div class="input-group">
+
+<label>
+
+Password
+
+</label>
+
+<input type="password"
+id="password"
+placeholder="Enter Password">
+
+</div>
+
+<button class="login-btn"
+onclick="login()">
+
+Login Now
+
+</button>
+
+</div>
+
+<script>
+
+let loginType = "member";
+
+function switchTab(type){
+
+loginType = type;
+
+if(type === "member"){
+
+document.getElementById("memberTab")
+.classList.add("active");
+
+document.getElementById("memberTab")
+.classList.remove("inactive");
+
+document.getElementById("adminTab")
+.classList.add("inactive");
+
+document.getElementById("adminTab")
+.classList.remove("active");
+
+}else{
+
+document.getElementById("adminTab")
+.classList.add("active");
+
+document.getElementById("adminTab")
+.classList.remove("inactive");
+
+document.getElementById("memberTab")
+.classList.add("inactive");
+
+document.getElementById("memberTab")
+.classList.remove("active");
+
+}
+
+}
+
+function login(){
+
+const userId =
+document.getElementById("userId")
+.value
+.trim()
+.toLowerCase();
+
+const password =
+document.getElementById("password")
+.value
+.trim();
+
+
+// =========================
+// MEMBER LOGIN
+// =========================
+
+if(loginType === "member"){
+
+const memberPassword =
+"Egreen@22";
+
+const memberUsers = [
+
+"ege0101",
+"ege0102",
+"ege0103",
+"ege0104",
+"ege0105",
+"ege0106",
+"ege0107",
+"ege0108",
+"ege0109",
+"ege0110",
+"ege0111",
+"ege0112",
+"ege0113",
+"ege0114",
+"ege0115",
+"ege0116",
+"ege0117",
+"ege0118",
+"ege0119",
+"ege0120"
+
+];
+
+if(
+memberUsers.includes(userId)
+&&
+password === memberPassword
+){
+
+localStorage.setItem(
+"memberLoggedIn",
+"true"
+);
+
+localStorage.setItem(
+"memberId",
+userId
+);
+
+window.location.href =
+"member-dashboard.html";
+
+}else{
+
+alert(
+"Invalid Member Login"
+);
+
+}
+
+}
+
+
+// =========================
+// ADMIN LOGIN
+// =========================
+
+else{
+
+const adminPassword =
+"Egreene@2022";
+
+const adminUsers = [
+
+"ege0101",
+"ege0102",
+"ege0103"
+
+];
+
+if(
+adminUsers.includes(userId)
+&&
+password === adminPassword
+){
+
+localStorage.setItem(
+"adminLoggedIn",
+"true"
+);
+
+localStorage.setItem(
+"adminId",
+userId
+);
+
+window.location.href =
+"admin.html";
+
+}else{
+
+alert(
+"Invalid Admin Login"
+);
+
+}
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
