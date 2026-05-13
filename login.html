@@ -425,7 +425,6 @@ window.location.href =
 "admin.html";
 
 }else{
-alert("Welcome To EverGreen Enterprise");
 alert(
 "Invalid Admin Login"
 );
@@ -436,6 +435,17 @@ alert(
   if(userId === "" || password === ""){
 alert("Please fill all fields");
 return;
+}
+
+  if(loginSuccess){
+
+alert(
+"Welcome To EverGreen Enterprise"
+);
+
+window.location.href =
+"member-dashboard.html";
+
 }
 </script>
 
