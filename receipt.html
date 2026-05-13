@@ -191,33 +191,21 @@ Print Receipt
 const params =
 new URLSearchParams(window.location.search);
 
-const receiptNo =
-"REC-" + Date.now();
-
-const today =
-new Date().toLocaleDateString();
-
-document.getElementById("receiptNo")
-.innerText = receiptNo;
-
 document.getElementById("memberId")
 .innerText =
-params.get("memberId") || "N/A";
+params.get("memberId");
 
 document.getElementById("name")
 .innerText =
-params.get("name") || "N/A";
+params.get("name");
 
 document.getElementById("month")
 .innerText =
-params.get("month") || "N/A";
+params.get("month");
 
 document.getElementById("amount")
 .innerText =
-(params.get("amount") || "0") + " BDT";
-
-document.getElementById("date")
-.innerText = today;
+params.get("amount");
 
 </script>
 
