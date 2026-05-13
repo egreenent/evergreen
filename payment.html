@@ -99,7 +99,7 @@ background:#b71c1c;
 <button onclick="generateReceipt()">
 Generate Receipt
 </button>
-
+  
 </div>
 
 <script>
@@ -152,11 +152,69 @@ alert("✅ Payment Saved Successfully");
 window.open(result.receiptUrl);
 
 }else{
-
 alert("❌ Payment Failed");
-
+}
 }
 
+  const API_URL =
+"https://script.google.com/macros/s/AKfycbxwksTf-ZgPHpA1ubCXZM2QFIuHuNyWpiwH2y7lTHYPV9Cvp6pv7oIlwuqwuOigJFTw/exec";
+
+async function generateReceipt(){
+
+const memberId =
+document.getElementById("memberId").value;
+
+const name =
+document.getElementById("name").value;
+
+const month =
+document.getElementById("month").value;
+
+const amount =
+document.getElementById("amount").value;
+
+const data = {
+
+action:"payment",
+memberId:memberId,
+name:name,
+month:month,
+amount:amount
+
+};
+
+const response = await fetch(API_URL,{
+
+method:"POST",
+body:JSON.stringify(data)
+
+});
+
+const result =
+await response.json();
+
+if(result.status === "success"){
+
+alert("✅ Payment Saved Successfully");
+
+const receiptLink =
+
+`receipt.html?
+
+memberId=${memberId}
+
+&name=${name}
+
+&month=${month}
+
+&amount=${amount}`;
+
+window.location.href =
+receiptLink;
+
+}else{
+alert("❌ Payment Failed");
+}
 }
 
 </script>
