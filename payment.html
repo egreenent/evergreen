@@ -94,6 +94,7 @@ background:#b71c1c;
 <input type="text" id="month" placeholder="Month">
 
 <input type="number" id="amount" placeholder="Amount">
+  <input id="fine" type="number" placeholder="Fine Amount">
 
 <button onclick="generateReceipt()">
 Generate Receipt
@@ -119,6 +120,9 @@ document.getElementById("month").value;
 const amount =
 document.getElementById("amount").value;
 
+const fine =
+document.getElementById("fine").value;
+
 const data = {
 
 action:"payment",
@@ -126,6 +130,7 @@ memberId:memberId,
 name:name,
 month:month,
 amount:amount
+ine:fine
 
 };
 
