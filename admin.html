@@ -2,7 +2,14 @@
 <html>
 
 <head>
+<script>
 
+if(localStorage.getItem("adminLoggedIn") !== "true"){
+window.location.href = "login.html";
+}
+
+</script>
+  
 <title>Admin Dashboard</title>
 
 <meta name="viewport"
