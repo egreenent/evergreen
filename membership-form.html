@@ -675,6 +675,32 @@ Together We Grow, Together We Succeed
 const API_URL =
 "https://script.google.com/macros/s/AKfycbxwksTf-ZgPHpA1ubCXZM2QFIuHuNyWpiwH2y7lTHYPV9Cvp6pv7oIlwuqwuOigJFTw/exec";
 
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbxwksTf-ZgPHpA1ubCXZM2QFIuHuNyWpiwH2y7lTHYPV9Cvp6pv7oIlwuqwuOigJFTw/exec";
+
+
+async function fileToBase64(file){
+
+return new Promise((resolve,reject)=>{
+
+const reader = new FileReader();
+
+reader.readAsDataURL(file);
+
+reader.onload = () =>
+resolve(reader.result);
+
+reader.onerror = error =>
+reject(error);
+
+});
+
+}
+
+async function submitForm(){
+  
 async function submitForm(){
 
 try{
