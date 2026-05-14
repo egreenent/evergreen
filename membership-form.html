@@ -302,6 +302,55 @@ font-weight:600;
 .logout-btn:hover{
 background:#b71c1c;
 }
+
+  #successBox{
+
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+
+background:#fff;
+padding:35px;
+border-radius:15px;
+
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+
+z-index:9999;
+
+text-align:center;
+
+width:350px;
+
+border-top:6px solid #0b5d2a;
+
+}
+
+#successBox h2{
+
+color:#0b5d2a;
+margin-bottom:20px;
+
+}
+
+#successBox p{
+
+margin:10px 0;
+font-size:16px;
+
+}
+
+#successBox button{
+
+margin-top:20px;
+background:#0b5d2a;
+color:#fff;
+border:none;
+padding:12px 25px;
+border-radius:8px;
+cursor:pointer;
+
+}
 </style>
 </head>
 
@@ -704,11 +753,39 @@ await response.json();
 
 if(result.status === "success"){
 
-alert(
-"Registration Successful\n\n"+
-"Member ID: " + result.memberId +
-"\nPassword: " + result.password
+if(result.status === "success"){
+
+document.body.insertAdjacentHTML(
+
+"beforeend",
+
+`
+
+<div id="successBox">
+
+<h2>✅ Registration Successful</h2>
+
+<p>
+Member ID:
+<b>${result.memberId}</b>
+</p>
+
+<p>
+Password:
+<b>${result.password}</b>
+</p>
+
+<button onclick="openPDF('${result.pdfUrl}')">
+View Membership PDF
+</button>
+
+</div>
+
+`
+
 );
+
+}
 
 window.location.reload();
 
@@ -723,11 +800,12 @@ alert("Registration Failed");
 console.log(error);
 
 alert("Server Error");
-
+}
 }
 
+function openPDF(url){
+window.open(url,"_blank");
 }
-
 </script>
 
 </body>
