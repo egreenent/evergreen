@@ -675,11 +675,8 @@ Together We Grow, Together We Succeed
 const API_URL =
 "https://script.google.com/macros/s/AKfycbxwksTf-ZgPHpA1ubCXZM2QFIuHuNyWpiwH2y7lTHYPV9Cvp6pv7oIlwuqwuOigJFTw/exec";
 
-<script>
 
-const API_URL =
-"https://script.google.com/macros/s/AKfycbxwksTf-ZgPHpA1ubCXZM2QFIuHuNyWpiwH2y7lTHYPV9Cvp6pv7oIlwuqwuOigJFTw/exec";
-
+// FILE TO BASE64
 
 async function fileToBase64(file){
 
@@ -689,28 +686,34 @@ const reader = new FileReader();
 
 reader.readAsDataURL(file);
 
-reader.onload = () =>
-resolve(reader.result);
+reader.onload = () => resolve(reader.result);
 
-reader.onerror = error =>
-reject(error);
+reader.onerror = error => reject(error);
 
 });
 
 }
 
-async function submitForm(){
-  
+
+// SUBMIT FORM
+
 async function submitForm(){
 
 try{
 
+// PHOTO
+
 const photoFile =
 document.getElementById("photoInput").files[0];
+
+
+// SIGNATURE
 
 const signatureFile =
 document.getElementById("signatureInput").files[0];
 
+
+// CONVERT BASE64
 
 const photoBase64 =
 photoFile
@@ -724,7 +727,11 @@ signatureFile
 : "";
 
 
+// FORM DATA
+
 const data = {
+
+action:"register",
 
 name:
 document.getElementById("fullName").value,
@@ -756,12 +763,16 @@ new Date().toLocaleDateString(),
 monthlyFee:
 document.querySelector("#monthlyfee input").value,
 
-photo:photoBase64,
+photo:
+photoBase64,
 
-signature:signatureBase64
+signature:
+signatureBase64
 
 };
 
+
+// SEND TO APPS SCRIPT
 
 const response =
 await fetch(API_URL,{
@@ -773,47 +784,25 @@ body:JSON.stringify(data)
 });
 
 
+// RESPONSE
+
 const result =
 await response.json();
 
 
-if(result.status === "success"){
+// SUCCESS
 
 if(result.status === "success"){
 
-document.body.insertAdjacentHTML(
+alert(
 
-"beforeend",
+"Registration Successful\n\n" +
 
-`
+"Member ID: " + result.memberId +
 
-<div id="successBox">
-
-<h2>✅ Registration Successful</h2>
-
-<p>
-Member ID:
-<b>${result.memberId}</b>
-</p>
-
-<p>
-Password:
-<b>${result.password}</b>
-</p>
-
-<button onclick="openPDF('${result.pdfUrl}')">
-View Membership PDF
-</button>
-
-</div>
-
-`
+"\nPassword: " + result.password
 
 );
-
-}
-
-window.location.reload();
 
 }else{
 
@@ -826,12 +815,11 @@ alert("Registration Failed");
 console.log(error);
 
 alert("Server Error");
-}
+
 }
 
-function openPDF(url){
-window.open(url,"_blank");
 }
+
 </script>
 
 </body>
