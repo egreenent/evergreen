@@ -391,9 +391,13 @@ MEMBERSHIP APPLICATION FORM
 <select>
 <option>Select</option>
 <option>A+</option>
+<option>A-</option>
 <option>B+</option>
+<option>B-</option>
 <option>O+</option>
+<option>O-</option>
 <option>AB+</option>
+<option>AB-</option>
 </select>
 </div>
 
@@ -515,7 +519,7 @@ MEMBERSHIP APPLICATION FORM
 
 <div class="form-group" id="monthlyfee">
 <label>Monthly Fee</label>
-<input type="number" value="500">
+<input type="number" value="1000">
 </div>
 
 </div>
@@ -616,325 +620,8 @@ Together We Grow, Together We Succeed
 
 </div>
 
-</body>
-
 <script>
 
-
-
-<style>
-
-body{
-font-family:Arial,sans-serif;
-padding:35px;
-color:#222;
-}
-
-.container{
-border:4px solid #0b5d2a;
-border-radius:15px;
-overflow:hidden;
-}
-
-.top{
-background:#0b5d2a;
-padding:20px;
-text-align:center;
-color:#fff;
-}
-
-.top img{
-width:120px;
-margin-bottom:10px;
-}
-
-.top h1{
-margin:0;
-font-size:38px;
-letter-spacing:2px;
-}
-
-.top h2{
-margin-top:8px;
-font-size:20px;
-color:#d4af37;
-}
-
-.title{
-background:#d4af37;
-padding:14px;
-text-align:center;
-font-size:24px;
-font-weight:bold;
-color:#0b5d2a;
-}
-
-.content{
-padding:30px;
-}
-
-.info-table{
-width:100%;
-border-collapse:collapse;
-margin-top:20px;
-}
-
-.info-table th{
-background:#0b5d2a;
-color:#fff;
-padding:12px;
-text-align:left;
-width:30%;
-}
-
-.info-table td{
-padding:12px;
-border:1px solid #ccc;
-}
-
-.section{
-margin-top:30px;
-}
-
-.section h3{
-background:#0b5d2a;
-color:#fff;
-padding:10px;
-border-radius:8px;
-}
-
-.signature-section{
-margin-top:60px;
-display:flex;
-justify-content:space-between;
-text-align:center;
-}
-
-.sign-box{
-width:30%;
-}
-
-.line{
-border-top:2px solid #333;
-margin-bottom:10px;
-padding-top:10px;
-}
-
-.footer{
-margin-top:40px;
-text-align:center;
-font-size:14px;
-color:#777;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="top">
-
-<img src="${logo}">
-
-<h1>EVERGREEN</h1>
-
-<h2>ENTERPRISE</h2>
-
-</div>
-
-<div class="title">
-MEMBERSHIP APPLICATION FORM
-</div>
-
-<div class="content">
-
-<div class="section">
-
-<h3>Personal Information</h3>
-
-<table class="info-table">
-
-<tr>
-<th>Member ID</th>
-<td>${memberData.memberId}</td>
-</tr>
-
-<tr>
-<th>Full Name</th>
-<td>${memberData.name}</td>
-</tr>
-
-<tr>
-<th>Phone Number</th>
-<td>${memberData.phone}</td>
-</tr>
-
-<tr>
-<th>Email</th>
-<td>${memberData.email}</td>
-</tr>
-
-<tr>
-<th>NID Number</th>
-<td>${memberData.nid}</td>
-</tr>
-
-<tr>
-<th>Address</th>
-<td>${memberData.address}</td>
-</tr>
-
-</table>
-
-</div>
-
-<div class="section">
-
-<h3>Membership Details</h3>
-
-<table class="info-table">
-
-<tr>
-<th>Membership Type</th>
-<td>General Member</td>
-</tr>
-
-<tr>
-<th>Monthly Fee</th>
-<td>500 BDT</td>
-</tr>
-
-<tr>
-<th>Status</th>
-<td>Active</td>
-</tr>
-
-<tr>
-<th>Registration Date</th>
-<td>${new Date()}</td>
-</tr>
-
-</table>
-
-</div>
-
-<div class="signature-section">
-
-<div class="sign-box">
-<div class="line"></div>
-Applicant Signature
-</div>
-
-<div class="sign-box">
-<div class="line"></div>
-Verified By
-</div>
-
-<div class="sign-box">
-<div class="line"></div>
-Chairman Signature
-</div>
-
-</div>
-
-<div class="footer">
-
-Together We Grow, Together We Succeed
-
-</div>
-
-</div>
-
-</div>
-
-</body>
-
-</html>
-
-`;
-
-const blob =
-Utilities.newBlob(
-html,
-"text/html"
-);
-
-const pdf =
-blob.getAs("application/pdf");
-
-const file =
-folder.createFile(pdf);
-
-file.setName(
-memberData.memberId + ".pdf"
-);
-
-file.setSharing(
-DriveApp.Access.ANYONE_WITH_LINK,
-DriveApp.Permission.VIEW
-);
-
-return file.getUrl();
-
-}
-
-const idCardUrl =
-generateIDCard({
-
-memberId:memberId,
-name:data.name,
-phone:data.phone,
-email:data.email,
-address:data.address,
-photoUrl:photoUrl
-
-});
-
-sheet.appendRow([
-
-memberId,
-data.name,
-data.phone,
-data.email,
-data.nid,
-"",
-data.address,
-data.nominee,
-"",
-new Date(),
-500,
-password,
-photoUrl,
-signatureUrl,
-pdfUrl,
-idCardUrl,
-"Active"
-
-]);
-
-return ContentService
-.createTextOutput(
-
-JSON.stringify({
-
-status:"success",
-
-message:
-"Registration Successful"
-})
-)
-
-.setMimeType(
-ContentService.MimeType.JSON
-);
-}
-
-const SHEET_ID = "1GXPh6kjc5XID78hqiCNc_iUfjdN5KJS4LogsiE7C_-w";
-
--------------------------------------------------------
 const API_URL =
 "https://script.google.com/macros/s/AKfycbxwksTf-ZgPHpA1ubCXZM2QFIuHuNyWpiwH2y7lTHYPV9Cvp6pv7oIlwuqwuOigJFTw/exec";
 
@@ -1009,7 +696,12 @@ alert("Registration Failed");
 console.log(error);
 
 alert("Server Error");
+
 }
+
 }
+
 </script>
+
+</body>
 </html>
