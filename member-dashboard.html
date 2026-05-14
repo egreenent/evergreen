@@ -371,11 +371,9 @@ const reader = new FileReader();
 
 reader.readAsDataURL(file);
 
-reader.onload = () =>
-resolve(reader.result);
+reader.onload = () => resolve(reader.result);
 
-reader.onerror = error =>
-reject(error);
+reader.onerror = error => reject(error);
 
 });
 
@@ -406,6 +404,8 @@ signatureFile
 
 
 const data = {
+
+action:"register",
 
 name:
 document.getElementById("fullName").value,
@@ -461,9 +461,13 @@ await response.json();
 if(result.status === "success"){
 
 alert(
+
 "Registration Successful\n\n"+
+
 "Member ID: " + result.memberId +
+
 "\nPassword: " + result.password
+
 );
 
 }else{
@@ -485,7 +489,4 @@ alert("Server Error");
 </script>
 
 </body>
-</html>
-</body>
-
 </html>
