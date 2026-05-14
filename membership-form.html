@@ -620,108 +620,7 @@ Together We Grow, Together We Succeed
 
 <script>
 
-const API_URL =
-"https://script.google.com/macros/s/AKfycbxwksTf-ZgPHpA1ubCXZM2QFIuHuNyWpiwH2y7lTHYPV9Cvp6pv7oIlwuqwuOigJFTw/exec";
-async function fileToBase64(file){
 
-return new Promise((resolve,reject)=>{
-const reader = new FileReader();
-reader.readAsDataURL(file);
-reader.onload = () => resolve(reader.result);
-reader.onerror = error => reject(error);
-});
-}
-
-async function submitForm(){
-const photoFile =
-document.getElementById("photo").files[0];
-
-const signatureFile =
-document.getElementById("signature").files[0];
-
-const photoBase64 =
-await fileToBase64(photoFile);
-
-const signatureBase64 =
-await fileToBase64(signatureFile);
-
-const data = {
-
-action:"register",
-
-name:
-document.getElementById("fullName").value,
-
-nid:
-document.getElementById("nid").value,
-
-mobile:
-document.getElementById("mobile").value,
-
-email:
-document.getElementById("email").value,
-
-address:
-document.getElementById("address").value,
-
-nominee:
-document.getElementById("nominee").value,
-
-photo:photoBase64,
-signature:signatureBase64
-
-};
-
-const response = await fetch(API_URL,{
-method:"POST",
-body:JSON.stringify(data)
-});
-
-const result = await response.json();
-alert(result.message);
-
-}
-
-if(action === "register"){
-return registerMember(data);
-}
-
-function registerMember(data){
-
-const ss =
-SpreadsheetApp.openById(SHEET_ID);
-
-const sheet =
-ss.getSheetByName("Members");
-
-const memberId =
-"EGE-" + Math.floor(Math.random()*100000);
-
-const password =
-Math.floor(1000 + Math.random()*9000);
-
-const photoUrl =
-uploadFile(data.photo,"Member Photos");
-
-const signatureUrl =
-uploadFile(data.signature,"Member Signatures");
-
-const pdfUrl =
-function generatePDF(memberData){
-
-const folder =
-DriveApp.getFoldersByName(
-"Membership PDFs"
-).next();
-
-const logo =
-"https://drive.google.com/uc?export=view&id=1Jlgc7LCK4Up1y3tIrQx2SDJ21uHYeqOw";
-
-const html = `
-
-<html>
-
-<head>
 
 <style>
 
@@ -1025,16 +924,68 @@ status:"success",
 
 message:
 "Registration Successful"
-
 })
-
 )
 
 .setMimeType(
 ContentService.MimeType.JSON
 );
+}
+
+const SHEET_ID = "YOUR_GOOGLE_SHEET_ID";
+
+function doPost(e){
+
+const data = JSON.parse(e.postData.contents);
+
+return registerMember(data);
 
 }
 
+function registerMember(data){
+
+const sheet = SpreadsheetApp
+.openById(SHEET_ID)
+.getSheetByName("Members");
+
+const memberId =
+"EGE-" +
+("00" + (sheet.getLastRow())).slice(-3);
+
+const password = "Egreene@2022";
+
+sheet.appendRow([
+
+memberId,
+data.name,
+data.phone,
+data.email,
+data.nid,
+data.blood,
+data.address,
+data.nominee,
+data.nomineePhone,
+data.joinDate,
+data.monthlyFee,
+password,
+"",
+"",
+"",
+"",
+"Active"
+
+]);
+
+return ContentService
+.createTextOutput(JSON.stringify({
+
+status:"success",
+memberId:memberId,
+password:password
+
+}))
+.setMimeType(ContentService.MimeType.JSON);
+
+}
 </script>
 </html>
