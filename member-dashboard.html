@@ -362,168 +362,130 @@ placeholder="Member Email">
 const API_URL =
 "https://script.google.com/macros/s/AKfycbxwksTf-ZgPHpA1ubCXZM2QFIuHuNyWpiwH2y7lTHYPV9Cvp6pv7oIlwuqwuOigJFTw/exec";
 
-const memberId =
-localStorage.getItem("memberId");
 
-async function loadMemberDashboard(){
+async function fileToBase64(file){
+
+return new Promise((resolve,reject)=>{
+
+const reader = new FileReader();
+
+reader.readAsDataURL(file);
+
+reader.onload = () =>
+resolve(reader.result);
+
+reader.onerror = error =>
+reject(error);
+
+});
+
+}
+
+
+async function submitForm(){
+
+try{
+
+const photoFile =
+document.getElementById("photoInput").files[0];
+
+const signatureFile =
+document.getElementById("signatureInput").files[0];
+
+
+const photoBase64 =
+photoFile
+? await fileToBase64(photoFile)
+: "";
+
+
+const signatureBase64 =
+signatureFile
+? await fileToBase64(signatureFile)
+: "";
+
+
+const data = {
+
+name:
+document.getElementById("fullName").value,
+
+phone:
+document.getElementById("mobile").value,
+
+email:
+document.getElementById("email").value,
+
+nid:
+document.getElementById("nid").value,
+
+blood:
+document.querySelector("#blood select").value,
+
+address:
+document.querySelector("#preadd textarea").value,
+
+nominee:
+document.querySelector("#nominee input").value,
+
+nomineePhone:
+document.querySelector("#nomineemobile input").value,
+
+joinDate:
+new Date().toLocaleDateString(),
+
+monthlyFee:
+document.querySelector("#monthlyfee input").value,
+
+photo:photoBase64,
+
+signature:signatureBase64
+
+};
+
 
 const response =
 await fetch(API_URL,{
 
 method:"POST",
 
-body:JSON.stringify({
-
-action:"memberDashboard",
-
-memberId:memberId
-
-})
+body:JSON.stringify(data)
 
 });
+
 
 const result =
 await response.json();
 
-document.getElementById(
-"memberIdText"
-).innerText =
-result.memberId;
 
-document.getElementById(
-"memberName"
-).innerText =
-result.name;
-
-document.getElementById(
-"memberPhone"
-).innerText =
-"Phone: " + result.phone;
-
-document.getElementById(
-"memberEmail"
-).innerText =
-"Email: " + result.email;
-
-document.getElementById(
-"memberStatus"
-).innerText =
-"Status: " + result.status;
-
-document.getElementById(
-"memberPhoto"
-).src =
-result.photo;
-
-document.getElementById(
-"totalPayment"
-).innerText =
-result.totalAmount;
-
-document.getElementById(
-"totalReceipts"
-).innerText =
-result.totalReceipts;
-
-document.getElementById(
-"statusText"
-).innerText =
-result.status;
-
-document.getElementById(
-"pdfLink"
-).href =
-result.pdf;
-
-document.getElementById(
-"idCardLink"
-).href =
-result.idcard;
-
-let rows = "";
-
-result.payments.forEach(payment=>{
-
-rows += `
-
-<tr>
-
-<td>${payment.receipt}</td>
-
-<td>${payment.month}</td>
-
-<td>${payment.amount}</td>
-
-<td>${payment.date}</td>
-
-<td>
-
-<a href="${payment.url}"
-target="_blank"
-class="download-btn">
-
-Receipt
-
-</a>
-
-</td>
-
-</tr>
-
-`;
-
-});
-
-document.getElementById(
-"paymentTable"
-).innerHTML = rows;
-
-}
-
-loadMemberDashboard();
-
-email:
-document.getElementById("email").value,
-
-const whatsappUrl =
-"https://wa.me/8801XXXXXXXXX?text="
-+ encodeURIComponent(
-
-"Payment Successful\nReceipt: "
-+ receiptUrl
-
-whatsapp:whatsappUrl
-);
-
-
-window.open(
-result.whatsapp,
-"_blank"
-);
-
-  function memberLogout(){
-
-localStorage.removeItem(
-"memberLoggedIn"
-);
-
-localStorage.removeItem(
-"memberId"
-);
-
-window.location.href =
-"login.html";
-}
-
-  if(result.status === "success"){
+if(result.status === "success"){
 
 alert(
-"Welcome To EverGreen Enterprise"
+"Registration Successful\n\n"+
+"Member ID: " + result.memberId +
+"\nPassword: " + result.password
 );
 
+}else{
+
+alert("Registration Failed");
+
 }
+
+}catch(error){
+
+console.log(error);
+
+alert("Server Error");
+
+}
+
+}
+
 </script>
 
+</body>
+</html>
 </body>
 
 </html>
