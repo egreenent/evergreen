@@ -1,6 +1,3 @@
-# Complete Upgraded `member-dashboard.html`
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -515,58 +512,40 @@ const memberId = localStorage.getItem("memberId");
 
 
 // =========================
-// MEMBER DATABASE
+// GOOGLE SHEET API
 // =========================
 
-const members = {
-
-"ege0101":{
-
-name:"Sony Zzaman",
-phone:"01700000000",
-email:"sony@example.com",
-join:"01 January 2026",
-address:"Tangail, Bangladesh",
-status:"Active",
-photo:"https://i.imgur.com/6VBx3io.png",
-
-due:500,
-
-payments:[
-
-{
-receipt:"RCPT-1001",
-month:"January",
-amount:500,
-date:"10 January 2026"
-},
-
-{
-receipt:"RCPT-1002",
-month:"February",
-amount:500,
-date:"10 February 2026"
-}
-
-]
-
-}
-
-};
+const API_URL =
+"YOUR_GOOGLE_APPS_SCRIPT_WEBAPP_URL";
 
 
 // =========================
 // LOAD MEMBER DATA
 // =========================
 
-const member = members[memberId];
+async function loadMember(){
 
-if(member){
+try{
+
+const response =
+await fetch(
+API_URL + "?memberId=" + memberId
+);
+
+const member =
+await response.json();
+
+if(!member || member.error){
+alert("Member Not Found");
+window.location.href = "login.html";
+return;
+}
+
 
 // Header
 
 document.getElementById("memberIdText")
-.innerText = memberId.toUpperCase();
+.innerText = member.memberId;
 
 
 // Profile
@@ -584,7 +563,7 @@ document.getElementById("memberEmail")
 
 
 document.getElementById("memberJoin")
-.innerText = "📅 Join Date: " + member.join;
+.innerText = "📅 Join Date: " + member.joinDate;
 
 
 document.getElementById("memberAddress")
@@ -603,59 +582,63 @@ document.getElementById("memberPhoto")
 .src = member.photo;
 
 
-// Payment History
-
-const paymentTable =
-document.getElementById("paymentTable");
-
-let totalPayment = 0;
-
-member.payments.forEach(pay=>{
-
- totalPayment += pay.amount;
-
- paymentTable.innerHTML += `
-
- <tr>
-
- <td>${pay.receipt}</td>
- <td>${pay.month}</td>
- <td>৳ ${pay.amount}</td>
- <td>${pay.date}</td>
-
- <td>
-
- <button class="pdf-btn"
- onclick="downloadReceipt(
- '${pay.receipt}',
- '${pay.month}',
- '${pay.amount}',
- '${pay.date}'
- )">
- PDF
- </button>
-
- </td>
-
- </tr>
-
- `;
-
-});
-
+// Payment
 
 document.getElementById("totalPayment")
-.innerText = "৳ " + totalPayment;
+.innerText = "৳ " + member.totalPayment;
 
 
 document.getElementById("totalReceipts")
-.innerText = member.payments.length;
+.innerText = member.totalReceipts;
 
 
 document.getElementById("dueAmount")
 .innerText = "৳ " + member.due;
 
+
+// Payment Table
+
+const paymentTable =
+document.getElementById("paymentTable");
+
+paymentTable.innerHTML = "";
+
+member.payments.forEach(pay=>{
+
+paymentTable.innerHTML += `
+
+<tr>
+<td>${pay.receipt}</td>
+<td>${pay.month}</td>
+<td>৳ ${pay.amount}</td>
+<td>${pay.date}</td>
+<td>
+<button class="pdf-btn"
+onclick="downloadReceipt(
+'${pay.receipt}',
+'${pay.month}',
+'${pay.amount}',
+'${pay.date}'
+)">
+PDF
+</button>
+</td>
+</tr>
+
+`;
+
+});
+
+}catch(error){
+
+console.log(error);
+alert("Server Error");
+
 }
+
+}
+
+loadMember();
 
 
 // =========================
@@ -795,26 +778,3 @@ link.click();
 
 </body>
 </html>
-```
-
-# Login Credentials
-
-```javascript
-User ID: ege0101
-Password: Egreen@22
-```
-
-# Important
-
-তোমার `login.html` ফাইলে অবশ্যই এই code থাকতে হবে:
-
-```javascript
-localStorage.setItem("memberLoggedIn","true");
-localStorage.setItem("memberId",userId);
-```
-
-তারপর:
-
-```javascript
-window.location.href = "member-dashboard.html";
-```
