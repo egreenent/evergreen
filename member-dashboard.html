@@ -1,22 +1,19 @@
+# Complete Upgraded `member-dashboard.html`
+
+```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <link rel="manifest" href="manifest.json">
-<script>
 
-if(localStorage.getItem("memberLoggedIn") !== "true"){
-window.location.href = "login.html";
-}
+<link rel="manifest" href="manifest.json">
 
-</script>
-<title>Member Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<title>EverGreen Member Dashboard</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 
@@ -33,138 +30,237 @@ padding:20px;
 }
 
 .header{
-
 background:#0b5d2a;
 padding:20px;
-border-radius:15px;
+border-radius:18px;
 display:flex;
 justify-content:space-between;
 align-items:center;
 color:#fff;
 margin-bottom:25px;
+box-shadow:0 5px 20px rgba(0,0,0,0.08);
+}
 
+.header-left h1{
+font-size:42px;
+font-weight:700;
+}
+
+.header-left p{
+margin-top:6px;
+font-size:15px;
+opacity:0.9;
+}
+
+.member-id-box{
+background:rgba(255,255,255,0.15);
+padding:12px 18px;
+border-radius:12px;
+font-size:18px;
+font-weight:600;
+}
+
+.logout-btn{
+background:#e62828;
+color:#fff;
+border:none;
+padding:14px 24px;
+border-radius:12px;
+cursor:pointer;
+font-size:16px;
+font-weight:600;
+transition:0.3s;
+}
+
+.logout-btn:hover{
+background:#c41f1f;
+transform:translateY(-2px);
 }
 
 .profile-card{
-
 background:#fff;
-padding:30px;
-border-radius:18px;
-box-shadow:0 5px 15px rgba(0,0,0,0.08);
+padding:35px;
+border-radius:20px;
+box-shadow:0 5px 18px rgba(0,0,0,0.06);
 display:flex;
-gap:30px;
 align-items:center;
-margin-bottom:30px;
-
+gap:35px;
+margin-bottom:25px;
 }
 
 .profile-photo{
-
-width:160px;
-height:160px;
+width:170px;
+height:170px;
 border-radius:50%;
 overflow:hidden;
-border:5px solid #d4af37;
-
+border:6px solid #d4af37;
+flex-shrink:0;
 }
 
 .profile-photo img{
-
 width:100%;
 height:100%;
 object-fit:cover;
-
 }
 
 .profile-info h1{
-font-size:34px;
+font-size:40px;
 color:#0b5d2a;
+margin-bottom:10px;
 }
 
 .profile-info p{
-margin-top:10px;
 font-size:17px;
-color:#555;
+margin-bottom:10px;
+color:#444;
+}
+
+.active-status{
+background:#0b5d2a;
+color:#fff;
+display:inline-block;
+padding:8px 16px;
+border-radius:30px;
+font-size:14px;
+font-weight:600;
+margin-top:8px;
 }
 
 .stats{
-
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
 gap:20px;
-margin-bottom:30px;
-
+margin-bottom:25px;
 }
 
 .stat-card{
-
 background:#fff;
-padding:25px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,0.06);
+padding:28px;
+border-radius:18px;
+box-shadow:0 5px 18px rgba(0,0,0,0.05);
 border-left:6px solid #0b5d2a;
-
 }
 
-.stat-card h2{
+.stat-card h3{
 font-size:18px;
 color:#666;
-margin-bottom:12px;
+margin-bottom:15px;
 }
 
 .stat-card h1{
-font-size:34px;
+font-size:36px;
 color:#0b5d2a;
 }
 
 .section{
-
 background:#fff;
-padding:25px;
-border-radius:15px;
-margin-bottom:30px;
-box-shadow:0 5px 15px rgba(0,0,0,0.06);
-
+padding:28px;
+border-radius:18px;
+margin-bottom:25px;
+box-shadow:0 5px 18px rgba(0,0,0,0.05);
 }
 
 .section h2{
-margin-bottom:20px;
+font-size:32px;
 color:#0b5d2a;
+margin-bottom:20px;
+}
+
+.notice-item{
+background:#edf7ef;
+padding:16px;
+border-radius:12px;
+margin-bottom:12px;
+font-size:16px;
+color:#0b5d2a;
+font-weight:500;
+}
+
+.download-btn,
+.pay-btn,
+.pdf-btn{
+background:#c99a2e;
+color:#fff;
+border:none;
+padding:12px 18px;
+border-radius:10px;
+cursor:pointer;
+text-decoration:none;
+display:inline-block;
+font-size:15px;
+font-weight:600;
+margin-right:10px;
+transition:0.3s;
+}
+
+.download-btn:hover,
+.pay-btn:hover,
+.pdf-btn:hover{
+background:#b98b1d;
+transform:translateY(-2px);
+}
+
+.payment-buttons{
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.payment-card{
+background:#f4f8f5;
+padding:20px;
+border-radius:14px;
+margin-top:18px;
+}
+
+.payment-card p{
+margin-bottom:12px;
+font-size:16px;
+color:#444;
+}
+
+.table-wrapper{
+overflow-x:auto;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
+min-width:700px;
 }
 
 table th{
 background:#0b5d2a;
 color:#fff;
-padding:14px;
+padding:16px;
 text-align:left;
+font-size:16px;
 }
 
 table td{
-padding:14px;
+padding:16px;
 border-bottom:1px solid #ddd;
+font-size:15px;
 }
 
-.download-btn{
-
-background:#c99a2e;
-padding:10px 16px;
-border-radius:8px;
-color:#fff;
-text-decoration:none;
-display:inline-block;
-
+.month-paid{
+color:#0b5d2a;
+font-weight:700;
 }
 
-.download-btn:hover{
-background:#af8427;
+.month-due{
+color:#d62828;
+font-weight:700;
 }
 
-@media(max-width:768px){
+.footer{
+text-align:center;
+margin-top:30px;
+font-size:14px;
+color:#666;
+}
+
+@media(max-width:900px){
 
 .profile-card{
 flex-direction:column;
@@ -173,46 +269,24 @@ text-align:center;
 
 .header{
 flex-direction:column;
-gap:15px;
+gap:18px;
 text-align:center;
 }
 
+.header-left h1{
+font-size:32px;
 }
 
-  .logout-btn{
-
-background:#d62828;
-color:#fff;
-border:none;
-padding:12px 22px;
-border-radius:10px;
-cursor:pointer;
-font-size:15px;
-font-weight:600;
+.profile-info h1{
+font-size:30px;
 }
 
-  button{
-transition:0.3s;
+.section h2{
+font-size:26px;
 }
 
-button:hover{
-transform:translateY(-2px);
 }
 
-.logout-btn{
-background:#d62828;
-color:#fff;
-border:none;
-padding:12px 22px;
-border-radius:10px;
-cursor:pointer;
-font-size:15px;
-font-weight:600;
-}
-
-.logout-btn:hover{
-background:#b71c1c;
-}
 </style>
 
 </head>
@@ -221,131 +295,169 @@ background:#b71c1c;
 
 <div class="header">
 
+<div class="header-left">
 <h1>Member Dashboard</h1>
-
-<h2 id="memberIdText">
-Member ID
-</h2>
-
-<button onclick="memberLogout()"
-class="logout-btn">
-Logout
-</button>
-  
+<p>EverGreen Enterprise Membership Portal</p>
 </div>
 
-<!-- Profile -->
+<div class="member-id-box" id="memberIdText">
+Member ID
+</div>
+
+<button class="logout-btn" onclick="memberLogout()">
+Logout
+</button>
+
+</div>
+
 
 <div class="profile-card">
 
 <div class="profile-photo">
-
-<img id="memberPhoto"
-src="">
-
+<img id="memberPhoto" src="https://i.imgur.com/6VBx3io.png">
 </div>
 
 <div class="profile-info">
 
-<h1 id="memberName">
-Loading...
-</h1>
+<h1 id="memberName">Loading...</h1>
 
 <p id="memberPhone"></p>
-
 <p id="memberEmail"></p>
+<p id="memberJoin"></p>
+<p id="memberAddress"></p>
 
-<p id="memberStatus"></p>
-
+<div class="active-status" id="memberStatus">
+Active Member
 </div>
 
 </div>
 
-<!-- Stats -->
+</div>
+
 
 <div class="stats">
 
 <div class="stat-card">
-
-<h2>Total Payment</h2>
-
-<h1 id="totalPayment">
-0
-</h1>
-
+<h3>Total Payment</h3>
+<h1 id="totalPayment">৳ 0</h1>
 </div>
 
 <div class="stat-card">
-
-<h2>Total Receipts</h2>
-
-<h1 id="totalReceipts">
-0
-</h1>
-
+<h3>Total Receipts</h3>
+<h1 id="totalReceipts">0</h1>
 </div>
 
 <div class="stat-card">
+<h3>Due Amount</h3>
+<h1 id="dueAmount">৳ 0</h1>
+</div>
 
-<h2>Membership Status</h2>
-
-<h1 id="statusText">
-Active
-</h1>
-
+<div class="stat-card">
+<h3>Membership Status</h3>
+<h1 id="statusText">Active</h1>
 </div>
 
 </div>
 
-<!-- Downloads -->
+
+<div class="section">
+
+<h2>Notice Board</h2>
+
+<div class="notice-item">
+📢 Monthly Meeting Friday 8PM
+</div>
+
+<div class="notice-item">
+📢 Membership Fee Submit Before 15th
+</div>
+
+<div class="notice-item">
+📢 New ID Card Download Available
+</div>
+
+</div>
+
 
 <div class="section">
 
 <h2>Downloads</h2>
 
-<a id="pdfLink"
-href="#"
-target="_blank"
-class="download-btn">
-
+<a href="#" class="download-btn" onclick="downloadMembershipPDF()">
 Membership PDF
-
 </a>
 
-<a id="idCardLink"
-href="#"
-target="_blank"
-class="download-btn">
-
+<a href="#" class="download-btn" onclick="downloadIDCard()">
 ID Card
-
 </a>
 
 </div>
 
-<!-- Payment History -->
 
 <div class="section">
 
-<h2>Payment History</h2>
+<h2>Online Payment</h2>
+
+<div class="payment-buttons">
+
+<button class="pay-btn" onclick="payNow('bKash')">
+bKash Payment
+</button>
+
+<button class="pay-btn" onclick="payNow('Nagad')">
+Nagad Payment
+</button>
+
+<button class="pay-btn" onclick="payNow('Rocket')">
+Rocket Payment
+</button>
+
+</div>
+
+<div class="payment-card">
+<p><strong>Monthly Fee:</strong> ৳ 500</p>
+<p><strong>Payment Status:</strong> Paid Until February</p>
+<p><strong>Next Due:</strong> March 15, 2026</p>
+</div>
+
+</div>
+
+
+<div class="section">
+
+<h2>Monthly Payment Tracking</h2>
+
+<div class="table-wrapper">
 
 <table>
 
 <thead>
-
 <tr>
-
-<th>Receipt</th>
 <th>Month</th>
+<th>Status</th>
 <th>Amount</th>
-<th>Date</th>
-<th>Download</th>
-
 </tr>
-
 </thead>
 
-<tbody id="paymentTable">
+<tbody>
+
+<tr>
+<td>January</td>
+<td class="month-paid">Paid</td>
+<td>৳ 500</td>
+</tr>
+
+<tr>
+<td>February</td>
+<td class="month-paid">Paid</td>
+<td>৳ 500</td>
+</tr>
+
+<tr>
+<td>March</td>
+<td class="month-due">Due</td>
+<td>৳ 500</td>
+</tr>
 
 </tbody>
 
@@ -353,136 +465,329 @@ ID Card
 
 </div>
 
-<input type="email"
-id="email"
-placeholder="Member Email">
+</div>
+
+
+<div class="section">
+
+<h2>Payment History</h2>
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+<tr>
+<th>Receipt</th>
+<th>Month</th>
+<th>Amount</th>
+<th>Date</th>
+<th>Download</th>
+</tr>
+</thead>
+
+<tbody id="paymentTable">
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<div class="footer">
+© 2026 EverGreen Enterprise. All Rights Reserved.
+</div>
+
 
 <script>
 
-const API_URL =
-"https://script.google.com/macros/s/AKfycbxwksTf-ZgPHpA1ubCXZM2QFIuHuNyWpiwH2y7lTHYPV9Cvp6pv7oIlwuqwuOigJFTw/exec";
+// =========================
+// LOGIN CHECK
+// =========================
 
-
-async function fileToBase64(file){
-
-return new Promise((resolve,reject)=>{
-
-const reader = new FileReader();
-
-reader.readAsDataURL(file);
-
-reader.onload = () => resolve(reader.result);
-
-reader.onerror = error => reject(error);
-
-});
-
+if(localStorage.getItem("memberLoggedIn") !== "true"){
+window.location.href = "login.html";
 }
 
-
-async function submitForm(){
-
-try{
-
-const photoFile =
-document.getElementById("photoInput").files[0];
-
-const signatureFile =
-document.getElementById("signatureInput").files[0];
+const memberId = localStorage.getItem("memberId");
 
 
-const photoBase64 =
-photoFile
-? await fileToBase64(photoFile)
-: "";
+// =========================
+// MEMBER DATABASE
+// =========================
 
+const members = {
 
-const signatureBase64 =
-signatureFile
-? await fileToBase64(signatureFile)
-: "";
+"ege0101":{
 
+name:"Sony Zzaman",
+phone:"01700000000",
+email:"sony@example.com",
+join:"01 January 2026",
+address:"Tangail, Bangladesh",
+status:"Active",
+photo:"https://i.imgur.com/6VBx3io.png",
 
-const data = {
+due:500,
 
-action:"register",
+payments:[
 
-name:
-document.getElementById("fullName").value,
+{
+receipt:"RCPT-1001",
+month:"January",
+amount:500,
+date:"10 January 2026"
+},
 
-phone:
-document.getElementById("mobile").value,
+{
+receipt:"RCPT-1002",
+month:"February",
+amount:500,
+date:"10 February 2026"
+}
 
-email:
-document.getElementById("email").value,
+]
 
-nid:
-document.getElementById("nid").value,
-
-blood:
-document.querySelector("#blood select").value,
-
-address:
-document.querySelector("#preadd textarea").value,
-
-nominee:
-document.querySelector("#nominee input").value,
-
-nomineePhone:
-document.querySelector("#nomineemobile input").value,
-
-joinDate:
-new Date().toLocaleDateString(),
-
-monthlyFee:
-document.querySelector("#monthlyfee input").value,
-
-photo:photoBase64,
-
-signature:signatureBase64
+}
 
 };
 
 
-const response =
-await fetch(API_URL,{
+// =========================
+// LOAD MEMBER DATA
+// =========================
 
-method:"POST",
+const member = members[memberId];
 
-body:JSON.stringify(data)
+if(member){
+
+// Header
+
+document.getElementById("memberIdText")
+.innerText = memberId.toUpperCase();
+
+
+// Profile
+
+document.getElementById("memberName")
+.innerText = member.name;
+
+
+document.getElementById("memberPhone")
+.innerText = "📞 Phone: " + member.phone;
+
+
+document.getElementById("memberEmail")
+.innerText = "📧 Email: " + member.email;
+
+
+document.getElementById("memberJoin")
+.innerText = "📅 Join Date: " + member.join;
+
+
+document.getElementById("memberAddress")
+.innerText = "📍 Address: " + member.address;
+
+
+document.getElementById("memberStatus")
+.innerText = member.status + " Member";
+
+
+document.getElementById("statusText")
+.innerText = member.status;
+
+
+document.getElementById("memberPhoto")
+.src = member.photo;
+
+
+// Payment History
+
+const paymentTable =
+document.getElementById("paymentTable");
+
+let totalPayment = 0;
+
+member.payments.forEach(pay=>{
+
+ totalPayment += pay.amount;
+
+ paymentTable.innerHTML += `
+
+ <tr>
+
+ <td>${pay.receipt}</td>
+ <td>${pay.month}</td>
+ <td>৳ ${pay.amount}</td>
+ <td>${pay.date}</td>
+
+ <td>
+
+ <button class="pdf-btn"
+ onclick="downloadReceipt(
+ '${pay.receipt}',
+ '${pay.month}',
+ '${pay.amount}',
+ '${pay.date}'
+ )">
+ PDF
+ </button>
+
+ </td>
+
+ </tr>
+
+ `;
 
 });
 
 
-const result =
-await response.json();
+document.getElementById("totalPayment")
+.innerText = "৳ " + totalPayment;
 
 
-if(result.status === "success"){
+document.getElementById("totalReceipts")
+.innerText = member.payments.length;
+
+
+document.getElementById("dueAmount")
+.innerText = "৳ " + member.due;
+
+}
+
+
+// =========================
+// LOGOUT
+// =========================
+
+function memberLogout(){
+
+localStorage.removeItem("memberLoggedIn");
+localStorage.removeItem("memberId");
+
+window.location.href = "login.html";
+
+}
+
+
+// =========================
+// PAYMENT BUTTONS
+// =========================
+
+function payNow(method){
 
 alert(
-
-"Registration Successful\n\n"+
-
-"Member ID: " + result.memberId +
-
-"\nPassword: " + result.password
-
+"Redirecting to " + method + " Payment Gateway"
 );
 
-}else{
+}
 
-alert("Registration Failed");
+
+// =========================
+// RECEIPT DOWNLOAD
+// =========================
+
+function downloadReceipt(
+receipt,
+month,
+amount,
+date
+){
+
+const text = `
+
+EVERGREEN ENTERPRISE
+
+Payment Receipt
+
+Receipt No: ${receipt}
+Month: ${month}
+Amount: ৳ ${amount}
+Date: ${date}
+Member ID: ${memberId}
+Status: Paid
+
+`;
+
+const blob = new Blob(
+[text],
+{type:"text/plain"}
+);
+
+const link = document.createElement("a");
+
+link.href = URL.createObjectURL(blob);
+link.download = receipt + ".txt";
+
+link.click();
 
 }
 
-}catch(error){
 
-console.log(error);
+// =========================
+// MEMBERSHIP PDF
+// =========================
 
-alert("Server Error");
+function downloadMembershipPDF(){
+
+const text = `
+
+EVERGREEN ENTERPRISE
+
+Membership Information
+
+Name: ${member.name}
+Member ID: ${memberId}
+Phone: ${member.phone}
+Email: ${member.email}
+Status: ${member.status}
+
+`;
+
+const blob = new Blob(
+[text],
+{type:"text/plain"}
+);
+
+const link = document.createElement("a");
+
+link.href = URL.createObjectURL(blob);
+link.download = "membership-info.txt";
+
+link.click();
 
 }
+
+
+// =========================
+// ID CARD DOWNLOAD
+// =========================
+
+function downloadIDCard(){
+
+const text = `
+
+EVERGREEN ID CARD
+
+Name: ${member.name}
+Member ID: ${memberId}
+Status: ${member.status}
+
+`;
+
+const blob = new Blob(
+[text],
+{type:"text/plain"}
+);
+
+const link = document.createElement("a");
+
+link.href = URL.createObjectURL(blob);
+link.download = "id-card.txt";
+
+link.click();
 
 }
 
@@ -490,3 +795,26 @@ alert("Server Error");
 
 </body>
 </html>
+```
+
+# Login Credentials
+
+```javascript
+User ID: ege0101
+Password: Egreen@22
+```
+
+# Important
+
+তোমার `login.html` ফাইলে অবশ্যই এই code থাকতে হবে:
+
+```javascript
+localStorage.setItem("memberLoggedIn","true");
+localStorage.setItem("memberId",userId);
+```
+
+তারপর:
+
+```javascript
+window.location.href = "member-dashboard.html";
+```
