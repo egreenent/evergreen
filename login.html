@@ -2,10 +2,9 @@
 <html lang="en">
 
 <head>
-<link rel="manifest" href="manifest.json">
+
 <meta charset="UTF-8">
 
-  
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
@@ -169,30 +168,9 @@ padding:30px 22px;
 font-size:32px;
 
 }
+
 }
 
-button{
-transition:0.3s;
-}
-
-button:hover{
-transform:translateY(-2px);
-}
-
-.logout-btn{
-background:#d62828;
-color:#fff;
-border:none;
-padding:12px 22px;
-border-radius:10px;
-cursor:pointer;
-font-size:15px;
-font-weight:600;
-}
-
-.logout-btn:hover{
-background:#b71c1c;
-}  
 </style>
 
 </head>
@@ -426,28 +404,17 @@ window.location.href =
 "admin.html";
 
 }else{
+
 alert(
 "Invalid Admin Login"
 );
-}
-}
-}
-
-  if(userId === "" || password === ""){
-alert("Please fill all fields");
-return;
-}
-
-  if(loginSuccess){
-
-alert(
-"Welcome To EverGreen Enterprise"
-);
-
-window.location.href =
-"member-dashboard.html";
 
 }
+
+}
+
+}
+
 </script>
 
 </body>
