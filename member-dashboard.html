@@ -92,6 +92,10 @@ border-radius:50%;
 overflow:hidden;
 border:6px solid #d4af37;
 flex-shrink:0;
+background: #f0f0f0;
+display: flex;
+align-items: center;
+justify-content: center;
 }
 
 .profile-photo img{
@@ -501,29 +505,30 @@ Rocket Payment
 <script>
 
 // =========================
+// GLOBAL MEMBER DATA
+// =========================
+
+let globalMemberData = null;
+
+
+// =========================
 // LOGIN CHECK
 // =========================
 
 if(localStorage.getItem("memberLoggedIn") !== "true"){
-
-window.location.href = "login.html";
-
+  window.location.href = "login.html";
 }
 
-const memberId =
-localStorage.getItem("memberId");
+const memberId = localStorage.getItem("memberId");
 
-document.getElementById(
-"memberIdText"
-).innerText = memberId;
+document.getElementById("memberIdText").innerText = memberId;
 
 
 // =========================
 // GOOGLE SHEET API
 // =========================
 
-const API_URL =
-"YOUR_GOOGLE_APPS_SCRIPT_WEBAPP_URL";
+const API_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEBAPP_URL";
 
 
 // =========================
@@ -534,113 +539,65 @@ async function loadMember(){
 
 try{
 
-const response =
-await fetch(
-API_URL + "?memberId=" + memberId
-);
-
-const member =
-await response.json();
+const response = await fetch(API_URL + "?memberId=" + memberId);
+const member = await response.json();
 
 if(!member || member.error){
-alert("Member Not Found");
-window.location.href = "login.html";
-return;
+  alert("Member Not Found");
+  window.location.href = "login.html";
+  return;
 }
 
+// Store globally
+globalMemberData = member;
 
 // Header
-
-document.getElementById("memberIdText")
-.innerText = member.memberId;
-
+document.getElementById("memberIdText").innerText = member.memberId;
 
 // Profile
+document.getElementById("memberName").innerText = member.name;
+document.getElementById("memberPhone").innerText = "📞 Phone: " + member.phone;
+document.getElementById("memberEmail").innerText = "📧 Email: " + member.email;
+document.getElementById("memberJoin").innerText = "📅 Join Date: " + member.joinDate;
+document.getElementById("memberAddress").innerText = "📍 Address: " + member.address;
+document.getElementById("memberStatus").innerText = member.status + " Member";
+document.getElementById("statusText").innerText = member.status;
 
-document.getElementById("memberName")
-.innerText = member.name;
-
-
-document.getElementById("memberPhone")
-.innerText = "📞 Phone: " + member.phone;
-
-
-document.getElementById("memberEmail")
-.innerText = "📧 Email: " + member.email;
-
-
-document.getElementById("memberJoin")
-.innerText = "📅 Join Date: " + member.joinDate;
-
-
-document.getElementById("memberAddress")
-.innerText = "📍 Address: " + member.address;
-
-
-document.getElementById("memberStatus")
-.innerText = member.status + " Member";
-
-
-document.getElementById("statusText")
-.innerText = member.status;
-
-
-document.getElementById("memberPhoto")
-.src = member.photo;
-
+// Photo - UPDATE FROM API
+if(member.photo){
+  document.getElementById("memberPhoto").src = member.photo;
+}
 
 // Payment
-
-document.getElementById("totalPayment")
-.innerText = "৳ " + member.totalPayment;
-
-
-document.getElementById("totalReceipts")
-.innerText = member.totalReceipts;
-
-
-document.getElementById("dueAmount")
-.innerText = "৳ " + member.due;
-
+document.getElementById("totalPayment").innerText = "৳ " + member.totalPayment;
+document.getElementById("totalReceipts").innerText = member.totalReceipts;
+document.getElementById("dueAmount").innerText = "৳ " + member.due;
 
 // Payment Table
-
-const paymentTable =
-document.getElementById("paymentTable");
-
+const paymentTable = document.getElementById("paymentTable");
 paymentTable.innerHTML = "";
 
-member.payments.forEach(pay=>{
-
-paymentTable.innerHTML += `
-
-<tr>
-<td>${pay.receipt}</td>
-<td>${pay.month}</td>
-<td>৳ ${pay.amount}</td>
-<td>${pay.date}</td>
-<td>
-<button class="pdf-btn"
-onclick="downloadReceipt(
-'${pay.receipt}',
-'${pay.month}',
-'${pay.amount}',
-'${pay.date}'
-)">
-PDF
-</button>
-</td>
-</tr>
-
-`;
-
-});
+if(member.payments && member.payments.length > 0){
+  member.payments.forEach(pay=>{
+    paymentTable.innerHTML += `
+    <tr>
+      <td>${pay.receipt}</td>
+      <td>${pay.month}</td>
+      <td>৳ ${pay.amount}</td>
+      <td>${pay.date}</td>
+      <td>
+        <button class="pdf-btn" onclick="downloadReceipt('${pay.receipt}', '${pay.month}', '${pay.amount}', '${pay.date}')">
+          PDF
+        </button>
+      </td>
+    </tr>
+    `;
+  });
+}
 
 }catch(error){
-
-console.log(error);
-alert("Server Error");
-
+  console.log(error);
+  alert("Server Error");
 }
 
 }
@@ -653,12 +610,10 @@ loadMember();
 // =========================
 
 function memberLogout(){
-
-localStorage.removeItem("memberLoggedIn");
-localStorage.removeItem("memberId");
-
-window.location.href = "login.html";
-
+  localStorage.removeItem("memberLoggedIn");
+  localStorage.removeItem("memberId");
+  localStorage.removeItem("member");
+  window.location.href = "login.html";
 }
 
 
@@ -667,11 +622,7 @@ window.location.href = "login.html";
 // =========================
 
 function payNow(method){
-
-alert(
-"Redirecting to " + method + " Payment Gateway"
-);
-
+  alert("Redirecting to " + method + " Payment Gateway");
 }
 
 
@@ -679,12 +630,7 @@ alert(
 // RECEIPT DOWNLOAD
 // =========================
 
-function downloadReceipt(
-receipt,
-month,
-amount,
-date
-){
+function downloadReceipt(receipt, month, amount, date){
 
 const text = `
 
@@ -701,16 +647,10 @@ Status: Paid
 
 `;
 
-const blob = new Blob(
-[text],
-{type:"text/plain"}
-);
-
+const blob = new Blob([text], {type:"text/plain"});
 const link = document.createElement("a");
-
 link.href = URL.createObjectURL(blob);
 link.download = receipt + ".txt";
-
 link.click();
 
 }
@@ -722,14 +662,9 @@ link.click();
 
 function downloadMembershipPDF(){
 
-const memberData =
-JSON.parse(
-localStorage.getItem("member")
-);
-
-if(!memberData){
-alert("Member data not available");
-return;
+if(!globalMemberData){
+  alert("Member data not available");
+  return;
 }
 
 const text = `
@@ -738,24 +673,18 @@ EVERGREEN ENTERPRISE
 
 Membership Information
 
-Name: ${memberData.name}
+Name: ${globalMemberData.name}
 Member ID: ${memberId}
-Phone: ${memberData.phone}
-Email: ${memberData.email}
-Status: ${memberData.status}
+Phone: ${globalMemberData.phone}
+Email: ${globalMemberData.email}
+Status: ${globalMemberData.status}
 
 `;
 
-const blob = new Blob(
-[text],
-{type:"text/plain"}
-);
-
+const blob = new Blob([text], {type:"text/plain"});
 const link = document.createElement("a");
-
 link.href = URL.createObjectURL(blob);
 link.download = "membership-info.txt";
-
 link.click();
 
 }
@@ -767,36 +696,25 @@ link.click();
 
 function downloadIDCard(){
 
-const memberData =
-JSON.parse(
-localStorage.getItem("member")
-);
-
-if(!memberData){
-alert("Member data not available");
-return;
+if(!globalMemberData){
+  alert("Member data not available");
+  return;
 }
 
 const text = `
 
 EVERGREEN ID CARD
 
-Name: ${memberData.name}
+Name: ${globalMemberData.name}
 Member ID: ${memberId}
-Status: ${memberData.status}
+Status: ${globalMemberData.status}
 
 `;
 
-const blob = new Blob(
-[text],
-{type:"text/plain"}
-);
-
+const blob = new Blob([text], {type:"text/plain"});
 const link = document.createElement("a");
-
 link.href = URL.createObjectURL(blob);
 link.download = "id-card.txt";
-
 link.click();
 
 }
