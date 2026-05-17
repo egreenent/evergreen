@@ -311,7 +311,7 @@ Logout
 <div class="profile-card">
 
 <div class="profile-photo">
-<img id="memberPhoto" img src="https://drive.google.com/uc?export=view&id=1D-AqiP6ScdBHZlzSgGTWaiHCf6itbAoW">
+<img id="memberPhoto" src="https://drive.google.com/uc?export=view&id=1D-AqiP6ScdBHZlzSgGTWaiHCf6itbAoW" alt="Member Photo">
 </div>
 
 <div class="profile-info">
@@ -722,17 +722,27 @@ link.click();
 
 function downloadMembershipPDF(){
 
+const memberData =
+JSON.parse(
+localStorage.getItem("member")
+);
+
+if(!memberData){
+alert("Member data not available");
+return;
+}
+
 const text = `
 
 EVERGREEN ENTERPRISE
 
 Membership Information
 
-Name: ${member.name}
+Name: ${memberData.name}
 Member ID: ${memberId}
-Phone: ${member.phone}
-Email: ${member.email}
-Status: ${member.status}
+Phone: ${memberData.phone}
+Email: ${memberData.email}
+Status: ${memberData.status}
 
 `;
 
@@ -757,13 +767,23 @@ link.click();
 
 function downloadIDCard(){
 
+const memberData =
+JSON.parse(
+localStorage.getItem("member")
+);
+
+if(!memberData){
+alert("Member data not available");
+return;
+}
+
 const text = `
 
 EVERGREEN ID CARD
 
-Name: ${member.name}
+Name: ${memberData.name}
 Member ID: ${memberId}
-Status: ${member.status}
+Status: ${memberData.status}
 
 `;
 
@@ -780,20 +800,6 @@ link.download = "id-card.txt";
 link.click();
 
 }
-
-
-const member =
-JSON.parse(
-localStorage.getItem("member")
-);
-
-
-// MEMBER PHOTO
-
-document.getElementById(
-"memberPhoto"
-).src =
-member.photo;
 
 </script>
 
