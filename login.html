@@ -408,13 +408,15 @@ window.location.href =
 alert(
 "Invalid Admin Login"
 );
-
+}
+}
 }
 
-}
 
-}
-
+  localStorage.setItem(
+"member",
+JSON.stringify(result.member)
+);
 </script>
 
 </body>
