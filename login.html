@@ -417,6 +417,23 @@ alert(
 "member",
 JSON.stringify(result.member)
 );
+
+  if(result.status=="success"){
+
+localStorage.setItem(
+"memberLoggedIn",
+"true"
+);
+
+localStorage.setItem(
+"member",
+JSON.stringify(result.member)
+);
+
+window.location.href =
+"member-dashboard.html";
+
+}
 </script>
 
 </body>
