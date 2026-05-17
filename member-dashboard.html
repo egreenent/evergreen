@@ -505,10 +505,17 @@ Rocket Payment
 // =========================
 
 if(localStorage.getItem("memberLoggedIn") !== "true"){
+
 window.location.href = "login.html";
+
 }
 
-const memberId = localStorage.getItem("memberId");
+const memberId =
+localStorage.getItem("memberId");
+
+document.getElementById(
+"memberIdText"
+).innerText = memberId;
 
 
 // =========================
