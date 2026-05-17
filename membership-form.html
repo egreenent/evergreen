@@ -649,21 +649,6 @@ const API_URL =
 
 // FILE TO BASE64
 
-async function fileToBase64(file){
-
-return new Promise((resolve,reject)=>{
-
-const reader = new FileReader();
-
-reader.readAsDataURL(file);
-
-reader.onload = () => resolve(reader.result);
-
-reader.onerror = error => reject(error);
-
-});
-
-}
 
 
 // SUBMIT FORM
@@ -672,30 +657,6 @@ async function submitForm(){
 
 try{
 
-// PHOTO
-
-const photoFile =
-document.getElementById("photoInput").files[0];
-
-
-// SIGNATURE
-
-const signatureFile =
-document.getElementById("signatureInput").files[0];
-
-
-// CONVERT BASE64
-
-const photoBase64 =
-photoFile
-? await fileToBase64(photoFile)
-: "";
-
-
-const signatureBase64 =
-signatureFile
-? await fileToBase64(signatureFile)
-: "";
 
 
 // FORM DATA
@@ -732,13 +693,7 @@ joinDate:
 new Date().toLocaleDateString(),
 
 monthlyFee:
-document.querySelector("#monthlyfee input").value,
-
-photo:
-photoBase64,
-
-signature:
-signatureBase64
+document.querySelector("#monthlyfee input").value
 
 };
 
