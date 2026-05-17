@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EverGreen Members</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#0b5d2a;
+overflow-x:hidden;
+}
+
+
+/* MAIN SECTION */
+
+.team-section{
+
+min-height:100vh;
+
+padding:80px 20px;
+
+background:
+linear-gradient(
+135deg,
+#0b5d2a,
+#c99a2e,
+#0b5d2a
+);
+
+background-size:400% 400%;
+
+animation:bgAnimation 12s ease infinite;
+
+}
+
+
+/* BACKGROUND ANIMATION */
+
+@keyframes bgAnimation{
+
+0%{
+background-position:0% 50%;
+}
+
+50%{
+background-position:100% 50%;
+}
+
+100%{
+background-position:0% 50%;
+}
+
+}
+
+
+/* TITLE */
+
+.title{
+
+text-align:center;
+
+font-size:55px;
+
+color:#fff;
+
+margin-bottom:100px;
+
+font-weight:700;
+
+letter-spacing:2px;
+
+}
+
+
+/* CARD CONTAINER */
+
+.member-container{
+
+display:flex;
+
+justify-content:center;
+
+flex-wrap:wrap;
+
+gap:40px;
+
+}
+
+
+/* MEMBER CARD */
+
+.member-card{
+
+width:320px;
+
+padding:30px 25px;
+
+border-radius:30px;
+
+background:rgba(255,255,255,0.12);
+
+backdrop-filter:blur(10px);
+
+border:1px solid rgba(255,255,255,0.2);
+
+text-align:center;
+
+position:relative;
+
+transition:0.5s;
+
+overflow:hidden;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,0.25);
+
+margin-top:80px;
+
+}
+
+
+/* HOVER */
+
+.member-card:hover{
+
+transform:
+translateY(-15px)
+scale(1.03);
+
+box-shadow:
+0 20px 40px rgba(0,0,0,0.4);
+
+}
+
+
+/* IMAGE BOX */
+
+.member-image{
+
+position:absolute;
+
+top:-45px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+width:200px;
+height:200px;
+
+border-radius:50%;
+
+padding:5px;
+
+background:
+linear-gradient(
+45deg,
+#c99a2e,
+#fff,
+#c99a2e
+);
+
+box-shadow:
+0 5px 20px rgba(0,0,0,0.3);
+
+}
+
+
+/* IMAGE */
+
+.member-image img{
+
+width:100%;
+height:100%;
+
+border-radius:50%;
+
+object-fit:cover;
+
+border:5px solid #fff;
+
+}
+
+
+/* NAME */
+
+.member-card h2{
+
+font-size:30px;
+
+margin-top:25px;
+
+color:#fff;
+padding-top:130px;
+
+}
+
+
+/* MEMBER ID */
+
+.member-card h3{
+
+font-size:18px;
+
+margin-top:10px;
+
+color:#ffd86b;
+
+font-weight:500;
+
+}
+
+
+/* TEXT */
+
+.member-card p{
+
+margin-top:12px;
+
+font-size:15px;
+
+color:#eee;
+
+line-height:1.6;
+
+}
+
+
+/* STATUS */
+
+.status{
+
+display:inline-block;
+
+margin-top:18px;
+
+padding:8px 20px;
+
+border-radius:30px;
+
+background:#c99a2e;
+
+color:#fff;
+
+font-weight:bold;
+
+}
+
+
+/* SOCIAL ICONS */
+
+.socials{
+
+margin-top:25px;
+
+display:flex;
+
+justify-content:center;
+
+gap:15px;
+
+}
+
+
+.socials a{
+
+width:45px;
+height:45px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+border-radius:50%;
+
+background:rgba(255,255,255,0.15);
+
+color:#fff;
+
+font-size:20px;
+
+text-decoration:none;
+
+transition:0.4s;
+
+}
+
+
+/* SOCIAL HOVER */
+
+.socials a:hover{
+
+background:#c99a2e;
+
+transform:rotate(360deg);
+
+}
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.title{
+font-size:38px;
+}
+
+.member-card{
+width:100%;
+max-width:340px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<section class="team-section">
+
+<h1 class="title">
+EverGreen Members
+</h1>
+
+<div class="member-container">
+
+
+<!-- MEMBER 1 -->
+
+<div class="member-card">
+
+<div class="member-image">
+<<img src="https://drive.google.com/uc?export=view&id=1D-AqiP6ScdBHZlzSgGTWaiHCf6itbAoW">>
+</div>
+
+<h2>Sony Zzaman</h2>
+
+<h3>Member ID: ege0101</h3>
+
+<p>📞 Phone: 01722 178888</p>
+
+<p>📧 sonyzzaman@gmail.com</p>
+
+<p>📍 East Adalat Para, Tangail - 1900, <br>
+Tangail Sadar, Tangail, Bangladesh</p>
+
+<div class="status">
+Active Member
+</div>
+
+<div class="socials">
+
+<a href="#">🌐</a>
+
+<a href="#">📘</a>
+
+<a href="#">📞</a>
+
+</div>
+
+</div>
+
+
+<!-- MEMBER 2 -->
+
+<div class="member-card">
+
+<div class="member-image">
+<img src="https://i.imgur.com/6VBx3io.png">
+</div>
+
+<h2>EverGreen User</h2>
+
+<h3>Member ID: ege0102</h3>
+
+<p>📞 Phone: 01800000000</p>
+
+<p>📧 user@example.com</p>
+
+<p>📍 Dhaka, Bangladesh</p>
+
+<div class="status">
+Premium Member
+</div>
+
+<div class="socials">
+
+<a href="#">🌐</a>
+
+<a href="#">📘</a>
+
+<a href="#">📞</a>
+
+</div>
+
+</div>
+
+
+<!-- MEMBER 3 -->
+
+<div class="member-card">
+
+<div class="member-image">
+<img src="https://i.imgur.com/6VBx3io.png">
+</div>
+
+<h2>Green Member</h2>
+
+<h3>Member ID: ege0103</h3>
+
+<p>📞 Phone: 01900000000</p>
+
+<p>📧 green@example.com</p>
+
+<p>📍 Chittagong, Bangladesh</p>
+
+<div class="status">
+Gold Member
+</div>
+
+<div class="socials">
+
+<a href="#">🌐</a>
+
+<a href="#">📘</a>
+
+<a href="#">📞</a>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</body>
+</html>
