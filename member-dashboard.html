@@ -782,9 +782,19 @@ link.click();
 }
 
 
-  document.getElementById(
+const member =
+JSON.parse(
+localStorage.getItem("member")
+);
+
+
+// MEMBER PHOTO
+
+document.getElementById(
 "memberPhoto"
-).src = member.photo;
+).src =
+member.photo;
+
 </script>
 
 </body>
