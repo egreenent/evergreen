@@ -546,7 +546,27 @@ window.location.href = "login.html";
 
 }
 
-loadMember();
+loadMember(
+document.getElementById(
+"totalPayment"
+).innerText =
+"৳ " + member.totalPayment;
+
+document.getElementById(
+"totalReceipts"
+).innerText =
+member.totalReceipts;
+
+document.getElementById(
+"dueAmount"
+).innerText =
+"৳ " + member.dueAmount;
+
+document.getElementById(
+"membershipStatus"
+).innerText =
+member.membershipStatus;  
+);
 
 </script>
 
