@@ -539,8 +539,25 @@ async function loadMember(){
 
 try{
 
-const response = await fetch(API_URL + "?memberId=" + memberId);
-const member = await response.json();
+// প্রথমে LocalStorage থেকে ডেটা চেক করুন
+let member = null;
+const storedMember = localStorage.getItem("member");
+
+if(storedMember){
+  // LocalStorage থেকে ডেটা আছে
+  member = JSON.parse(storedMember);
+  console.log("Loading from LocalStorage");
+} else if(API_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEBAPP_URL"){
+  // API সঠিক থাকলে API থেকে ডেটা নিন
+  const response = await fetch(API_URL + "?memberId=" + memberId);
+  member = await response.json();
+  console.log("Loading from API");
+} else {
+  // API URL সেট করা নেই
+  console.error("API URL not configured");
+  alert("Server configuration error. Please contact admin.");
+  return;
+}
 
 if(!member || member.error){
   alert("Member Not Found");
@@ -552,26 +569,27 @@ if(!member || member.error){
 globalMemberData = member;
 
 // Header
-document.getElementById("memberIdText").innerText = member.memberId;
+document.getElementById("memberIdText").innerText = member.memberId || memberId;
 
 // Profile
-document.getElementById("memberName").innerText = member.name;
-document.getElementById("memberPhone").innerText = "📞 Phone: " + member.phone;
-document.getElementById("memberEmail").innerText = "📧 Email: " + member.email;
-document.getElementById("memberJoin").innerText = "📅 Join Date: " + member.joinDate;
-document.getElementById("memberAddress").innerText = "📍 Address: " + member.address;
-document.getElementById("memberStatus").innerText = member.status + " Member";
-document.getElementById("statusText").innerText = member.status;
+document.getElementById("memberName").innerText = member.name || "N/A";
+document.getElementById("memberPhone").innerText = "📞 Phone: " + (member.phone || "N/A");
+document.getElementById("memberEmail").innerText = "📧 Email: " + (member.email || "N/A");
+document.getElementById("memberJoin").innerText = "📅 Join Date: " + (member.joinDate || "N/A");
+document.getElementById("memberAddress").innerText = "📍 Address: " + (member.address || "N/A");
+document.getElementById("memberStatus").innerText = (member.status || "Active") + " Member";
+document.getElementById("statusText").innerText = member.status || "Active";
 
-// Photo - UPDATE FROM API
+// Photo - UPDATE FROM DATA
 if(member.photo){
   document.getElementById("memberPhoto").src = member.photo;
+  console.log("Photo loaded:", member.photo);
 }
 
 // Payment
-document.getElementById("totalPayment").innerText = "৳ " + member.totalPayment;
-document.getElementById("totalReceipts").innerText = member.totalReceipts;
-document.getElementById("dueAmount").innerText = "৳ " + member.due;
+document.getElementById("totalPayment").innerText = "৳ " + (member.totalPayment || 0);
+document.getElementById("totalReceipts").innerText = member.totalReceipts || 0;
+document.getElementById("dueAmount").innerText = "৳ " + (member.due || 0);
 
 // Payment Table
 const paymentTable = document.getElementById("paymentTable");
@@ -596,8 +614,8 @@ if(member.payments && member.payments.length > 0){
 }
 
 }catch(error){
-  console.log(error);
-  alert("Server Error");
+  console.error("Error loading member:", error);
+  alert("Error loading member data. Check console for details.");
 }
 
 }
@@ -673,11 +691,11 @@ EVERGREEN ENTERPRISE
 
 Membership Information
 
-Name: ${globalMemberData.name}
+Name: ${globalMemberData.name || 'N/A'}
 Member ID: ${memberId}
-Phone: ${globalMemberData.phone}
-Email: ${globalMemberData.email}
-Status: ${globalMemberData.status}
+Phone: ${globalMemberData.phone || 'N/A'}
+Email: ${globalMemberData.email || 'N/A'}
+Status: ${globalMemberData.status || 'Active'}
 
 `;
 
@@ -705,9 +723,9 @@ const text = `
 
 EVERGREEN ID CARD
 
-Name: ${globalMemberData.name}
+Name: ${globalMemberData.name || 'N/A'}
 Member ID: ${memberId}
-Status: ${globalMemberData.status}
+Status: ${globalMemberData.status || 'Active'}
 
 `;
 
