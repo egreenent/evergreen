@@ -457,94 +457,30 @@ window.location.href = "login.html";
 
 async function loadMember(){
 
-try{
-
 const memberId =
 localStorage.getItem("memberId");
-
-if(!memberId){
-return;
-}
-
-document.getElementById(
-"memberIdText"
-).innerText = memberId;
 
 const response = await fetch(
 `${API_URL}?memberId=${memberId}`
 );
 
-const member = await response.json();
+const member =
+await response.json();
 
-console.log(member);
-
-if(member.error){
-alert("Member Not Found");
-return;
-}
-
-if(member.memberId){
 document.getElementById(
 "memberIdText"
-).innerText = member.memberId;
-}
+).innerText =
+member.memberId;
 
-if(member.name){
 document.getElementById(
 "memberName"
-).innerText = member.name;
-}
+).innerText =
+member.name;
 
-if(member.phone){
-document.getElementById(
-"memberPhone"
-).innerText = "📞 Phone: " + member.phone;
-}
-
-if(member.email){
-document.getElementById(
-"memberEmail"
-).innerText = "📧 Email: " + member.email;
-}
-
-if(member.joinDate){
-document.getElementById(
-"memberJoin"
-).innerText = "📅 Join Date: " + member.joinDate;
-}
-
-if(member.address){
-document.getElementById(
-"memberAddress"
-).innerText = "📍 Address: " + member.address;
-}
-
-if(member.status){
-document.getElementById(
-"memberStatus"
-).innerText = member.status;
-}
-
-if(member.photo){
 document.getElementById(
 "memberPhoto"
-).src = member.photo;
-}
-
-}catch(error){
-console.log(error);
-}
-
-}
-
-function logout(){
-
-localStorage.removeItem("memberLoggedIn");
-localStorage.removeItem("memberId");
-
-window.location.href = "login.html";
-
-}
+).src =
+member.photo;
 
 document.getElementById(
 "totalPayment"
@@ -565,6 +501,8 @@ document.getElementById(
 "membershipStatus"
 ).innerText =
 member.membershipStatus;
+
+}
   
 loadMember();
 
