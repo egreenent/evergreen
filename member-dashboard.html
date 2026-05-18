@@ -742,6 +742,15 @@ link.click();
 "memberName"
 ).innerText =
 member.name;
+
+const response = await fetch(
+`${API_URL}?memberId=${memberId}`,
+{
+method:"GET",
+mode:"cors"
+}
+);
+ 
 </script>
 
 </body>
