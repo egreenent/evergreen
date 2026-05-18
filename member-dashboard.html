@@ -468,6 +468,67 @@ const response = await fetch(
 `${API_URL}?memberId=${memberId}`
 );
 
+async function loadMember(){
+
+const memberId =
+localStorage.getItem("memberId");
+
+const response = await fetch(
+`${API_URL}?memberId=${memberId}`
+);
+
+const member =
+await response.json();
+
+document.getElementById(
+"memberIdText"
+).innerText =
+member.memberId;
+
+document.getElementById(
+"memberName"
+).innerText =
+member.name;
+
+document.getElementById(
+"memberPhone"
+).innerText =
+"📞 Phone: " + member.phone;
+
+document.getElementById(
+"memberEmail"
+).innerText =
+"📧 Email: " + member.email;
+
+document.getElementById(
+"memberPhoto"
+).src =
+member.photo;
+
+document.getElementById(
+"totalPayment"
+).innerText =
+"৳ " + member.totalPayment;
+
+document.getElementById(
+"totalReceipts"
+).innerText =
+member.totalReceipts;
+
+document.getElementById(
+"dueAmount"
+).innerText =
+"৳ " + member.dueAmount;
+
+document.getElementById(
+"membershipStatus"
+).innerText =
+member.membershipStatus;
+
+}
+
+loadMember();
+  
 const member =
 await response.json();
 
