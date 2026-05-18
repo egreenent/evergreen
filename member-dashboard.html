@@ -515,9 +515,10 @@ let globalMemberData = null;
 // LOGIN CHECK
 // =========================
 
-if(localStorage.getItem("memberLoggedIn") !== "true"){
-  window.location.href = "login.html";
-}
+// COMMENTED OUT FOR TESTING
+// if(localStorage.getItem("memberLoggedIn") !== "true"){
+//   window.location.href = "login.html";
+// }
 
 const memberId = localStorage.getItem("memberId");
 
