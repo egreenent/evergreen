@@ -312,7 +312,7 @@ Logout
 
 <div class="profile-photo">
 <img id="memberPhoto"
-src="https://drive.google.com/thumbnail?id=1D-AqiP6ScdBHZlzSgGTWaiHCf6itbAoW&sz=w1000"
+src=""
 alt="">
 
 </div>
@@ -775,11 +775,14 @@ document.getElementById(
 "memberName"
 ).innerText =
 member.name;
-
 }
-
 loadMember();
 
+
+ document.getElementById(
+"memberPhoto"
+).src =
+member.photo;
 </script>
 
 </body>
