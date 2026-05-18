@@ -546,6 +546,15 @@ member.membershipStatus;
 
 loadMember();
   
+async function loadMember(){
+
+const memberId =
+localStorage.getItem("memberId");
+
+const response = await fetch(
+`${API_URL}?memberId=${memberId}`
+);
+
 const member =
 await response.json();
 
@@ -568,7 +577,7 @@ document.getElementById(
 "memberEmail"
 ).innerText =
 "📧 Email: " + member.email;
-  
+
 document.getElementById(
 "memberPhoto"
 ).src =
@@ -594,7 +603,6 @@ document.getElementById(
 ).innerText =
 member.membershipStatus;
 
-}
 if(member.noticeTitle){
 
 document.getElementById(
@@ -606,6 +614,8 @@ member.noticeTitle +
 "</strong><br><br>" +
 
 member.noticeMessage;
+
+}
 
 }
 
