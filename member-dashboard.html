@@ -300,7 +300,7 @@ font-size:26px;
 <div class="member-id-box" id="memberIdText">
 Member ID
 </div>
-
+ 
 <button class="logout-btn" onclick="memberLogout()">
 Logout
 </button>
@@ -737,12 +737,6 @@ link.click();
 
 }
 
- document.getElementById(
-"memberName"
-).innerText =
-member.name;
-
-
 // Photo
 async function loadMember(){
 
@@ -759,6 +753,25 @@ mode:"cors"
 
 const member =
 await response.json();
+
+console.log(member);
+
+document.getElementById(
+"memberIdText"
+).innerText =
+member.memberId;
+
+document.getElementById(
+"memberName"
+).innerText =
+member.name;
+
+document.getElementById(
+"memberPhoto"
+).src =
+member.photo;
+
+}
 
 
 // MEMBER PHOTO
