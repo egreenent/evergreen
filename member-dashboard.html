@@ -265,6 +265,25 @@ font-size:32px;
 }
 
 }
+
+  .notice-board{
+
+background:#fff;
+padding:20px;
+border-radius:15px;
+margin-top:20px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+
+}
+
+#noticeBox{
+
+margin-top:10px;
+font-size:15px;
+line-height:1.6;
+color:#444;
+
+}
 </style>
 </head>
 <body>
@@ -342,18 +361,16 @@ Active Member
 </div>
 
 <div class="section">
+
 <h2>Notice Board</h2>
 
-<div class="notice-item">
-📢 Monthly Meeting Friday 8PM
-</div>
+<div
+class="notice-item"
+id="noticeBox"
+>
 
-<div class="notice-item">
-📢 Membership Fee Submit Before 15th
-</div>
+No Notice Available
 
-<div class="notice-item">
-📢 New ID Card Download Available
 </div>
 
 </div>
@@ -578,7 +595,20 @@ document.getElementById(
 member.membershipStatus;
 
 }
-  
+
+if(member.noticeTitle){
+
+document.getElementById(
+"noticeBox"
+).innerHTML =
+
+"📢 <strong>" +
+member.noticeTitle +
+"</strong><br><br>" +
+
+member.noticeMessage;
+
+}
 loadMember();
 
 
