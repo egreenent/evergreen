@@ -550,9 +550,9 @@ if(storedMember){
   console.log("Loading from LocalStorage");
 } else if(API_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEBAPP_URL"){
   // API সঠিক থাকলে API থেকে ডেটা নিন
-  const response = await fetch(API_URL + "?memberId=" + memberId);
-  member = await response.json();
-  console.log("Loading from API");
+  // const response = await fetch(API_URL + "?memberId=" + memberId);
+ //  member = await response.json();
+ //  console.log("Loading from API");
 } else {
   // API URL সেট করা নেই
   console.error("API URL not configured");
@@ -743,6 +743,15 @@ link.click();
 ).innerText =
 member.name;
 
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
+
+async function loadMember(){
+
+const memberId =
+localStorage.getItem("memberId");
+
 const response = await fetch(
 `${API_URL}?memberId=${memberId}`,
 {
@@ -751,13 +760,29 @@ mode:"cors"
 }
 );
 
- document.getElementById(
+const member =
+await response.json();
+
+
+// MEMBER PHOTO
+
+document.getElementById(
 "memberPhoto"
-).src = member.photo;
+).src =
+member.photo;
+
+
+// MEMBER NAME
 
 document.getElementById(
 "memberName"
-).inne
+).innerText =
+member.name;
+
+}
+
+loadMember();
+
 </script>
 
 </body>
