@@ -315,7 +315,7 @@ Logout
 <div class="profile-card">
 
 <div class="profile-photo">
-<img id="memberPhoto" src="https://drive.google.com/uc?export=view&id=1D-AqiP6ScdBHZlzSgGTWaiHCf6itbAoW" alt="Member Photo">
+<img id="memberPhoto" >
 </div>
 
 <div class="profile-info">
@@ -750,7 +750,14 @@ method:"GET",
 mode:"cors"
 }
 );
- 
+
+ document.getElementById(
+"memberPhoto"
+).src = member.photo;
+
+document.getElementById(
+"memberName"
+).inne
 </script>
 
 </body>
