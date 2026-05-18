@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<link rel="manifest" href="manifest.json">
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member Dashboard</title>
 
-<title>EverGreen Member Dashboard</title>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-
 *{
 margin:0;
 padding:0;
@@ -22,197 +18,185 @@ font-family:'Poppins',sans-serif;
 }
 
 body{
-background:#edf3ee;
+background:#edf2ed;
 padding:20px;
+color:#0b5d2a;
 }
 
-.header{
-background:#0b5d2a;
-padding:20px;
-border-radius:18px;
+.dashboard-header{
+background:#0b6623;
+color:#fff;
+padding:25px;
+border-radius:25px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-color:#fff;
-margin-bottom:25px;
-box-shadow:0 5px 20px rgba(0,0,0,0.08);
+flex-wrap:wrap;
+gap:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.12);
 }
 
-.header-left h1{
-font-size:42px;
+.dashboard-title h1{
+font-size:52px;
 font-weight:700;
 }
 
-.header-left p{
-margin-top:6px;
-font-size:15px;
-opacity:0.9;
+.dashboard-title p{
+margin-top:10px;
+font-size:18px;
+}
+
+.header-right{
+display:flex;
+align-items:center;
+gap:20px;
 }
 
 .member-id-box{
-background:rgba(255,255,255,0.15);
-padding:12px 18px;
-border-radius:12px;
-font-size:18px;
-font-weight:600;
+background:rgba(255,255,255,.18);
+padding:16px 28px;
+border-radius:14px;
+font-size:26px;
+font-weight:700;
+color:#fff;
 }
 
 .logout-btn{
-background:#e62828;
+background:#ff2a2a;
 color:#fff;
 border:none;
-padding:14px 24px;
-border-radius:12px;
+padding:16px 28px;
+border-radius:14px;
+font-size:18px;
+font-weight:700;
 cursor:pointer;
-font-size:16px;
-font-weight:600;
-transition:0.3s;
-}
-
-.logout-btn:hover{
-background:#c41f1f;
-transform:translateY(-2px);
 }
 
 .profile-card{
+margin-top:25px;
 background:#fff;
+border-radius:25px;
 padding:35px;
-border-radius:20px;
-box-shadow:0 5px 18px rgba(0,0,0,0.06);
 display:flex;
 align-items:center;
 gap:35px;
-margin-bottom:25px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
 .profile-photo{
-width:160px;
-height:160px;
+width:180px;
+height:180px;
 border-radius:50%;
 overflow:hidden;
-border:6px solid #c99a2e;
+border:6px solid #d4a62b;
+background:#f3f3f3;
+flex-shrink:0;
 }
 
 .profile-photo img{
 width:100%;
 height:100%;
 object-fit:cover;
-display:block;
 }
 
 .profile-info h1{
-font-size:40px;
-color:#0b5d2a;
-margin-bottom:10px;
-}
-
-.profile-info p{
-font-size:17px;
-margin-bottom:10px;
-color:#444;
-}
-
-.active-status{
-background:#0b5d2a;
-color:#fff;
-display:inline-block;
-padding:8px 16px;
-border-radius:30px;
-font-size:14px;
-font-weight:600;
-margin-top:8px;
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-gap:20px;
-margin-bottom:25px;
-}
-
-.stat-card{
-background:#fff;
-padding:28px;
-border-radius:18px;
-box-shadow:0 5px 18px rgba(0,0,0,0.05);
-border-left:6px solid #0b5d2a;
-}
-
-.stat-card h3{
-font-size:18px;
-color:#666;
+font-size:50px;
 margin-bottom:15px;
 }
 
-.stat-card h1{
-font-size:36px;
-color:#0b5d2a;
+.profile-info p{
+margin-top:8px;
+font-size:18px;
+color:#444;
+}
+
+.member-status{
+margin-top:20px;
+display:inline-block;
+background:#0b6623;
+color:#fff;
+padding:10px 22px;
+border-radius:50px;
+font-weight:600;
+}
+
+.stats-grid{
+margin-top:25px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+.stat-box{
+background:#fff;
+padding:30px;
+border-radius:22px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+border-left:6px solid #0b6623;
+}
+
+.stat-box h3{
+font-size:22px;
+margin-bottom:20px;
+color:#555;
+}
+
+.stat-box h2{
+font-size:42px;
+color:#0b6623;
 }
 
 .section{
+margin-top:25px;
 background:#fff;
-padding:28px;
-border-radius:18px;
-margin-bottom:25px;
-box-shadow:0 5px 18px rgba(0,0,0,0.05);
+padding:30px;
+border-radius:25px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
 .section h2{
-font-size:32px;
-color:#0b5d2a;
-margin-bottom:20px;
+font-size:42px;
+margin-bottom:25px;
 }
 
 .notice-item{
-background:#edf7ef;
-padding:16px;
+background:#eef5ee;
+padding:18px;
 border-radius:12px;
-margin-bottom:12px;
-font-size:16px;
-color:#0b5d2a;
-font-weight:500;
+margin-top:15px;
+font-size:18px;
 }
 
-.download-btn,
-.pay-btn,
-.pdf-btn{
-background:#c99a2e;
-color:#fff;
-border:none;
-padding:12px 18px;
-border-radius:10px;
-cursor:pointer;
-text-decoration:none;
-display:inline-block;
-font-size:15px;
-font-weight:600;
-margin-right:10px;
-transition:0.3s;
-}
-
-.download-btn:hover,
-.pay-btn:hover,
-.pdf-btn:hover{
-background:#b98b1d;
-transform:translateY(-2px);
-}
-
+.download-buttons,
 .payment-buttons{
 display:flex;
 flex-wrap:wrap;
 gap:15px;
 }
 
-.payment-card{
-background:#f4f8f5;
-padding:20px;
-border-radius:14px;
-margin-top:18px;
+.download-buttons a,
+.payment-buttons button{
+background:#d4a62b;
+color:#fff;
+text-decoration:none;
+border:none;
+padding:15px 22px;
+border-radius:12px;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
 }
 
-.payment-card p{
-margin-bottom:12px;
-font-size:16px;
+.payment-info{
+margin-top:25px;
+background:#f2f5f2;
+padding:25px;
+border-radius:18px;
+}
+
+.payment-info p{
+margin-top:10px;
+font-size:18px;
 color:#444;
 }
 
@@ -223,98 +207,93 @@ overflow-x:auto;
 table{
 width:100%;
 border-collapse:collapse;
-min-width:700px;
+margin-top:10px;
 }
 
 table th{
-background:#0b5d2a;
+background:#0b6623;
 color:#fff;
-padding:16px;
+padding:18px;
 text-align:left;
-font-size:16px;
+font-size:17px;
 }
 
 table td{
-padding:16px;
+padding:18px;
 border-bottom:1px solid #ddd;
-font-size:15px;
+font-size:16px;
 }
 
-.month-paid{
-color:#0b5d2a;
+.paid{
+color:green;
 font-weight:700;
 }
 
-.month-due{
-color:#d62828;
+.due{
+color:red;
 font-weight:700;
 }
 
 .footer{
-text-align:center;
 margin-top:30px;
-font-size:14px;
+text-align:center;
 color:#666;
+font-size:16px;
 }
 
-@media(max-width:900px){
+@media(max-width:768px){
+
+.dashboard-title h1{
+font-size:38px;
+}
 
 .profile-card{
 flex-direction:column;
 text-align:center;
 }
 
-.header{
-flex-direction:column;
-gap:18px;
-text-align:center;
-}
-
-.header-left h1{
-font-size:32px;
-}
-
 .profile-info h1{
-font-size:30px;
+font-size:36px;
+}
+
+.member-id-box{
+font-size:20px;
 }
 
 .section h2{
-font-size:26px;
+font-size:32px;
 }
 
 }
-
 </style>
-
 </head>
-
 <body>
 
-<div class="header">
+<div class="dashboard-header">
 
-<div class="header-left">
+<div class="dashboard-title">
 <h1>Member Dashboard</h1>
 <p>EverGreen Enterprise Membership Portal</p>
 </div>
 
+<div class="header-right">
 <div class="member-id-box" id="memberIdText">
 Member ID
 </div>
- 
-<button class="logout-btn" onclick="memberLogout()">
+
+<button class="logout-btn" onclick="logout()">
 Logout
 </button>
-
 </div>
 
+</div>
 
 <div class="profile-card">
 
 <div class="profile-photo">
 <img id="memberPhoto"
-src=""
-alt="">
-
+src="https://via.placeholder.com/300x300.png?text=Member"
+alt="Member Photo">
 </div>
 
 <div class="profile-info">
@@ -326,7 +305,7 @@ alt="">
 <p id="memberJoin"></p>
 <p id="memberAddress"></p>
 
-<div class="active-status" id="memberStatus">
+<div class="member-status" id="memberStatus">
 Active Member
 </div>
 
@@ -334,34 +313,31 @@ Active Member
 
 </div>
 
+<div class="stats-grid">
 
-<div class="stats">
-
-<div class="stat-card">
+<div class="stat-box">
 <h3>Total Payment</h3>
-<h1 id="totalPayment">৳ 0</h1>
+<h2>৳ 0</h2>
 </div>
 
-<div class="stat-card">
+<div class="stat-box">
 <h3>Total Receipts</h3>
-<h1 id="totalReceipts">0</h1>
+<h2>0</h2>
 </div>
 
-<div class="stat-card">
+<div class="stat-box">
 <h3>Due Amount</h3>
-<h1 id="dueAmount">৳ 0</h1>
+<h2>৳ 0</h2>
 </div>
 
-<div class="stat-card">
+<div class="stat-box">
 <h3>Membership Status</h3>
-<h1 id="statusText">Active</h1>
+<h2>Active</h2>
 </div>
 
 </div>
-
 
 <div class="section">
-
 <h2>Notice Board</h2>
 
 <div class="notice-item">
@@ -378,43 +354,26 @@ Active Member
 
 </div>
 
-
 <div class="section">
-
 <h2>Downloads</h2>
 
-<a href="#" class="download-btn" onclick="downloadMembershipPDF()">
-Membership PDF
-</a>
-
-<a href="#" class="download-btn" onclick="downloadIDCard()">
-ID Card
-</a>
+<div class="download-buttons">
+<a href="#">Membership PDF</a>
+<a href="#">ID Card</a>
+</div>
 
 </div>
 
-
 <div class="section">
-
 <h2>Online Payment</h2>
 
 <div class="payment-buttons">
-
-<button class="pay-btn" onclick="payNow('bKash')">
-bKash Payment
-</button>
-
-<button class="pay-btn" onclick="payNow('Nagad')">
-Nagad Payment
-</button>
-
-<button class="pay-btn" onclick="payNow('Rocket')">
-Rocket Payment
-</button>
-
+<button>bKash Payment</button>
+<button>Nagad Payment</button>
+<button>Rocket Payment</button>
 </div>
 
-<div class="payment-card">
+<div class="payment-info">
 <p><strong>Monthly Fee:</strong> ৳ 500</p>
 <p><strong>Payment Status:</strong> Paid Until February</p>
 <p><strong>Next Due:</strong> March 15, 2026</p>
@@ -422,15 +381,11 @@ Rocket Payment
 
 </div>
 
-
 <div class="section">
-
 <h2>Monthly Payment Tracking</h2>
 
 <div class="table-wrapper">
-
 <table>
-
 <thead>
 <tr>
 <th>Month</th>
@@ -438,44 +393,33 @@ Rocket Payment
 <th>Amount</th>
 </tr>
 </thead>
-
 <tbody>
-
 <tr>
 <td>January</td>
-<td class="month-paid">Paid</td>
+<td class="paid">Paid</td>
 <td>৳ 500</td>
 </tr>
-
 <tr>
 <td>February</td>
-<td class="month-paid">Paid</td>
+<td class="paid">Paid</td>
 <td>৳ 500</td>
 </tr>
-
 <tr>
 <td>March</td>
-<td class="month-due">Due</td>
+<td class="due">Due</td>
 <td>৳ 500</td>
 </tr>
-
 </tbody>
-
 </table>
-
 </div>
 
 </div>
-
 
 <div class="section">
-
 <h2>Payment History</h2>
 
 <div class="table-wrapper">
-
 <table>
-
 <thead>
 <tr>
 <th>Receipt</th>
@@ -485,317 +429,125 @@ Rocket Payment
 <th>Download</th>
 </tr>
 </thead>
-
-<tbody id="paymentTable">
+<tbody>
+<tr>
+<td>REC-1001</td>
+<td>January</td>
+<td>৳ 500</td>
+<td>01 Jan 2026</td>
+<td><a href="#">PDF</a></td>
+</tr>
 </tbody>
-
 </table>
-
 </div>
 
 </div>
-
 
 <div class="footer">
 © 2026 EverGreen Enterprise. All Rights Reserved.
 </div>
 
-
 <script>
-
-// =========================
-// GLOBAL MEMBER DATA
-// =========================
-
-let globalMemberData = null;
-
-
-// =========================
-// LOGIN CHECK
-// =========================
-
-
- if(localStorage.getItem("memberLoggedIn") !== "true"){
- window.location.href = "login.html";
-}
-
-const memberId = localStorage.getItem("memberId");
-
-document.getElementById("memberIdText").innerText = memberId;
-
-
-// =========================
-// GOOGLE SHEET API
-// =========================
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
 
-
-// =========================
-// LOAD MEMBER DATA
-// =========================
+if(localStorage.getItem("memberLoggedIn") !== "true"){
+window.location.href = "login.html";
+}
 
 async function loadMember(){
 
 try{
 
-// প্রথমে LocalStorage থেকে ডেটা চেক করুন
-let member = null;
-const storedMember = localStorage.getItem("member");
-
-if(storedMember){
-  // LocalStorage থেকে ডেটা আছে
-  member = JSON.parse(storedMember);
-  console.log("Loading from LocalStorage");
-} else if(API_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEBAPP_URL"){
-  // API সঠিক থাকলে API থেকে ডেটা নিন
-  // const response = await fetch(API_URL + "?memberId=" + memberId);
- //  member = await response.json();
- //  console.log("Loading from API");
-} else {
-  // API URL সেট করা নেই
-  console.error("API URL not configured");
-  alert("Server configuration error. Please contact admin.");
-  return;
-}
-
-if(!member || member.error){
-  alert("Member Not Found");
-  window.location.href = "login.html";
-  return;
-}
-
-// Store globally
-globalMemberData = member;
-
-// Header
-document.getElementById("memberIdText").innerText = member.memberId || memberId;
-
-// Profile
-document.getElementById("memberName").innerText = member.name || "N/A";
-document.getElementById("memberPhone").innerText = "📞 Phone: " + (member.phone || "N/A");
-document.getElementById("memberEmail").innerText = "📧 Email: " + (member.email || "N/A");
-document.getElementById("memberJoin").innerText = "📅 Join Date: " + (member.joinDate || "N/A");
-document.getElementById("memberAddress").innerText = "📍 Address: " + (member.address || "N/A");
-document.getElementById("memberStatus").innerText = (member.status || "Active") + " Member";
-document.getElementById("statusText").innerText = member.status || "Active";
-
-// Photo - UPDATE FROM DATA
-if(member.photo){
-  document.getElementById("memberPhoto").src = member.photo;
-  console.log("Photo loaded:", member.photo);
-}
-
-// Payment
-document.getElementById("totalPayment").innerText = "৳ " + (member.totalPayment || 0);
-document.getElementById("totalReceipts").innerText = member.totalReceipts || 0;
-document.getElementById("dueAmount").innerText = "৳ " + (member.due || 0);
-
-// Payment Table
-const paymentTable = document.getElementById("paymentTable");
-paymentTable.innerHTML = "";
-
-if(member.payments && member.payments.length > 0){
-  member.payments.forEach(pay=>{
-    paymentTable.innerHTML += `
-    <tr>
-      <td>${pay.receipt}</td>
-      <td>${pay.month}</td>
-      <td>৳ ${pay.amount}</td>
-      <td>${pay.date}</td>
-      <td>
-        <button class="pdf-btn" onclick="downloadReceipt('${pay.receipt}', '${pay.month}', '${pay.amount}', '${pay.date}')">
-          PDF
-        </button>
-      </td>
-    </tr>
-    `;
-  });
-}
-
-}catch(error){
-  console.error("Error loading member:", error);
-  alert("Error loading member data. Check console for details.");
-}
-
-}
-
-loadMember();
-
-
-// =========================
-// LOGOUT
-// =========================
-
-function memberLogout(){
-  localStorage.removeItem("memberLoggedIn");
-  localStorage.removeItem("memberId");
-  localStorage.removeItem("member");
-  window.location.href = "login.html";
-}
-
-
-// =========================
-// PAYMENT BUTTONS
-// =========================
-
-function payNow(method){
-  alert("Redirecting to " + method + " Payment Gateway");
-}
-
-
-// =========================
-// RECEIPT DOWNLOAD
-// =========================
-
-function downloadReceipt(receipt, month, amount, date){
-
-const text = `
-
-EVERGREEN ENTERPRISE
-
-Payment Receipt
-
-Receipt No: ${receipt}
-Month: ${month}
-Amount: ৳ ${amount}
-Date: ${date}
-Member ID: ${memberId}
-Status: Paid
-
-`;
-
-const blob = new Blob([text], {type:"text/plain"});
-const link = document.createElement("a");
-link.href = URL.createObjectURL(blob);
-link.download = receipt + ".txt";
-link.click();
-
-}
-
-
-// =========================
-// MEMBERSHIP PDF
-// =========================
-
-function downloadMembershipPDF(){
-
-if(!globalMemberData){
-  alert("Member data not available");
-  return;
-}
-
-const text = `
-
-EVERGREEN ENTERPRISE
-
-Membership Information
-
-Name: ${globalMemberData.name || 'N/A'}
-Member ID: ${memberId}
-Phone: ${globalMemberData.phone || 'N/A'}
-Email: ${globalMemberData.email || 'N/A'}
-Status: ${globalMemberData.status || 'Active'}
-
-`;
-
-const blob = new Blob([text], {type:"text/plain"});
-const link = document.createElement("a");
-link.href = URL.createObjectURL(blob);
-link.download = "membership-info.txt";
-link.click();
-
-}
-
-
-// =========================
-// ID CARD DOWNLOAD
-// =========================
-
-function downloadIDCard(){
-
-if(!globalMemberData){
-  alert("Member data not available");
-  return;
-}
-
-const text = `
-
-EVERGREEN ID CARD
-
-Name: ${globalMemberData.name || 'N/A'}
-Member ID: ${memberId}
-Status: ${globalMemberData.status || 'Active'}
-
-`;
-
-const blob = new Blob([text], {type:"text/plain"});
-const link = document.createElement("a");
-link.href = URL.createObjectURL(blob);
-link.download = "id-card.txt";
-link.click();
-
-}
-
-// Photo
-async function loadMember(){
-
 const memberId =
 localStorage.getItem("memberId");
 
-const response = await fetch(
-`${API_URL}?memberId=${memberId}`,
-{
-method:"GET",
-mode:"cors"
+if(!memberId){
+return;
 }
-);
-
-const member =
-await response.json();
-
-console.log(member);
 
 document.getElementById(
 "memberIdText"
-).innerText =
-member.memberId;
+).innerText = memberId;
 
+const response = await fetch(
+`${API_URL}?memberId=${memberId}`
+);
+
+const member = await response.json();
+
+console.log(member);
+
+if(member.error){
+alert("Member Not Found");
+return;
+}
+
+if(member.memberId){
+document.getElementById(
+"memberIdText"
+).innerText = member.memberId;
+}
+
+if(member.name){
 document.getElementById(
 "memberName"
-).innerText =
-member.name;
+).innerText = member.name;
+}
 
+if(member.phone){
+document.getElementById(
+"memberPhone"
+).innerText = "📞 Phone: " + member.phone;
+}
+
+if(member.email){
+document.getElementById(
+"memberEmail"
+).innerText = "📧 Email: " + member.email;
+}
+
+if(member.joinDate){
+document.getElementById(
+"memberJoin"
+).innerText = "📅 Join Date: " + member.joinDate;
+}
+
+if(member.address){
+document.getElementById(
+"memberAddress"
+).innerText = "📍 Address: " + member.address;
+}
+
+if(member.status){
+document.getElementById(
+"memberStatus"
+).innerText = member.status;
+}
+
+if(member.photo){
 document.getElementById(
 "memberPhoto"
-).src =
-member.photo;
+).src = member.photo;
+}
+
+}catch(error){
+console.log(error);
+}
 
 }
 
+function logout(){
 
-// MEMBER PHOTO
+localStorage.removeItem("memberLoggedIn");
+localStorage.removeItem("memberId");
 
-document.getElementById(
-"memberPhoto"
-).src =
-member.photo;
+window.location.href = "login.html";
 
-
-// MEMBER NAME
-
-document.getElementById(
-"memberName"
-).innerText =
-member.name;
 }
+
 loadMember();
 
-
- document.getElementById(
-"memberPhoto"
-).src =
-member.photo;
 </script>
 
 </body>
