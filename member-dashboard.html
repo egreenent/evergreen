@@ -546,7 +546,6 @@ window.location.href = "login.html";
 
 }
 
-loadMember(
 document.getElementById(
 "totalPayment"
 ).innerText =
@@ -565,9 +564,25 @@ document.getElementById(
 document.getElementById(
 "membershipStatus"
 ).innerText =
-member.membershipStatus;  
+member.membershipStatus;
+  
+loadMember();
+
+
+  function logout(){
+
+localStorage.removeItem(
+"memberLoggedIn"
 );
 
+localStorage.removeItem(
+"memberId"
+);
+
+window.location.href =
+"login.html";
+
+}
 </script>
 
 </body>
