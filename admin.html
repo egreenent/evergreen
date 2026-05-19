@@ -521,6 +521,64 @@ Due
 
 <script>
 
+/* =========================
+ADMIN LOGIN CHECK
+========================= */
+
+const adminLoggedIn =
+localStorage.getItem(
+"adminLoggedIn"
+);
+
+const adminId =
+localStorage.getItem(
+"adminId"
+);
+
+const allowedAdmins = [
+
+"ege0101",
+"ege0102",
+"ege0103",
+"ege0104",
+"ege0105"
+
+];
+
+if(
+
+adminLoggedIn !== "true"
+
+||
+
+!allowedAdmins.includes(adminId)
+
+){
+
+window.location.href =
+"login.html";
+
+}
+
+/* =========================
+LOGOUT
+========================= */
+
+function logout(){
+
+localStorage.removeItem(
+"adminLoggedIn"
+);
+
+localStorage.removeItem(
+"adminId"
+);
+
+window.location.href =
+"login.html";
+
+}
+
 /* ADMIN LOGIN CHECK */
 
 const adminIds = [
