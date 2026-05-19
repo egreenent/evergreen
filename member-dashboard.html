@@ -376,13 +376,29 @@ No Notice Available
 </div>
 
 <div class="section">
+
 <h2>Downloads</h2>
 
-<div class="download-buttons">
-<a href="#">Membership PDF</a>
-<a href="#">ID Card</a>
-</div>
+<div class="download-box">
 
+<a
+id="membershipPdf"
+href="#"
+target="_blank"
+class="download-btn"
+>
+📄 Membership PDF
+</a>
+
+<a
+id="idCard"
+href="#"
+target="_blank"
+class="download-btn"
+>
+🪪 ID Card
+</a>
+</div>
 </div>
 
 <div class="section">
@@ -488,6 +504,16 @@ document.getElementById(
 ).innerText =
 member.memberId;
 
+document.getElementById(
+"membershipPdf"
+).href =
+member.membershipPdf;
+
+document.getElementById(
+"idCard"
+).href =
+member.idCard;
+  
 document.getElementById(
 "memberName"
 ).innerText =
