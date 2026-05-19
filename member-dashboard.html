@@ -403,36 +403,29 @@ No Notice Available
 </div>
 
 <div class="section">
-<h2>Monthly Payment Tracking</h2>
 
-<div class="table-wrapper">
-<table>
+<h2>Payment History</h2>
+
+<table class="payment-table">
+
 <thead>
+
 <tr>
+
 <th>Month</th>
 <th>Status</th>
 <th>Amount</th>
+<th>Total</th>
+
 </tr>
+
 </thead>
-<tbody>
-<tr>
-<td>January</td>
-<td class="paid">Paid</td>
-<td>৳ 500</td>
-</tr>
-<tr>
-<td>February</td>
-<td class="paid">Paid</td>
-<td>৳ 500</td>
-</tr>
-<tr>
-<td>March</td>
-<td class="due">Due</td>
-<td>৳ 500</td>
-</tr>
+
+<tbody id="paymentTableBody">
+
 </tbody>
+
 </table>
-</div>
 
 </div>
 
@@ -551,6 +544,41 @@ member.noticeMessage;
 
 }
 
+  let runningTotal = 0;
+
+let tableHTML = "";
+
+member.paymentHistory.forEach(payment => {
+
+runningTotal +=
+
+Number(payment.amount)
++
+Number(payment.fine);
+
+tableHTML += `
+
+<tr>
+
+<td>${payment.month}</td>
+
+<td>${payment.status}</td>
+
+<td>৳ ${payment.amount}</td>
+
+<td>৳ ${runningTotal}</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById(
+"paymentTableBody"
+).innerHTML =
+tableHTML;
+  
 loadMember();
 function logout(){
 
