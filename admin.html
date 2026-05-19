@@ -632,13 +632,14 @@ loadDashboardStats();
 LOAD DASHBOARD STATS
 ========================= */
 
+
 async function loadDashboardStats(){
 
 try{
 
 const response =
 await fetch(
-`${API_URL}?action=dashboard`
+`${API_URL}&action=dashboard`
 );
 
 const data =
@@ -673,6 +674,8 @@ console.log(error);
 }
 
 loadDashboardStats();
+
+
 
 
 </script>
