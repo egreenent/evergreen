@@ -432,7 +432,6 @@ onclick="openAddPayment()"
 >
 
 💰 Add Payment
-
 </div>
 
 <div
@@ -827,9 +826,7 @@ method:"POST",
 body:JSON.stringify(
 memberData
 )
-
 }
-
 );
 
 const result =
@@ -857,6 +854,110 @@ console.log(error);
 
 alert(
 "Failed To Add Member"
+);
+}
+}
+
+
+ /* =========================
+OPEN PAYMENT MODAL
+========================= */
+
+function openAddPayment(){
+
+document.getElementById(
+"paymentModal"
+).style.display =
+"block";
+
+}
+
+/* =========================
+CLOSE PAYMENT MODAL
+========================= */
+
+function closePaymentModal(){
+
+document.getElementById(
+"paymentModal"
+).style.display =
+"none";
+
+}
+
+/* =========================
+SAVE PAYMENT
+========================= */
+
+async function savePayment(){
+
+const paymentData = {
+
+memberId:
+document.getElementById(
+"paymentMemberId"
+).value,
+
+month:
+document.getElementById(
+"paymentMonth"
+).value,
+
+amount:
+document.getElementById(
+"paymentAmount"
+).value,
+
+fine:
+document.getElementById(
+"paymentFine"
+).value,
+
+status:
+document.getElementById(
+"paymentStatus"
+).value
+
+};
+
+try{
+
+const response =
+await fetch(
+
+API_URL,
+
+{
+
+method:"POST",
+
+body:JSON.stringify({
+
+action:"addPayment",
+
+...paymentData
+
+})
+
+}
+
+);
+
+const result =
+await response.json();
+
+alert(
+"Payment Added Successfully"
+);
+
+closePaymentModal();
+
+}catch(error){
+
+console.log(error);
+
+alert(
+"Payment Failed"
 );
 }
 }
@@ -914,6 +1015,68 @@ Close
 </button>
 </div>
 </div>
+<! -- =============================================================================================================== -->
+
+ <!-- =========================
+ADD PAYMENT MODAL
+========================= -->
+
+<div
+id="paymentModal"
+class="modal"
+style="display:none;"
+>
+
+<div class="modal-content">
+
+<h2>Add Payment</h2>
+
+<input
+type="text"
+id="paymentMemberId"
+placeholder="Member ID"
+>
+
+<input
+type="text"
+id="paymentMonth"
+placeholder="Month"
+>
+
+<input
+type="number"
+id="paymentAmount"
+placeholder="Amount"
+>
+
+<input
+type="number"
+id="paymentFine"
+placeholder="Fine"
+>
+
+<select id="paymentStatus">
+
+<option value="Paid">
+Paid
+</option>
+
+<option value="Due">
+Due
+</option>
+</select>
+<button onclick="savePayment()">
+
+Save Payment
+
+</button>
+<button onclick="closePaymentModal()">
+Close
+</button>
+</div>
+</div>
+
+ 
 </body>
 
 </html>
