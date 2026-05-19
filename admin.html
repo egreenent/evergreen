@@ -558,19 +558,75 @@ LOGOUT
 ========================= */
 
 function logout(){
-
 localStorage.removeItem(
 "adminLoggedIn"
 );
-
 localStorage.removeItem(
 "adminId"
 );
-
 window.location.href =
 "login.html";
 }
 
+ /*---------------------------------------------------------- */
+  
+const API_URL =
+"https://script.google.com/macros/s/AKfycbwWwMZ4mzGZQisAT4S-5MRskdzKsOPHba0ifpUck7K-lKYDxdW4FGZbk-oCbWQvowro/exec";
+
+/* =========================
+LOAD DASHBOARD STATS
+========================= */
+
+async function loadDashboardStats(){
+
+try{
+
+const response =
+await fetch(
+`${API_URL}?action=dashboard`
+);
+
+const data =
+await response.json();
+
+/* =========================
+SET DATA
+========================= */
+
+document.getElementById(
+"totalMembers"
+).innerText =
+data.totalMembers;
+
+document.getElementById(
+"totalCollection"
+).innerText =
+"৳ " + data.totalCollection;
+
+document.getElementById(
+"totalPayments"
+).innerText =
+data.totalPayments;
+
+document.getElementById(
+"activeMembers"
+).innerText =
+data.activeMembers;
+
+}catch(error){
+
+console.log(error);
+}
+}
+
+/* =========================
+AUTO LOAD
+========================= */
+
+loadDashboardStats();
+
+
+  
 </script>
 
 </body>
