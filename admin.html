@@ -374,45 +374,58 @@ Logout
 
 <!-- QUICK ACTIONS -->
 
+
 <div class="section">
-
 <h2>Quick Actions</h2>
-
 <div class="quick-actions">
 
-<div class="action-btn">
+<div
+class="action-btn"
+onclick="openAddMember()"
+>
 
 ➕ Add Member
 
 </div>
 
-<div class="action-btn">
+<div
+class="action-btn"
+onclick="openAddPayment()"
+>
 
 💰 Add Payment
 
 </div>
 
-<div class="action-btn">
+<div
+class="action-btn"
+onclick="openNotice()"
+>
 
 📢 Publish Notice
 
 </div>
 
-<div class="action-btn">
+<div
+class="action-btn"
+onclick="generateIdCard()"
+>
 
 🪪 Generate ID Card
 
 </div>
 
-<div class="action-btn">
+<div
+class="action-btn"
+onclick="generatePdf()"
+>
 
 📄 Generate PDF
 
 </div>
-
+</div>
 </div>
 
-</div>
 
 <!-- SEARCH -->
 
@@ -449,53 +462,31 @@ Search
 <thead>
 
 <tr>
-
 <th>Receipt No</th>
-
 <th>Member ID</th>
-
 <th>Name</th>
-
 <th>Amount</th>
-
 <th>Status</th>
-
 </tr>
-
 </thead>
 
 <tbody id="paymentTable">
-
 <tr>
-
 <td>RCPT001</td>
-
 <td>ege0101</td>
-
 <td>Tariquzzaman</td>
-
 <td>৳ 1000</td>
-
 <td>
 
 <span class="status active">
-
 Paid
-
 </span>
-
 </td>
-
 </tr>
-
 <tr>
-
 <td>RCPT002</td>
-
 <td>ege0102</td>
-
 <td>Rahim</td>
-
 <td>৳ 1000</td>
 
 <td>
@@ -675,8 +666,60 @@ console.log(error);
 
 loadDashboardStats();
 
+/* =========================
+ADD MEMBER
+========================= */
 
+function openAddMember(){
 
+alert(
+"Add Member Panel Coming Soon"
+);
+}
+
+/* =========================
+ADD PAYMENT
+========================= */
+
+function openAddPayment(){
+
+alert(
+"Add Payment Panel Coming Soon"
+);
+}
+
+/* =========================
+NOTICE
+========================= */
+
+function openNotice(){
+
+alert(
+"Publish Notice Panel Coming Soon"
+);
+}
+
+/* =========================
+ID CARD
+========================= */
+
+function generateIdCard(){
+
+alert(
+"ID Card Generator Coming Soon"
+);
+}
+
+/* =========================
+PDF
+========================= */
+
+function generatePdf(){
+
+alert(
+"PDF Generator Coming Soon"
+);
+}
 
 </script>
 
