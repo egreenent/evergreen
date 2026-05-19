@@ -253,6 +253,10 @@ Login Now
 
 let loginType = "member";
 
+/* =========================
+SWITCH TAB
+========================= */
+
 function switchTab(type){
 
 loginType = type;
@@ -289,7 +293,11 @@ document.getElementById("memberTab")
 
 }
 
-function login(){
+/* =========================
+LOGIN FUNCTION
+========================= */
+
+async function login(){
 
 const userId =
 document.getElementById("userId")
@@ -302,91 +310,11 @@ document.getElementById("password")
 .value
 .trim();
 
-
-// =========================
-// MEMBER LOGIN
-// =========================
-
-if(loginType === "member"){
-
-const memberPassword =
-"Egreen@22";
-
-const memberUsers = [
-
-"ege0101",
-"ege0102",
-"ege0103",
-"ege0104",
-"ege0105",
-"ege0106",
-"ege0107",
-"ege0108",
-"ege0109",
-"ege0110",
-"ege0111",
-"ege0112",
-"ege0113",
-"ege0114",
-"ege0115",
-"ege0116",
-"ege0117",
-"ege0118",
-"ege0119",
-"ege0120"
-
-];
-
-if(
-memberUsers.includes(userId)
-&&
-password === memberPassword
-){
-
-localStorage.setItem(
-"memberLoggedIn",
-"true"
-);
-
-localStorage.setItem(
-"memberId",
-userId
-);
-
-window.location.href =
-"member-dashboard.html";
-
-}else{
-
-alert(
-"Invalid Member Login"
-);
-
-}
-
-}
-
-
-// =========================
-// ADMIN LOGIN
-// =========================
-
-javascript id="wq7nsl"
-async function login(){
-
-const userId =
-document.getElementById(
-"userId"
-).value.trim();
-
-const password =
-document.getElementById(
-"password"
-).value.trim();
-
 /* =========================
 ADMIN LOGIN
 ========================= */
+
+if(loginType === "admin"){
 
 const adminPassword =
 "Egreene@2022";
@@ -427,6 +355,14 @@ password
 window.location.href =
 "admin-dashboard.html";
 
+}else{
+
+alert(
+"Invalid Admin Login"
+);
+
+}
+
 return;
 
 }
@@ -435,17 +371,45 @@ return;
 MEMBER LOGIN
 ========================= */
 
-try{
+if(loginType === "member"){
 
-const response =
-await fetch(
-`${API_URL}?memberId=${userId}`
-);
+const memberPassword =
+"Egreen@22";
 
-const result =
-await response.json();
+const memberUsers = [
 
-if(result.memberId){
+"ege0101",
+"ege0102",
+"ege0103",
+"ege0104",
+"ege0105",
+"ege0106",
+"ege0107",
+"ege0108",
+"ege0109",
+"ege0110",
+"ege0111",
+"ege0112",
+"ege0113",
+"ege0114",
+"ege0115",
+"ege0116",
+"ege0117",
+"ege0118",
+"ege0119",
+"ege0120"
+
+];
+
+if(
+
+memberUsers.includes(userId)
+
+&&
+
+password === memberPassword
+
+){
 
 localStorage.setItem(
 "memberLoggedIn",
@@ -454,12 +418,7 @@ localStorage.setItem(
 
 localStorage.setItem(
 "memberId",
-result.memberId
-);
-
-localStorage.setItem(
-"member",
-JSON.stringify(result)
+userId
 );
 
 window.location.href =
@@ -473,19 +432,11 @@ alert(
 
 }
 
-}catch(error){
-
-alert(
-"Login Failed"
-);
-
-console.log(error);
-
 }
 
 }
+
 </script>
-
 </body>
 
 </html>
