@@ -311,15 +311,22 @@ document.getElementById("password")
 .trim();
 
 /* =========================
-ADMIN LOGIN
+ADMIN LOGIN CHECK
 ========================= */
 
-if(loginType === "admin"){
+const adminLoggedIn =
 
-const adminPassword =
-"Egreene@2022";
+localStorage.getItem(
+"adminLoggedIn"
+);
 
-const adminUsers = [
+const adminId =
+
+localStorage.getItem(
+"adminId"
+);
+
+const allowedAdmins = [
 
 "ege0101",
 "ege0102",
@@ -329,43 +336,20 @@ const adminUsers = [
 
 if(
 
-adminUsers.includes(userId)
+adminLoggedIn !== "true"
 
-&&
+||
 
-password === adminPassword
+!allowedAdmins.includes(adminId)
 
 ){
 
-localStorage.setItem(
-"adminLoggedIn",
-"true"
-);
-
-localStorage.setItem(
-"adminId",
-userId
-);
-
-localStorage.setItem(
-"memberPassword",
-password
-);
-
 window.location.href =
-"admin.html";
-
-}else{
-
-alert(
-"Invalid Admin Login"
-);
+"login.html";
 
 }
 
-return;
 
-}
 
 /* =========================
 MEMBER LOGIN
