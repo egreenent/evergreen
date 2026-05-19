@@ -311,12 +311,20 @@ document.getElementById("password")
 .trim();
 
 /* =========================
-ADMIN LOGIN
+ADMIN ACCESS CHECK
 ========================= */
 
-if(loginType === "admin"){
+const adminLoggedIn =
+localStorage.getItem(
+"adminLoggedIn"
+);
 
-const adminUsers = [
+const adminId =
+localStorage.getItem(
+"adminId"
+);
+
+const allowedAdmins = [
 
 "ege0101",
 "ege0102",
@@ -324,43 +332,21 @@ const adminUsers = [
 
 ];
 
-const adminPassword =
-"Egreene@2022";
-
 if(
 
-adminUsers.includes(userId)
+adminLoggedIn !== "true"
 
-&&
+||
 
-password === adminPassword
+!allowedAdmins.includes(adminId)
 
 ){
 
-localStorage.setItem(
-"adminLoggedIn",
-"true"
-);
-
-localStorage.setItem(
-"adminId",
-userId
-);
-
 window.location.href =
-"admin.html";
-
-}else{
-
-alert(
-"Invalid Admin Login"
-);
+"login.html";
 
 }
 
-return;
-
-}
 
 /* =========================
 MEMBER LOGIN
@@ -375,6 +361,22 @@ const memberUsers = [
 "ege0103",
 "ege0104",
 "ege0105"
+"ege0106"
+"ege0107"
+"ege0108"
+"ege0109"
+"ege0110"
+"ege0111"
+"ege0112"
+"ege0113"
+"ege0114"
+"ege0115"
+"ege0116"
+"ege0117"
+"ege0118"
+"ege0119"
+"ege0120" 
+  
 
 ];
 
