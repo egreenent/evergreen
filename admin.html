@@ -961,7 +961,96 @@ alert(
 );
 }
 }
+<!-- ====================================================================================================== -->
 
+ /* =========================
+OPEN NOTICE MODAL
+========================= */
+
+function openNotice(){
+
+document.getElementById(
+"noticeModal"
+).style.display =
+"block";
+}
+
+/* =========================
+CLOSE NOTICE MODAL
+========================= */
+
+function closeNoticeModal(){
+
+document.getElementById(
+"noticeModal"
+).style.display =
+"none";
+}
+
+/* =========================
+PUBLISH NOTICE
+========================= */
+
+async function publishNotice(){
+
+const noticeData = {
+
+action:"publishNotice",
+
+title:
+document.getElementById(
+"noticeTitle"
+).value,
+
+message:
+document.getElementById(
+"noticeMessage"
+).value,
+
+status:
+document.getElementById(
+"noticeStatus"
+).value
+};
+
+try{
+
+const response =
+await fetch(
+
+API_URL,
+
+{
+
+method:"POST",
+
+body:JSON.stringify(
+noticeData
+)
+}
+);
+
+const result =
+await response.json();
+
+alert(
+"Notice Published Successfully"
+);
+
+closeNoticeModal();
+
+}catch(error){
+
+console.log(error);
+
+alert(
+"Notice Publish Failed"
+);
+}
+}
+
+
+ 
 </script>
 
 <!-- =========================
@@ -1071,6 +1160,60 @@ Save Payment
 
 </button>
 <button onclick="closePaymentModal()">
+Close
+</button>
+</div>
+</div>
+<!-- =================================================================================================== -->
+ <!-- =========================
+NOTICE MODAL
+========================= -->
+
+<div
+id="noticeModal"
+class="modal"
+style="display:none;"
+>
+
+<div class="modal-content">
+
+<h2>Publish Notice</h2>
+
+<input
+type="text"
+id="noticeTitle"
+placeholder="Notice Title"
+>
+
+<textarea
+id="noticeMessage"
+placeholder="Notice Message"
+style="
+padding:10px;
+height:120px;
+border:1px solid #ccc;
+border-radius:6px;
+"
+></textarea>
+
+<select id="noticeStatus">
+
+<option value="Active">
+Active
+</option>
+
+<option value="Inactive">
+Inactive
+</option>
+
+</select>
+
+<button onclick="publishNotice()">
+
+Publish Notice
+
+</button>
+<button onclick="closeNoticeModal()">
 Close
 </button>
 </div>
