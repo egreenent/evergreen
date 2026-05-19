@@ -371,7 +371,22 @@ alert(
 // ADMIN LOGIN
 // =========================
 
-else{
+javascript id="wq7nsl"
+async function login(){
+
+const userId =
+document.getElementById(
+"userId"
+).value.trim();
+
+const password =
+document.getElementById(
+"password"
+).value.trim();
+
+/* =========================
+ADMIN LOGIN
+========================= */
 
 const adminPassword =
 "Egreene@2022";
@@ -385,9 +400,13 @@ const adminUsers = [
 ];
 
 if(
+
 adminUsers.includes(userId)
+
 &&
+
 password === adminPassword
+
 ){
 
 localStorage.setItem(
@@ -400,25 +419,33 @@ localStorage.setItem(
 userId
 );
 
+localStorage.setItem(
+"memberPassword",
+password
+);
+
 window.location.href =
-"admin.html";
+"admin-dashboard.html";
 
-}else{
+return;
 
-alert(
-"Invalid Admin Login"
+}
+
+/* =========================
+MEMBER LOGIN
+========================= */
+
+try{
+
+const response =
+await fetch(
+`${API_URL}?memberId=${userId}`
 );
-}
-}
-}
 
+const result =
+await response.json();
 
-  localStorage.setItem(
-"member",
-JSON.stringify(result.member)
-);
-
-  if(result.status=="success"){
+if(result.memberId){
 
 localStorage.setItem(
 "memberLoggedIn",
@@ -426,12 +453,35 @@ localStorage.setItem(
 );
 
 localStorage.setItem(
+"memberId",
+result.memberId
+);
+
+localStorage.setItem(
 "member",
-JSON.stringify(result.member)
+JSON.stringify(result)
 );
 
 window.location.href =
 "member-dashboard.html";
+
+}else{
+
+alert(
+"Invalid Member Login"
+);
+
+}
+
+}catch(error){
+
+alert(
+"Login Failed"
+);
+
+console.log(error);
+
+}
 
 }
 </script>
