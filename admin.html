@@ -626,7 +626,56 @@ AUTO LOAD
 loadDashboardStats();
 
 
-  
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
+
+/* =========================
+LOAD DASHBOARD STATS
+========================= */
+
+async function loadDashboardStats(){
+
+try{
+
+const response =
+await fetch(
+`${API_URL}?action=dashboard`
+);
+
+const data =
+await response.json();
+
+document.getElementById(
+"totalMembers"
+).innerText =
+data.totalMembers;
+
+document.getElementById(
+"totalCollection"
+).innerText =
+"৳ " + data.totalCollection;
+
+document.getElementById(
+"totalPayments"
+).innerText =
+data.totalPayments;
+
+document.getElementById(
+"activeMembers"
+).innerText =
+data.activeMembers;
+
+}catch(error){
+
+console.log(error);
+
+}
+
+}
+
+loadDashboardStats();
+
+
 </script>
 
 </body>
