@@ -670,11 +670,23 @@ loadDashboardStats();
 ADD MEMBER
 ========================= */
 
+
 function openAddMember(){
 
-alert(
-"Add Member Panel Coming Soon"
-);
+document.getElementById(
+"addMemberModal"
+).style.display =
+"block";
+
+}
+
+function closeAddMember(){
+
+document.getElementById(
+"addMemberModal"
+).style.display =
+"none";
+
 }
 
 /* =========================
@@ -722,6 +734,58 @@ alert(
 }
 
 </script>
+
+ <!-- =========================
+ADD MEMBER MODAL
+========================= -->
+
+<div
+id="addMemberModal"
+class="modal"
+style="display:none;"
+>
+
+<div class="modal-content">
+
+<h2>Add Member</h2>
+
+<input
+type="text"
+id="newMemberName"
+placeholder="Full Name"
+>
+
+<input
+type="text"
+id="newMemberPhone"
+placeholder="Phone Number"
+>
+
+<input
+type="email"
+id="newMemberEmail"
+placeholder="Email Address"
+>
+
+<input
+type="text"
+id="newMemberPhoto"
+placeholder="Photo URL"
+>
+
+<button onclick="saveMember()">
+
+Save Member
+
+</button>
+
+<button onclick="closeAddMember()">
+
+Close
+
+</button>
+</div>
+</div>
 
 </body>
 
