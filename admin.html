@@ -508,21 +508,16 @@ Due
 </span>
 
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
-
 </div>
-
 </div>
 
 <script>
 
 /* =========================
-ADMIN LOGIN CHECK
+ADMIN ACCESS CHECK
 ========================= */
 
 const adminLoggedIn =
@@ -542,22 +537,20 @@ const allowedAdmins = [
 "ege0103",
 "ege0104",
 "ege0105"
-
 ];
 
 if(
-
 adminLoggedIn !== "true"
-
 ||
-
 !allowedAdmins.includes(adminId)
-
 ){
+
+alert(
+"Please Login Again"
+);
 
 window.location.href =
 "login.html";
-
 }
 
 /* =========================
@@ -576,91 +569,6 @@ localStorage.removeItem(
 
 window.location.href =
 "login.html";
-
-}
-
-/* ADMIN LOGIN CHECK */
-
-const adminIds = [
-
-"ege0101",
-"ege0102",
-"ege0103"
-
-];
-
-const adminPassword =
-"Egreene@2022";
-
-const loggedMemberId =
-localStorage.getItem("memberId");
-
-const loggedPassword =
-localStorage.getItem("memberPassword");
-
-if(
-
-!adminIds.includes(loggedMemberId)
-
-||
-
-loggedPassword !== adminPassword
-
-){
-
-window.location.href =
-"login.html";
-
-}
-
-/* DEMO DATA */
-
-document.getElementById(
-"totalMembers"
-).innerText = 120;
-
-document.getElementById(
-"totalCollection"
-).innerText = "৳ 1,25,000";
-
-document.getElementById(
-"totalPayments"
-).innerText = 350;
-
-document.getElementById(
-"activeMembers"
-).innerText = 98;
-
-/* SEARCH */
-
-function searchMember(){
-
-const input =
-document.getElementById(
-"searchInput"
-).value;
-
-alert(
-"Searching Member: " + input
-);
-
-}
-
-/* LOGOUT */
-
-function logout(){
-
-localStorage.removeItem(
-"memberId"
-);
-
-localStorage.removeItem(
-"memberPassword"
-);
-
-window.location.href =
-"login.html";
-
 }
 
 </script>
