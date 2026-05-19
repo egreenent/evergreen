@@ -294,10 +294,10 @@ document.getElementById("memberTab")
 }
 
 /* =========================
-LOGIN FUNCTION
+LOGIN
 ========================= */
 
-async function login(){
+function login(){
 
 const userId =
 document.getElementById("userId")
@@ -311,22 +311,12 @@ document.getElementById("password")
 .trim();
 
 /* =========================
-ADMIN LOGIN CHECK
+ADMIN LOGIN
 ========================= */
 
-const adminLoggedIn =
+if(loginType === "admin"){
 
-localStorage.getItem(
-"adminLoggedIn"
-);
-
-const adminId =
-
-localStorage.getItem(
-"adminId"
-);
-
-const allowedAdmins = [
+const adminUsers = [
 
 "ege0101",
 "ege0102",
@@ -334,22 +324,43 @@ const allowedAdmins = [
 
 ];
 
+const adminPassword =
+"Egreene@2022";
+
 if(
 
-adminLoggedIn !== "true"
+adminUsers.includes(userId)
 
-||
+&&
 
-!allowedAdmins.includes(adminId)
+password === adminPassword
 
 ){
 
+localStorage.setItem(
+"adminLoggedIn",
+"true"
+);
+
+localStorage.setItem(
+"adminId",
+userId
+);
+
 window.location.href =
-"login.html";
+"admin.html";
+
+}else{
+
+alert(
+"Invalid Admin Login"
+);
 
 }
 
+return;
 
+}
 
 /* =========================
 MEMBER LOGIN
@@ -357,33 +368,18 @@ MEMBER LOGIN
 
 if(loginType === "member"){
 
-const memberPassword =
-"Egreen@22";
-
 const memberUsers = [
 
 "ege0101",
 "ege0102",
 "ege0103",
 "ege0104",
-"ege0105",
-"ege0106",
-"ege0107",
-"ege0108",
-"ege0109",
-"ege0110",
-"ege0111",
-"ege0112",
-"ege0113",
-"ege0114",
-"ege0115",
-"ege0116",
-"ege0117",
-"ege0118",
-"ege0119",
-"ege0120"
+"ege0105"
 
 ];
+
+const memberPassword =
+"Egreen@22";
 
 if(
 
