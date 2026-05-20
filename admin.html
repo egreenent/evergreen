@@ -1202,21 +1202,82 @@ async function loadRecentPayments() {
 
         let html = "";
         payments.forEach(payment => {
-            html += `
-                <div class="payment-item">
-                    <div>
-                        <h4>${payment.memberId}</h4>
-                        <p>${payment.month}</p>
-                    </div>
-                    <div>
-                        <p>৳ ${payment.amount}</p>
-                        <span>${payment.status}</span>
-                    </div>
-                </div>
-            `;
-        });
+let tableHtml = "";
 
-        document.getElementById("recentPayments").innerHTML = html;
+payments.forEach(payment => {
+
+html += `
+
+<div class="payment-item">
+
+<div>
+
+<h4>${payment.memberId}</h4>
+
+<p>${payment.month}</p>
+
+</div>
+
+<div>
+
+<p>৳ ${payment.amount}</p>
+
+<span>${payment.status}</span>
+
+</div>
+
+</div>
+
+`;
+
+/* =========================
+TABLE DATA
+========================= */
+
+tableHtml += `
+
+<tr>
+
+<td>
+RCPT00
+</td>
+
+<td>
+${payment.memberId}
+</td>
+
+<td>
+EverGreen Member
+</td>
+
+<td>
+৳ ${payment.amount}
+</td>
+
+<td>
+
+<span class="status active">
+
+${payment.status}
+
+</span>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+/* =========================
+SHOW TABLE
+========================= */
+
+document.getElementById(
+"paymentTable"
+).innerHTML =
+tableHtml;
 
     } catch (error) {
         console.error("Invalid Payment Data", error);
