@@ -733,6 +733,96 @@ loadDashboardStats();
 loadMembers();
 loadRecentPayments();
 
+/* =========================
+SEARCH MEMBER
+========================= */
+
+async function searchMember(){
+
+const memberId =
+
+document.getElementById(
+"searchMemberId"
+).value;
+
+try{
+
+const response =
+await fetch(
+
+`https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec?memberId=${memberId}`
+
+);
+
+const member =
+await response.json();
+
+if(member.error){
+
+document.getElementById(
+"searchResult"
+).innerHTML =
+
+"<p>Member Not Found</p>";
+return;
+}
+
+document.getElementById(
+"searchResult"
+).innerHTML = `
+
+<div class="member-card">
+
+<img
+src="${member.photo}"
+class="member-photo"
+>
+
+<h3>${member.name}</h3>
+
+<p>
+Member ID:
+${member.memberId}
+</p>
+
+<p>
+Phone:
+${member.phone}
+</p>
+
+<p>
+Email:
+${member.email}
+</p>
+
+<p>
+Status:
+${member.membershipStatus}
+</p>
+
+<p>
+Total Payment:
+৳ ${member.totalPayment}
+</p>
+
+<p>
+Due Amount:
+৳ ${member.dueAmount}
+</p>
+
+</div>
+`;
+
+}catch(error){
+
+console.log(error);
+
+alert(
+"Search Failed"
+);
+}
+}
+ 
 </script>
 
 </body>
