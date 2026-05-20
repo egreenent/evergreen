@@ -1200,16 +1200,8 @@ await response.text();
 
 console.log(text);
 
-/* =========================
-CONVERT JSON
-========================= */
-
 const payments =
 JSON.parse(text);
-
-/* =========================
-CHECK ARRAY
-========================= */
 
 if(!Array.isArray(payments)){
 
@@ -1224,10 +1216,6 @@ return;
 }
 
 let html = "";
-
-/* =========================
-LOOP
-========================= */
 
 payments.forEach(payment => {
 
@@ -1265,10 +1253,6 @@ ${payment.status}
 
 });
 
-/* =========================
-SHOW
-========================= */
-
 document.getElementById(
 "recentPayments"
 ).innerHTML =
@@ -1283,10 +1267,13 @@ document.getElementById(
 ).innerHTML =
 
 "Failed To Load Payments";
+
 }
+
 }
 
 loadRecentPayments();
+
  
 </script>
 
