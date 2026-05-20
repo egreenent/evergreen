@@ -1183,7 +1183,6 @@ alert(
  /* =========================
 LOAD RECENT PAYMENTS
 ========================= */
-
 async function loadRecentPayments(){
 
 try{
@@ -1196,10 +1195,39 @@ API_URL +
 
 );
 
+const text =
+await response.text();
+
+console.log(text);
+
+/* =========================
+CONVERT JSON
+========================= */
+
 const payments =
-await response.json();
+JSON.parse(text);
+
+/* =========================
+CHECK ARRAY
+========================= */
+
+if(!Array.isArray(payments)){
+
+document.getElementById(
+"recentPayments"
+).innerHTML =
+
+"Invalid Payment Data";
+
+return;
+
+}
 
 let html = "";
+
+/* =========================
+LOOP
+========================= */
 
 payments.forEach(payment => {
 
@@ -1237,6 +1265,10 @@ ${payment.status}
 
 });
 
+/* =========================
+SHOW
+========================= */
+
 document.getElementById(
 "recentPayments"
 ).innerHTML =
@@ -1246,12 +1278,15 @@ html;
 
 console.log(error);
 
-}
+document.getElementById(
+"recentPayments"
+).innerHTML =
 
+"Failed To Load Payments";
+}
 }
 
 loadRecentPayments();
-
  
 </script>
 
