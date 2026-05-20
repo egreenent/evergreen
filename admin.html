@@ -453,6 +453,15 @@ color:#fff;
 overflow-x:auto;
 margin-top:15px;
 }
+
+.page-section{
+display:none;
+}
+
+.page-section.active-section{
+display:block;
+}
+
 </style>
 
 </head>
@@ -468,40 +477,44 @@ margin-top:15px;
 <h2>EverGreen<br>Enterprise</h2>
 <span>Admin Panel</span>
 </div>
- 
+
+<div class="section page-section" id="dashboardSection"></div>
+<div class="section page-section" id="membersSection"></div>
+<div class="section page-section" id="paymentsSection"></div>
+<div class="section page-section" id="noticeSection"></div>
+<div class="section page-section" id="downloadsSection"></div>
+<div class="section page-section" id="analyticsSection"></div>
+<div class="section page-section" id="settingsSection"></div>
+
+
+
 <div class="menu">
-<a href="#" class="active">
-🏠 Dashboard
-</a>
 
-<a href="#membersSection">
-👥 Members
-</a>
+<a href="#" onclick="showSection('dashboardSection')" class="active">
+🏠 Dashboard </a>
 
-<a href="#paymentsSection">
-💰 Payments
-</a>
+<a href="#" onclick="showSection('membersSection')">
+👥 Members</a>
 
-<a href="#noticeSection">
-📢 Notices
-</a>
+<a href="#" onclick="showSection('paymentsSection')">
+💰 Payments</a>
 
-<a href="#downloadsSection">
-📥 Downloads
-</a>
+<a href="#" onclick="showSection('noticeSection')">
 
-<a href="#analyticsSection">
-📊 Analytics
-</a>
+📢 Notices</a>
 
-<a href="#settingsSection">
-⚙ Settings
-</a>
+<a href="#" onclick="showSection('downloadsSection')">
+📥 Downloads</a>
+
+<a href="#" onclick="showSection('analyticsSection')">
+📊 Analytics</a>
+
+<a href="#" onclick="showSection('settingsSection')">
+⚙ Settings</a>
 
 <a href="#" onclick="logout()">
-🚪 Logout
-</a>
-</div>
+🚪 Logout</a>
+
 </div>
 
 <!-- MAIN -->
@@ -1584,6 +1597,45 @@ AUTO LOAD
 
 loadMembers();
 
+function showSection(sectionId){
+
+/* =========================
+HIDE ALL
+========================= */
+
+const sections =
+document.querySelectorAll(
+".page-section"
+);
+
+sections.forEach(section => {
+
+section.classList.remove(
+"active-section"
+);
+
+});
+
+/* =========================
+SHOW SELECTED
+========================= */
+
+document.getElementById(
+sectionId
+).classList.add(
+"active-section"
+);
+
+}
+
+/* =========================
+DEFAULT SECTION
+========================= */
+
+showSection(
+"dashboardSection"
+);
+ 
  
 </script>
 
