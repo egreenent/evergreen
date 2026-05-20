@@ -335,6 +335,37 @@ border:4px solid #0f766e;
 margin-bottom:10px;
 color:#0f766e;
 }
+
+.payment-item{
+display:flex;
+justify-content:
+space-between;
+align-items:center;
+padding:15px;
+margin-bottom:10px;
+background:#fff;
+border-radius:10px;
+box-shadow:
+0 2px 10px rgba(0,0,0,0.08);
+}
+
+.payment-item h4{
+margin:0;
+color:#0f766e;
+}
+
+.payment-item p{
+margin:3px 0;
+}
+
+.payment-item span{
+background:#0f766e;
+color:#fff;
+padding:4px 10px;
+border-radius:20px;
+font-size:12px;
+}
+ 
 </style>
 
 </head>
@@ -519,8 +550,11 @@ Search
 <!-- RECENT PAYMENTS -->
 
 <div class="section">
-
 <h2>Recent Payments</h2>
+<div id="recentPayments">
+Loading...
+</div>
+</div>
 
 <table>
 
@@ -536,26 +570,6 @@ Search
 </thead>
 
 <tbody id="paymentTable">
-<tr>
-<td>RCPT001</td>
-<td>ege0101</td>
-<td>Tariquzzaman</td>
-<td>৳ 1000</td>
-<td>
-
-<span class="status active">
-Paid
-</span>
-</td>
-</tr>
-<tr>
-<td>RCPT002</td>
-<td>ege0102</td>
-<td>Rahim</td>
-<td>৳ 1000</td>
-
-<td>
-
 <span class="status due">
 
 Due
@@ -1166,6 +1180,78 @@ alert(
 );
 }
 }
+ /* =========================
+LOAD RECENT PAYMENTS
+========================= */
+
+async function loadRecentPayments(){
+
+try{
+
+const response =
+await fetch(
+
+API_URL +
+"?action=recentPayments"
+
+);
+
+const payments =
+await response.json();
+
+let html = "";
+
+payments.forEach(payment => {
+
+html += `
+
+<div class="payment-item">
+
+<div>
+
+<h4>
+${payment.memberId}
+</h4>
+
+<p>
+${payment.month}
+</p>
+
+</div>
+
+<div>
+
+<p>
+৳ ${payment.amount}
+</p>
+
+<span>
+${payment.status}
+</span>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById(
+"recentPayments"
+).innerHTML =
+html;
+
+}catch(error){
+
+console.log(error);
+
+}
+
+}
+
+loadRecentPayments();
+
  
 </script>
 
