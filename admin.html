@@ -382,7 +382,91 @@ align-items:flex-start;
 <div class="action-btn">📢 Publish Notice</div>
 <div class="action-btn">🪪 Generate ID Card</div>
 </div>
+</div>
 
+ <!-- SEARCH -->
+
+<div class="section">
+<h2>Search Member</h2>
+<div
+id="searchResult"
+style="margin-top:20px;"
+>
+</div>
+<div class="search-box">
+
+<input
+type="text"
+id="searchMemberId"
+placeholder="Enter Member ID"
+>
+<button onclick="searchMember()">
+Search
+</button>
+<div id="searchResult"></div>
+ </div>
+
+</div>
+ 
+ <!-- -------- ------------- -->
+<!-- MEMBERS SECTION -->
+<!-- ---------------------- -->
+ 
+<div class="section" id="membersSection">
+<h2>
+ðŸ‘¥ Members List
+</h2>
+
+<input
+type="text"
+id="memberSearch"
+placeholder="Search Member..."
+class="search-box"
+/>
+
+<div class="table-container">
+
+<table class="payment-table">
+
+<thead>
+
+<tr>
+
+<th>
+Photo
+</th>
+
+<th>
+Member ID
+</th>
+
+<th>
+Name
+</th>
+
+<th>
+Phone
+</th>
+
+<th>
+Status
+</th>
+
+<th>
+Action
+</th>
+</tr>
+</thead>
+ 
+<tbody id="membersTable">
+<tr>
+<td colspan="6">
+Loading...
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 <div class="section">
