@@ -18,7 +18,30 @@ rel="stylesheet"
 />
 
 <style>
+.logo{
+display:flex;
+align-items:center;
+gap:15px;
+}
 
+.logo img{
+width:70px;
+height:70px;
+object-fit:contain;
+}
+
+.logo-text h1{
+font-size:30px;
+color:#fff;
+line-height:1;
+}
+
+.logo-text p{
+color:#d4af37;
+font-size:14px;
+margin-top:5px;
+}
+ 
 *{
 margin:0;
 padding:0;
@@ -385,32 +408,44 @@ transition:0.3s;
 <!-- SIDEBAR -->
 
 <div class="sidebar">
-
 <div class="logo">
-
-EverGreen
+<img src="logo.png" alt="EverGreen Logo">
+EverGreen<br>Enterprise
 
 <span>Admin Panel</span>
-
 </div>
-
 <div class="menu">
+<a href="#" class="active">
+🏠 Dashboard
+</a>
 
-<a href="#" class="active">Dashboard</a>
+<a href="#membersSection">
+👥 Members
+</a>
 
-<a href="#">Members</a>
+<a href="#paymentsSection">
+💰 Payments
+</a>
 
-<a href="#">Payments</a>
+<a href="#noticeSection">
+📢 Notices
+</a>
 
-<a href="#">Notices</a>
+<a href="#downloadsSection">
+📥 Downloads
+</a>
 
-<a href="#">Downloads</a>
+<a href="#analyticsSection">
+📊 Analytics
+</a>
 
-<a href="#">Analytics</a>
+<a href="#settingsSection">
+⚙ Settings
+</a>
 
-<a href="#">Settings</a>
-
-<a href="#" onclick="logout()">Logout</a>
+<a href="#" onclick="logout()">
+🚪 Logout
+</a>
 
 </div>
 
