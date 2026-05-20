@@ -1084,6 +1084,7 @@ SEARCH MEMBER
 async function searchMember(){
 
 const memberId =
+
 document.getElementById(
 "searchMemberId"
 ).value;
@@ -1093,18 +1094,12 @@ try{
 const response =
 await fetch(
 
-API_URL +
-"?memberId=" +
-memberId
+`https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec?memberId=${memberId}`
 
 );
 
 const member =
 await response.json();
-
-/* =========================
-NOT FOUND
-========================= */
 
 if(member.error){
 
@@ -1113,14 +1108,8 @@ document.getElementById(
 ).innerHTML =
 
 "<p>Member Not Found</p>";
-
 return;
-
 }
-
-/* =========================
-SHOW RESULT
-========================= */
 
 document.getElementById(
 "searchResult"
@@ -1166,7 +1155,6 @@ Due Amount:
 </p>
 
 </div>
-
 `;
 
 }catch(error){
