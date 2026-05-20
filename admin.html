@@ -501,16 +501,158 @@ margin-top:15px;
 <a href="#" onclick="logout()">
 🚪 Logout
 </a>
-
 </div>
-
 </div>
 
 <!-- MAIN -->
 
 <div class="main">
-<!-- MEMBERS SECTION -->
 
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+
+<h1>EverGreen Admin Dashboard</h1>
+
+<button
+class="logout-btn"
+onclick="logout()"
+>
+
+Logout
+
+</button>
+
+</div>
+
+<!-- CARDS -->
+
+<div class="cards">
+<div class="card">
+<h3>Total Members</h3>
+<h2 id="totalMembers">0</h2>
+</div>
+
+<div class="card">
+<h3>Total Collection</h3>
+<h2 id="totalCollection">৳ 0</h2>
+</div>
+
+<div class="card">
+<h3>Total Payments</h3>
+<h2 id="totalPayments">0</h2>
+</div>
+
+<div class="card">
+<h3>Active Members</h3>
+<h2 id="activeMembers">0</h2>
+</div>
+
+</div>
+
+<!-- QUICK ACTIONS -->
+
+
+<div class="section">
+<h2>Quick Actions</h2>
+<div class="quick-actions">
+
+<div
+class="action-btn"
+onclick="openAddMember()"
+>
+➕ Add Member
+</div>
+
+<div
+class="action-btn"
+onclick="openAddPayment()"
+>
+💰 Add Payment
+</div>
+
+<div
+class="action-btn"
+onclick="openNotice()"
+>
+📢 Publish Notice
+</div>
+
+<div
+class="action-btn"
+onclick="generateIdCard()"
+>
+🪪 Generate ID Card
+</div>
+
+<div
+class="action-btn"
+onclick="generatePdf()"
+>
+
+📄 Generate PDF
+
+</div>
+</div>
+</div>
+
+
+<!-- SEARCH -->
+
+<div class="section">
+<h2>Search Member</h2>
+<div
+id="searchResult"
+style="margin-top:20px;"
+>
+</div>
+<div class="search-box">
+
+<input
+type="text"
+id="searchMemberId"
+placeholder="Enter Member ID"
+>
+
+<button onclick="searchMember()">
+Search
+</button>
+
+<div id="searchResult"></div>
+
+</div>
+
+</div>
+
+<!-- RECENT PAYMENTS -->
+
+<div class="section">
+    <h2>Recent Payments</h2>
+    <div id="recentPayments">
+        Loading...
+    </div>
+
+    <div class="table-container">
+        <table class="payment-table">
+            <thead>
+                <tr>
+                    <th>Receipt No</th>
+                    <th>Member ID</th>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="paymentTable">
+                <!-- এখানে ডাইনামিক টেবিল রো যোগ হবে -->
+            </tbody>
+        </table>
+    </div>
+<!-- -------- ------------- -->
+<!-- MEMBERS SECTION -->
+<!-- ---------------------- -->
+ 
 <div class="section" id="membersSection">
 <h2>
 👥 Members List
@@ -567,170 +709,8 @@ Loading...
 </table>
 </div>
 </div>
+
  
-
-<!-- TOPBAR -->
-
-<div class="topbar">
-
-<h1>EverGreen Admin Dashboard</h1>
-
-<button
-class="logout-btn"
-onclick="logout()"
->
-
-Logout
-
-</button>
-
-</div>
-
-<!-- CARDS -->
-
-<div class="cards">
-
-<div class="card">
-
-<h3>Total Members</h3>
-
-<h2 id="totalMembers">0</h2>
-
-</div>
-
-<div class="card">
-
-<h3>Total Collection</h3>
-
-<h2 id="totalCollection">৳ 0</h2>
-
-</div>
-
-<div class="card">
-
-<h3>Total Payments</h3>
-
-<h2 id="totalPayments">0</h2>
-
-</div>
-
-<div class="card">
-
-<h3>Active Members</h3>
-
-<h2 id="activeMembers">0</h2>
-
-</div>
-
-</div>
-
-<!-- QUICK ACTIONS -->
-
-
-<div class="section">
-<h2>Quick Actions</h2>
-<div class="quick-actions">
-
-<div
-class="action-btn"
-onclick="openAddMember()"
->
-
-➕ Add Member
-
-</div>
-
-<div
-class="action-btn"
-onclick="openAddPayment()"
->
-
-💰 Add Payment
-</div>
-
-<div
-class="action-btn"
-onclick="openNotice()"
->
-
-📢 Publish Notice
-
-</div>
-
-<div
-class="action-btn"
-onclick="generateIdCard()"
->
-
-🪪 Generate ID Card
-
-</div>
-
-<div
-class="action-btn"
-onclick="generatePdf()"
->
-
-📄 Generate PDF
-
-</div>
-</div>
-</div>
-
-
-<!-- SEARCH -->
-
-<div class="section">
-
-<h2>Search Member</h2>
-<div
-id="searchResult"
-style="margin-top:20px;"
->
-</div>
-<div class="search-box">
-
-<input
-type="text"
-id="searchMemberId"
-placeholder="Enter Member ID"
->
-
-<button onclick="searchMember()">
-Search
-</button>
-
-<div id="searchResult"></div>
-
-</div>
-
-</div>
-
-<!-- RECENT PAYMENTS -->
-
-<!-- RECENT PAYMENTS -->
-<div class="section">
-    <h2>Recent Payments</h2>
-    <div id="recentPayments">
-        Loading...
-    </div>
-
-    <div class="table-container">
-        <table class="payment-table">
-            <thead>
-                <tr>
-                    <th>Receipt No</th>
-                    <th>Member ID</th>
-                    <th>Name</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="paymentTable">
-                <!-- এখানে ডাইনামিক টেবিল রো যোগ হবে -->
-            </tbody>
-        </table>
-    </div>
 </div>
 
 <script>
