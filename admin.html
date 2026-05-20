@@ -654,8 +654,12 @@ try{
 
 const response =
 await fetch(
-`${API_URL}?action=dashboard`
+
+API_URL +
+"?action=dashboard"
+
 );
+ 
 
 const data =
 await response.json();
