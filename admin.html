@@ -365,7 +365,17 @@ padding:4px 10px;
 border-radius:20px;
 font-size:12px;
 }
- 
+
+ .sidebar ul li a.active{
+background:#ff0000;
+color:#fff;
+border-radius:10px;
+}
+
+.sidebar ul li a{
+transition:0.3s;
+}
+
 </style>
 
 </head>
@@ -1320,7 +1330,33 @@ AUTO LOAD
 
 loadRecentPayments();
 
-loadRecentPayments();
+const sidebarLinks =
+document.querySelectorAll(
+".sidebar ul li a"
+);
+
+sidebarLinks.forEach(link => {
+
+link.addEventListener(
+"click",
+function(){
+
+sidebarLinks.forEach(item => {
+
+item.classList.remove(
+"active"
+);
+
+});
+
+this.classList.add(
+"active"
+);
+
+}
+);
+
+});
 
 
 
