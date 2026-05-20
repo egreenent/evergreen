@@ -1179,93 +1179,48 @@ alert(
  /* =========================
 LOAD RECENT PAYMENTS
 ========================= */
-async function loadRecentPayments(){
+async function loadRecentPayments() {
+    try {
+        const response = await fetch(API_URL + "?action=recentPayments");
+        const text = await response.text();
 
-try{
+        // চেক করি যে response text আসলে JSON কিনা
+        let payments;
+        try {
+            payments = JSON.parse(text);
+        } catch (parseError) {
+            console.error("Failed to parse JSON", parseError);
+            document.getElementById("recentPayments").innerHTML = "Invalid Payment Data";
+            return;
+        }
 
-const response =
-await fetch(
+        if (!Array.isArray(payments)) {
+            document.getElementById("recentPayments").innerHTML = "Invalid Payment Data";
+            return;
+        }
 
-API_URL +
-"?action=recentPayments"
+        let html = "";
+        payments.forEach(payment => {
+            html += `
+                <div class="payment-item">
+                    <div>
+                        <h4>${payment.memberId}</h4>
+                        <p>${payment.month}</p>
+                    </div>
+                    <div>
+                        <p>৳ ${payment.amount}</p>
+                        <span>${payment.status}</span>
+                    </div>
+                </div>
+            `;
+        });
 
-);
+        document.getElementById("recentPayments").innerHTML = html;
 
-const text =
-await response.text();
-
-console.log(text);
-
-const payments =
-JSON.parse(text);
-
-if(!Array.isArray(payments)){
-
-document.getElementById(
-"recentPayments"
-).innerHTML =
-
-"Invalid Payment Data";
-
-return;
-
-}
-
-let html = "";
-
-payments.forEach(payment => {
-
-html += `
-
-<div class="payment-item">
-
-<div>
-
-<h4>
-${payment.memberId}
-</h4>
-
-<p>
-${payment.month}
-</p>
-
-</div>
-
-<div>
-
-<p>
-৳ ${payment.amount}
-</p>
-
-<span>
-${payment.status}
-</span>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-document.getElementById(
-"recentPayments"
-).innerHTML =
-html;
-
-}catch(error){
-
-console.log(error);
-
-document.getElementById(
-"recentPayments"
-).innerHTML =
-
-"Failed To Load Payments";
-
-}
-
+    } catch (error) {
+        console.error("Invalid Payment Data", error);
+        document.getElementById("recentPayments").innerHTML = "Failed To Load Payments";
+    }
 }
 
 loadRecentPayments();
