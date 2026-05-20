@@ -462,6 +462,15 @@ display:none;
 display:block;
 }
 
+.page-section{
+display:none;
+width:100%;
+}
+
+.active-section{
+display:block;
+}
+ 
 </style>
 
 </head>
@@ -1751,11 +1760,11 @@ sectionId
 DEFAULT SECTION
 ========================= */
 
-showSection(
-"dashboardSection"
-);
-
 function showSection(sectionId){
+
+/* =========================
+HIDE ALL SECTIONS
+========================= */
 
 const sections =
 document.querySelectorAll(
@@ -1764,17 +1773,24 @@ document.querySelectorAll(
 
 sections.forEach(section => {
 
-section.style.display =
-"none";
+section.classList.remove(
+"active-section"
+);
 
 });
 
+/* =========================
+SHOW SELECTED SECTION
+========================= */
+
 document.getElementById(
 sectionId
-).style.display =
-"block";
+).classList.add(
+"active-section"
+);
 
 }
+
 
 /* =========================
 DEFAULT SECTION
@@ -1783,6 +1799,7 @@ DEFAULT SECTION
 showSection(
 "dashboardSection"
 );
+```
  
  
 </script>
