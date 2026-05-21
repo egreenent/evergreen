@@ -738,28 +738,22 @@ align-items:flex-start;
 
 <script>
 
-const members = [
-{
-memberId:'ege0101',
-name:'Tariquzzaman',
-phone:'01722178888',
-status:'Active',
-photo:'https://i.imgur.com/6VBx3io.png',
-email:'sonyzzaman@gmail.com',
-payment:'৳ 2000',
-due:'৳ 0'
-},
-{
-memberId:'ege0102',
-name:'Solayman Masud',
-phone:'01717073761',
-status:'Active',
-photo:'https://i.imgur.com/6VBx3io.png',
-email:'example@gmail.com',
-payment:'৳ 1000',
-due:'৳ 0'
+let members = [];
+
+async function fetchMembers(){
+
+try{
+
+const response = await fetch(
+API_URL + '?action=getMembers'
+);
+
+members = await response.json();
+loadMembers();
+}catch(error){
+console.log(error);
 }
-];
+}
 
 const payments = [
 {
@@ -1038,7 +1032,7 @@ row.style.display = 'none';
 
 /* AUTO LOAD */
 
-loadMembers();
+fetchMembers();
 loadPayments();
 
 </script>
