@@ -870,27 +870,119 @@ console.log(error);
 DUMMY PAYMENTS
 ========================= */
 
-const payments = [
+async function loadPayments(){
 
-{
-receipt:'RCPT001',
-memberId:'ege0101',
-name:'Tariquzzaman',
-amount:'2000',
-status:'Paid',
-month:'May'
-},
+try{
 
-{
-receipt:'RCPT002',
-memberId:'ege0102',
-name:'Solayman Masud',
-amount:'2000',
-status:'Paid',
-month:'June'
+const response =
+await fetch(
+API_URL + '?action=recentPayments'
+);
+
+const payments =
+await response.json();
+
+let recentHtml = '';
+let tableHtml = '';
+
+let totalCollection = 0;
+
+payments.forEach(payment => {
+
+totalCollection +=
+Number(payment.amount);
+
+
+recentHtml += `
+
+<div class="payment-item">
+
+<div>
+
+<h4>${payment.memberId}</h4>
+
+<p>${payment.month}</p>
+
+</div>
+
+<div>
+
+<p>
+৳ ${payment.amount}
+</p>
+
+<span class="status active-status">
+
+${payment.status}
+
+</span>
+
+</div>
+
+</div>
+
+`;
+
+
+tableHtml += `
+
+<tr>
+
+<td>${payment.receipt}</td>
+
+<td>${payment.memberId}</td>
+
+<td>${payment.name}</td>
+
+<td>
+৳ ${payment.amount}
+</td>
+
+<td>
+
+<span class="status active-status">
+
+${payment.status}
+
+</span>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+
+document.getElementById(
+'recentPayments'
+).innerHTML = recentHtml;
+
+
+document.getElementById(
+'paymentTable'
+).innerHTML = tableHtml;
+
+
+/* DASHBOARD */
+
+document.getElementById(
+'totalCollection'
+).innerText =
+'৳ ' + totalCollection;
+
+
+document.getElementById(
+'totalPayments'
+).innerText =
+payments.length;
+
+}catch(error){
+
+console.log(error);
 }
-
-];
+}
 
 
 /* =========================
