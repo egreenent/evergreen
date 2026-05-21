@@ -480,20 +480,12 @@ align-items:flex-start;
 <h2 id="totalMembers">0</h2>
 </div>
 
-<div class="card">
-<h3>Total Collection</h3>
-<h2 id="totalCollection">৳ 4000</h2>
-</div>
+<h2 id="totalCollection">৳ 0</h2>
 
-<div class="card">
-<h3>Total Payments</h3>
-<h2 id="totalPayments">2</h2>
-</div>
+<h2 id="totalPayments">0</h2>
 
-<div class="card">
-<h3>Active Members</h3>
-<h2 id="activeMembers">4</h2>
-</div>
+<h2 id="activeMembers">0</h2>
+
 
 </div>
 
@@ -748,34 +740,24 @@ async function fetchMembers(){
 try{
 
 const response = await fetch(
-API_URL + '?action=getMembers'
+API_URL + '?action=members'
 );
 
 members = await response.json();
+
+console.log(members);
+
 loadMembers();
+
 }catch(error){
+
 console.log(error);
-}
+
 }
 
-const payments = [
-{
-receipt:'RCPT001',
-memberId:'ege0101',
-name:'Tariquzzaman',
-amount:'2000',
-status:'Paid',
-month:'May'
-},
-{
-receipt:'RCPT002',
-memberId:'ege0102',
-name:'Solayman Masud',
-amount:'2000',
-status:'Paid',
-month:'June'
 }
-];
+
+const payments = [ ... ];
 
 /* SECTION */
 
