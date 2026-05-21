@@ -2,13 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EverGreen Admin Dashboard</title>
 
-<link
-href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-rel="stylesheet"
-/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 
@@ -31,32 +28,31 @@ min-height:100vh;
 width:260px;
 background:#0b6b2d;
 color:#fff;
-padding:30px 20px;
+padding:25px 18px;
 position:fixed;
-height:100vh;
-overflow:auto;
 left:0;
 top:0;
+height:100vh;
+overflow-y:auto;
 }
 
 .logo{
 text-align:center;
-padding-bottom:30px;
+margin-bottom:35px;
 }
 
-.logo-img{
-width:80px;
-height:80px;
+.logo img{
+width:85px;
+height:85px;
 border-radius:50%;
-object-fit:cover;
 background:#fff;
 padding:5px;
-margin-bottom:10px;
+margin-bottom:12px;
 }
 
 .logo h2{
-font-size:24px;
-line-height:1.4;
+font-size:28px;
+line-height:1.3;
 }
 
 .logo span{
@@ -67,33 +63,33 @@ opacity:0.8;
 .menu{
 display:flex;
 flex-direction:column;
-gap:12px;
+gap:10px;
 }
 
 .menu a{
 text-decoration:none;
 color:#fff;
 padding:14px 18px;
-border-radius:12px;
-transition:0.3s;
+border-radius:14px;
 font-weight:500;
-display:block;
+transition:0.3s;
 }
 
-.menu a:hover,
-.menu a.active{
+.menu a:hover{
 background:#16913f;
+}
+
+.menu a.active{
+background:#ff2e2e;
 }
 
 /* MAIN */
 
 .main{
 margin-left:260px;
-padding:25px;
 width:calc(100% - 260px);
+padding:25px;
 }
-
-/* TOPBAR */
 
 .topbar{
 background:#0b6b2d;
@@ -107,45 +103,30 @@ margin-bottom:25px;
 }
 
 .topbar h1{
-font-size:36px;
+font-size:42px;
 }
 
 .logout-btn{
 background:#ff2e2e;
 color:#fff;
 border:none;
-padding:14px 25px;
+padding:14px 22px;
 border-radius:12px;
 cursor:pointer;
 font-weight:600;
 }
 
-/* SECTION */
-
-.section{
-background:#fff;
-padding:25px;
-border-radius:20px;
-margin-bottom:25px;
-box-shadow:0 4px 12px rgba(0,0,0,0.08);
-}
-
-.section h2{
-margin-bottom:20px;
-color:#0b6b2d;
-}
-
-/* PAGE SYSTEM */
+/* PAGE SECTION */
 
 .page-section{
 display:none;
 }
 
-.page-section.active-section{
+.active-section{
 display:block;
 }
 
-/* CARDS */
+/* CARD */
 
 .cards{
 display:grid;
@@ -157,22 +138,37 @@ margin-bottom:25px;
 .card{
 background:#fff;
 padding:25px;
-border-radius:18px;
-box-shadow:0 4px 12px rgba(0,0,0,0.08);
+border-radius:20px;
+box-shadow:0 4px 14px rgba(0,0,0,0.08);
 border-left:5px solid #0b6b2d;
 }
 
 .card h3{
-font-size:18px;
 margin-bottom:15px;
+color:#444;
 }
 
 .card h2{
-font-size:36px;
+font-size:40px;
 color:#0b6b2d;
 }
 
-/* QUICK ACTION */
+/* SECTION */
+
+.section{
+background:#fff;
+padding:25px;
+border-radius:20px;
+margin-bottom:25px;
+box-shadow:0 4px 14px rgba(0,0,0,0.08);
+}
+
+.section h2{
+margin-bottom:20px;
+color:#0b6b2d;
+}
+
+/* QUICK ACTIONS */
 
 .quick-actions{
 display:grid;
@@ -181,14 +177,13 @@ gap:18px;
 }
 
 .action-btn{
-background:#f4f7f5;
-padding:25px;
-border-radius:18px;
+background:#f3f5f4;
+padding:22px;
 text-align:center;
+border-radius:16px;
 font-weight:600;
 cursor:pointer;
 transition:0.3s;
-border:2px solid #e5e5e5;
 }
 
 .action-btn:hover{
@@ -198,13 +193,28 @@ color:#fff;
 
 /* SEARCH */
 
-.search-input{
-width:100%;
-padding:14px;
+.search-box{
+display:flex;
+gap:12px;
+margin-bottom:20px;
+}
+
+.search-box input{
+flex:1;
+padding:15px;
 border-radius:12px;
 border:1px solid #ccc;
 font-size:16px;
-margin-bottom:15px;
+}
+
+.search-box button{
+background:#0b6b2d;
+color:#fff;
+border:none;
+padding:0 25px;
+border-radius:12px;
+cursor:pointer;
+font-weight:600;
 }
 
 /* TABLE */
@@ -213,25 +223,47 @@ margin-bottom:15px;
 overflow-x:auto;
 }
 
-.payment-table{
+.table{
 width:100%;
 border-collapse:collapse;
 }
 
-.payment-table thead{
+.table thead{
 background:#0b6b2d;
 color:#fff;
 }
 
-.payment-table th,
-.payment-table td{
+.table th,
+.table td{
 padding:15px;
 text-align:left;
 }
 
-.payment-table tbody tr{
+.table tbody tr{
 border-bottom:1px solid #eee;
 }
+
+/* STATUS */
+
+.status{
+padding:6px 12px;
+border-radius:10px;
+font-size:14px;
+font-weight:600;
+display:inline-block;
+}
+
+.active-status{
+background:#d4f5dd;
+color:#0b6b2d;
+}
+
+.due-status{
+background:#ffe0e0;
+color:#c70000;
+}
+
+/* MEMBER */
 
 .member-photo{
 width:45px;
@@ -240,33 +272,132 @@ border-radius:50%;
 object-fit:cover;
 }
 
-.status{
-padding:6px 12px;
-border-radius:8px;
-font-size:14px;
-font-weight:600;
-display:inline-block;
-background:#d4f5dd;
-color:#0b6b2d;
+.action-buttons{
+display:flex;
+gap:8px;
 }
+
+.small-btn{
+padding:8px 12px;
+border:none;
+border-radius:8px;
+font-size:12px;
+font-weight:600;
+cursor:pointer;
+}
+
+.view-btn{
+background:#0b6b2d;
+color:#fff;
+}
+
+.edit-btn{
+background:#ff9800;
+color:#fff;
+}
+
+.delete-btn{
+background:#ff2e2e;
+color:#fff;
+}
+
+/* PAYMENT ITEM */
 
 .payment-item{
 display:flex;
 justify-content:space-between;
 align-items:center;
 padding:15px;
-margin-bottom:10px;
+margin-bottom:12px;
+border-radius:14px;
 background:#fff;
-border-radius:10px;
-box-shadow:0 2px 10px rgba(0,0,0,0.08);
+box-shadow:0 2px 10px rgba(0,0,0,0.06);
 }
 
-.payment-item span{
-background:#0f766e;
-color:#fff;
-padding:4px 10px;
+/* NOTICE */
+
+.notice-card{
+background:#f7fff8;
+border-left:5px solid #0b6b2d;
+padding:18px;
+border-radius:12px;
+margin-bottom:15px;
+}
+
+/* ANALYTICS */
+
+.analytics-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.analytics-box{
+background:#fff;
+padding:25px;
+border-radius:18px;
+box-shadow:0 4px 14px rgba(0,0,0,0.08);
+}
+
+/* MODAL */
+
+.modal{
+display:none;
+position:fixed;
+z-index:999;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+background:#fff;
+padding:30px;
 border-radius:20px;
-font-size:12px;
+width:90%;
+max-width:600px;
+max-height:90vh;
+overflow-y:auto;
+}
+
+.close-btn{
+float:right;
+font-size:25px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.form-group{
+margin-bottom:15px;
+}
+
+.form-group label{
+display:block;
+margin-bottom:6px;
+font-weight:600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+width:100%;
+padding:14px;
+border-radius:10px;
+border:1px solid #ccc;
+}
+
+.submit-btn{
+background:#0b6b2d;
+color:#fff;
+border:none;
+padding:14px 22px;
+border-radius:10px;
+font-weight:600;
+cursor:pointer;
 }
 
 /* RESPONSIVE */
@@ -289,73 +420,9 @@ flex-direction:column;
 gap:15px;
 align-items:flex-start;
 }
+
 }
 
-/* SEARCH */
-
-.search-box{
-display:flex;
-gap:15px;
-flex-wrap:wrap;
-}
-
-.search-box input{
-flex:1;
-padding:14px;
-border-radius:12px;
-border:1px solid #ccc;
-font-size:16px;
-}
-
-.search-box button{
-background:#0b6b2d;
-color:#fff;
-border:none;
-padding:14px 30px;
-border-radius:12px;
-cursor:pointer;
-font-weight:600;
-}
-
- .modal{
-
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:
-rgba(0,0,0,0.5);
-z-index:999;
-}
-
-.modal-content{
-background:#fff;
-width:90%;
-max-width:400px;
-margin:50px auto;
-padding:20px;
-border-radius:10px;
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.modal-content input{
-padding:10px;
-font-size:16px;
-border:1px solid #ccc;
-border-radius:6px;
-}
-
-.modal-content button{
-padding:12px;
-background:#0f766e;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
 </style>
 </head>
 
@@ -366,38 +433,31 @@ cursor:pointer;
 <div class="sidebar">
 
 <div class="logo">
-<img src="logo.png" alt="EverGreen Logo" class="logo-img"/>
-<h2>EverGreen<br>Enterprise</h2>
+<img src="logo.png" alt="Logo">
+<h2>EverGreen Enterprise</h2>
 <span>Admin Panel</span>
 </div>
 
 <div class="menu">
 
-<a href="#" onclick="showSection('dashboardSection', this)" class="active">
-🏠 Dashboard
-</a>
+<a href="#" onclick="showSection('dashboardSection', this)" class="active">🏠 Dashboard</a>
 
-<a href="#" onclick="showSection('membersSection', this)">
-👥 Members
-</a>
+<a href="#" onclick="showSection('membersSection', this)">👥 Members</a>
 
-<a href="#" onclick="showSection('paymentsSection', this)">
-💰 Payments
-</a>
+<a href="#" onclick="showSection('paymentsSection', this)">💰 Payments</a>
 
-<a href="#" onclick="showSection('noticeSection', this)">
-📢 Notices
-</a>
+<a href="#" onclick="showSection('noticesSection', this)">📢 Notices</a>
 
-<a href="#" onclick="showSection('settingsSection', this)">
-⚙ Settings
-</a>
+<a href="#" onclick="showSection('downloadsSection', this)">📥 Downloads</a>
 
-<a href="#" onclick="logout()">
-🚪 Logout
-</a>
+<a href="#" onclick="showSection('analyticsSection', this)">📊 Analytics</a>
+
+<a href="#" onclick="showSection('settingsSection', this)">⚙ Settings</a>
+
+<a href="#" onclick="logout()">🚪 Logout</a>
 
 </div>
+
 </div>
 
 <!-- MAIN -->
@@ -406,7 +466,7 @@ cursor:pointer;
 
 <div class="topbar">
 <h1>EverGreen Admin Dashboard</h1>
-<button class="logout-btn" onclick="logout()">Logout</button>
+<button class="logout-btn">Logout</button>
 </div>
 
 <!-- DASHBOARD -->
@@ -417,105 +477,64 @@ cursor:pointer;
 
 <div class="card">
 <h3>Total Members</h3>
-<h2 id="totalMembers">0</h2>
+<h2 id="totalMembers">4</h2>
 </div>
 
 <div class="card">
 <h3>Total Collection</h3>
-<h2 id="totalCollection">৳ 0</h2>
+<h2 id="totalCollection">৳ 4000</h2>
 </div>
 
 <div class="card">
 <h3>Total Payments</h3>
-<h2 id="totalPayments">0</h2>
+<h2 id="totalPayments">2</h2>
 </div>
 
 <div class="card">
 <h3>Active Members</h3>
-<h2 id="activeMembers">0</h2>
+<h2 id="activeMembers">4</h2>
 </div>
 
 </div>
-
-<div class="section">
-<!-- QUICK ACTIONS -->
-
 
 <div class="section">
 <h2>Quick Actions</h2>
+
 <div class="quick-actions">
 
-<div
-class="action-btn"
-onclick="openAddMember()"
->
-➕ Add Member
-</div>
+<div class="action-btn" onclick="openAddMember()">➕ Add Member</div>
 
-<div
-class="action-btn"
-onclick="openAddPayment()"
->
-💰 Add Payment
-</div>
+<div class="action-btn" onclick="openAddPayment()">💰 Add Payment</div>
 
-<div
-class="action-btn"
-onclick="openNotice()"
->
-📢 Publish Notice
-</div>
+<div class="action-btn" onclick="openNoticeModal()">📢 Publish Notice</div>
 
-<div
-class="action-btn"
-onclick="generateIdCard()"
->
-🪪 Generate ID Card
-</div>
+<div class="action-btn" onclick="generateIdCard()">🪪 Generate ID Card</div>
 
-<div
-class="action-btn"
-onclick="generatePdf()"
->
-
-📄 Generate PDF
+<div class="action-btn" onclick="generatePDF()">📄 Generate PDF</div>
 
 </div>
-</div>
+
 </div>
 
-
-<!-- Search Member -->
+<div class="section">
+<h2>Search Member</h2>
 
 <div class="search-box">
-
-  <input
-    type="text"
-    id="searchMemberId"
-    placeholder="Enter Member ID"
-  >
-
-  <button onclick="searchMember()">
-    Search
-  </button>
-
+<input type="text" id="searchMemberId" placeholder="Enter Member ID">
+<button onclick="searchMember()">Search</button>
 </div>
 
 <div id="searchResult"></div>
- </div>
 
 </div>
-
 
 <div class="section">
 <h2>Recent Payments</h2>
 
-<div id="recentPayments">
-Loading...
-</div>
+<div id="recentPayments"></div>
 
 <div class="table-container">
-<table class="payment-table">
+<table class="table">
 <thead>
 <tr>
 <th>Receipt No</th>
@@ -540,16 +559,12 @@ Loading...
 <div class="section">
 <h2>👥 Members List</h2>
 
-<input
-class="search-input"
-type="text"
-id="memberSearch"
-placeholder="Search Member..."
-/>
+<div class="search-box">
+<input type="text" id="memberSearch" placeholder="Search Member...">
+</div>
 
 <div class="table-container">
-
-<table class="payment-table">
+<table class="table">
 <thead>
 <tr>
 <th>Photo</th>
@@ -557,17 +572,11 @@ placeholder="Search Member..."
 <th>Name</th>
 <th>Phone</th>
 <th>Status</th>
+<th>Action</th>
 </tr>
 </thead>
-
-<tbody id="membersTable">
-<tr>
-<td colspan="5">Loading...</td>
-</tr>
-</tbody>
-
+<tbody id="membersTable"></tbody>
 </table>
-
 </div>
 
 </div>
@@ -577,42 +586,201 @@ placeholder="Search Member..."
 <!-- PAYMENTS -->
 
 <div class="page-section" id="paymentsSection">
+
 <div class="section">
-<h2>💰 Payments</h2>
-<p>Payments Panel</p>
+<h2>Add Payment</h2>
+
+<div class="form-group">
+<label>Member ID</label>
+<input type="text" id="paymentMemberId">
 </div>
+
+<div class="form-group">
+<label>Member Name</label>
+<input type="text" id="paymentMemberName" readonly>
+</div>
+
+<div class="form-group">
+<label>Month</label>
+<select id="paymentMonth">
+<option>January</option>
+<option>February</option>
+<option>March</option>
+<option>April</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Amount</label>
+<input type="number" id="paymentAmount">
+</div>
+
+<div class="form-group">
+<label>Fine</label>
+<input type="number" id="paymentFine">
+</div>
+
+<div class="form-group">
+<label>Payment Date</label>
+<input type="date" id="paymentDate">
+</div>
+
+<div class="form-group">
+<label>Status</label>
+<select id="paymentStatus">
+<option>Paid</option>
+<option>Due</option>
+</select>
+</div>
+
+<button class="submit-btn" onclick="savePayment()">Save Payment</button>
+
+</div>
+
 </div>
 
 <!-- NOTICES -->
 
-<div class="page-section" id="noticeSection">
+<div class="page-section" id="noticesSection">
+
 <div class="section">
 <h2>📢 Notices</h2>
-<p>Notice Panel</p>
+
+<div class="notice-card">
+<h3>Monthly Meeting Notice</h3>
+<p>All members are requested to attend the monthly meeting.</p>
 </div>
+
+<div class="notice-card">
+<h3>Payment Reminder</h3>
+<p>Please complete your monthly payment before 10th.</p>
+</div>
+
+</div>
+
+</div>
+
+<!-- DOWNLOADS -->
+
+<div class="page-section" id="downloadsSection">
+
+<div class="section">
+<h2>📥 Downloads</h2>
+
+<div class="quick-actions">
+<div class="action-btn">Download ID Card</div>
+<div class="action-btn">Download PDF</div>
+<div class="action-btn">Download Certificate</div>
+</div>
+
+</div>
+
+</div>
+
+<!-- ANALYTICS -->
+
+<div class="page-section" id="analyticsSection">
+
+<div class="analytics-grid">
+
+<div class="analytics-box">
+<h3>Monthly Collection</h3>
+<h2>৳ 4000</h2>
+</div>
+
+<div class="analytics-box">
+<h3>Due Members</h3>
+<h2>0</h2>
+</div>
+
+<div class="analytics-box">
+<h3>Active vs Due</h3>
+<h2>4 / 0</h2>
+</div>
+
+</div>
+
 </div>
 
 <!-- SETTINGS -->
 
 <div class="page-section" id="settingsSection">
+
 <div class="section">
 <h2>⚙ Settings</h2>
-<p>Settings Panel</p>
-</div>
+
+<div class="form-group">
+<label>Organization Name</label>
+<input type="text" value="EverGreen Enterprise">
 </div>
 
+<div class="form-group">
+<label>Admin Email</label>
+<input type="email" value="admin@example.com">
+</div>
+
+<button class="submit-btn">Save Settings</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- MEMBER MODAL -->
+
+<div class="modal" id="memberModal">
+<div class="modal-content">
+<span class="close-btn" onclick="closeModal()">&times;</span>
+<div id="modalContent"></div>
+</div>
 </div>
 
 <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
-
-function logout(){
-localStorage.clear();
-window.location.href = "login.html";
+const members = [
+{
+memberId:'ege0101',
+name:'Tariquzzaman',
+phone:'01722178888',
+status:'Active',
+photo:'https://i.imgur.com/6VBx3io.png',
+email:'sonyzzaman@gmail.com',
+payment:'৳ 2000',
+due:'৳ 0'
+},
+{
+memberId:'ege0102',
+name:'Solayman Masud',
+phone:'01717073761',
+status:'Active',
+photo:'https://i.imgur.com/6VBx3io.png',
+email:'example@gmail.com',
+payment:'৳ 1000',
+due:'৳ 0'
 }
+];
 
-/* SECTION SYSTEM */
+const payments = [
+{
+receipt:'RCPT001',
+memberId:'ege0101',
+name:'Tariquzzaman',
+amount:'2000',
+status:'Paid',
+month:'May'
+},
+{
+receipt:'RCPT002',
+memberId:'ege0102',
+name:'Solayman Masud',
+amount:'2000',
+status:'Paid',
+month:'June'
+}
+];
+
+/* SECTION */
 
 function showSection(sectionId, element){
 
@@ -621,61 +789,20 @@ sections.forEach(section => {
 section.classList.remove('active-section');
 });
 
-document.getElementById(sectionId)
-.classList.add('active-section');
+document.getElementById(sectionId).classList.add('active-section');
 
 const links = document.querySelectorAll('.menu a');
 links.forEach(link => {
 link.classList.remove('active');
 });
 
-if(element){
 element.classList.add('active');
-}
-
-}
-
-/* DASHBOARD */
-
-async function loadDashboardStats(){
-
-try{
-
-const response = await fetch(
-API_URL + '?action=dashboard'
-);
-
-const data = await response.json();
-
-if(data){
-
-document.getElementById('totalMembers').innerText = data.totalMembers || 0;
-
-document.getElementById('totalCollection').innerText = '৳ ' + (data.totalCollection || 0);
-
-document.getElementById('totalPayments').innerText = data.totalPayments || 0;
-
-document.getElementById('activeMembers').innerText = data.activeMembers || 0;
-
-}
-
-}catch(error){
-console.log(error);
-}
 
 }
 
 /* MEMBERS */
 
-async function loadMembers(){
-
-try{
-
-const response = await fetch(
-API_URL + '?action=members'
-);
-
-const members = await response.json();
+function loadMembers(){
 
 let html = '';
 
@@ -683,13 +810,18 @@ members.forEach(member => {
 
 html += `
 <tr>
-<td>
-<img src="${member.photo}" class="member-photo"/>
-</td>
+<td><img src="${member.photo}" class="member-photo"></td>
 <td>${member.memberId}</td>
 <td>${member.name}</td>
 <td>${member.phone}</td>
-<td><span class="status">${member.status}</span></td>
+<td><span class="status active-status">${member.status}</span></td>
+<td>
+<div class="action-buttons">
+<button class="small-btn view-btn" onclick="viewMember('${member.memberId}')">View</button>
+<button class="small-btn edit-btn">Edit</button>
+<button class="small-btn delete-btn">Suspend</button>
+</div>
+</td>
 </tr>
 `;
 
@@ -697,15 +829,36 @@ html += `
 
 document.getElementById('membersTable').innerHTML = html;
 
-}catch(error){
+}
 
-console.log(error);
+/* SEARCH MEMBER */
 
-document.getElementById('membersTable').innerHTML = `
-<tr>
-<td colspan="5">Failed To Load Members</td>
-</tr>
+function searchMember(){
+
+const memberId = document.getElementById('searchMemberId').value;
+
+const member = members.find(m => m.memberId === memberId);
+
+if(member){
+
+document.getElementById('searchResult').innerHTML = `
+<div style="display:flex;gap:20px;align-items:center;">
+<img src="${member.photo}" class="member-photo" style="width:80px;height:80px;">
+<div>
+<h3>${member.name}</h3>
+<p>Member ID: ${member.memberId}</p>
+<p>Phone: ${member.phone}</p>
+<p>Email: ${member.email}</p>
+<p>Status: ${member.status}</p>
+<p>Total Payment: ${member.payment}</p>
+<p>Due: ${member.due}</p>
+</div>
+</div>
 `;
+
+}else{
+
+document.getElementById('searchResult').innerHTML = 'Member Not Found';
 
 }
 
@@ -713,22 +866,14 @@ document.getElementById('membersTable').innerHTML = `
 
 /* PAYMENTS */
 
-async function loadRecentPayments(){
+function loadPayments(){
 
-try{
-
-const response = await fetch(
-API_URL + '?action=recentPayments'
-);
-
-const payments = await response.json();
-
-let html = '';
+let recentHtml = '';
 let tableHtml = '';
 
-payments.forEach((payment,index) => {
+payments.forEach(payment => {
 
-html += `
+recentHtml += `
 <div class="payment-item">
 <div>
 <h4>${payment.memberId}</h4>
@@ -736,524 +881,125 @@ html += `
 </div>
 <div>
 <p>৳ ${payment.amount}</p>
-<span>${payment.status}</span>
+<span class="status active-status">${payment.status}</span>
 </div>
 </div>
 `;
 
 
- tableHtml += `
+tableHtml += `
 <tr>
-<td>RCPT00${index + 1}</td>
+<td>${payment.receipt}</td>
 <td>${payment.memberId}</td>
 <td>${payment.name}</td>
 <td>৳ ${payment.amount}</td>
-<td><span class="status">${payment.status}</span></td>
+<td><span class="status active-status">${payment.status}</span></td>
 </tr>
 `;
 
 });
 
 
-document.getElementById('recentPayments').innerHTML = html;
+document.getElementById('recentPayments').innerHTML = recentHtml;
 
 document.getElementById('paymentTable').innerHTML = tableHtml;
 
-}catch(error){
-console.log(error);
 }
 
+/* QUICK ACTION */
+
+function openAddMember(){
+showSection('membersSection', document.querySelectorAll('.menu a')[1]);
 }
 
-/* AUTO LOAD */
-
-loadDashboardStats();
-loadMembers();
-loadRecentPayments();
-
-/* =========================
-SEARCH MEMBER
-========================= */
-
-async function searchMember(){
-
-const memberId =
-document.getElementById(
-"searchMemberId"
-).value.trim();
-
-if(!memberId){
-  alert("Enter Member ID");
-  return;
+function openAddPayment(){
+showSection('paymentsSection', document.querySelectorAll('.menu a')[2]);
 }
 
-try{
-
-const response =
-await fetch(
-
-`https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec?memberId=${memberId}`
-
-);
-
-const member =
-await response.json();
-
-if(member.error){
-
-document.getElementById(
-"searchResult"
-).innerHTML =
-
-"<p>Member Not Found</p>";
-
-return;
+function openNoticeModal(){
+showSection('noticesSection', document.querySelectorAll('.menu a')[3]);
 }
 
-document.getElementById(
-"searchResult"
-).innerHTML = `
+function generateIdCard(){
+alert('ID Card Generator Ready');
+}
 
-<div class="member-card">
+function generatePDF(){
+alert('PDF Generator Ready');
+}
 
-<img
-src="${member.photo}"
-class="member-photo"
->
+/* VIEW PROFILE */
 
-<h3>${member.name}</h3>
+function viewMember(memberId){
 
-<p>
-Member ID:
-${member.memberId}
-</p>
+const member = members.find(m => m.memberId === memberId);
 
-<p>
-Phone:
-${member.phone}
-</p>
+if(member){
 
-<p>
-Email:
-${member.email}
-</p>
-
-<p>
-Status:
-${member.membershipStatus}
-</p>
-
-<p>
-Total Payment:
-৳ ${member.totalPayment}
-</p>
-
-<p>
-Due Amount:
-৳ ${member.dueAmount}
-</p>
-
+const html = `
+<div style="text-align:center;">
+<img src="${member.photo}" style="width:100px;height:100px;border-radius:50%;margin-bottom:15px;">
+<h2>${member.name}</h2>
+<p>Phone: ${member.phone}</p>
+<p>Email: ${member.email}</p>
+<p>Payment: ${member.payment}</p>
+<p>Due: ${member.due}</p>
 </div>
 `;
 
-}catch(error){
 
-console.log(error);
+document.getElementById('modalContent').innerHTML = html;
 
-alert(
-"Search Failed"
-);
+document.getElementById('memberModal').style.display = 'flex';
 
 }
 
 }
 
-  // Add Member
-  function openAddMember() {
-    window.location.href = "membership-form.html";
-  }
-
-  // Add Payment
-  function openAddPayment() {
-    window.location.href = "payment.html";
-  }
-
-  // Publish Notice
-  function publishNotice() {
-    window.location.href = "notice.html";
-  }
-
-  // Search Member
-  function searchMember() {
-    const memberId = document
-      .getElementById("searchInput")
-      .value
-      .trim();
-
-    if (memberId === "") {
-      alert("Please enter Member ID");
-      return;
-    }
-
-    // Example redirect
-    window.location.href =
-      "member-details.html?id=" + memberId;
-  }
-<!-- #####################################################################################################################-->
-/* =========================
-ADD MEMBER
-========================= */
-
-
-function openAddMember(){
-
-document.getElementById(
-"addMemberModal"
-).style.display =
-"block";
-
+function closeModal(){
+document.getElementById('memberModal').style.display = 'none';
 }
 
-function closeAddMember(){
+/* PAYMENT AUTO */
 
-document.getElementById(
-"addMemberModal"
-).style.display =
-"none";
-
+function savePayment(){
+alert('Payment Saved Successfully');
 }
 
-/* =========================
-ADD PAYMENT
-========================= */
+/* SETTINGS */
 
-function openAddPayment(){
-
-alert(
-"Add Payment Panel Coming Soon"
-);
+function logout(){
+alert('Logout Success');
 }
 
-/* =========================
-NOTICE
-========================= */
+/* LIVE SEARCH */
 
-function openNotice(){
+document.getElementById('memberSearch').addEventListener('keyup', function(){
 
-alert(
-"Publish Notice Panel Coming Soon"
-);
+const value = this.value.toLowerCase();
+
+const rows = document.querySelectorAll('#membersTable tr');
+
+rows.forEach(row => {
+
+const text = row.innerText.toLowerCase();
+
+if(text.includes(value)){
+row.style.display = '';
+}else{
+row.style.display = 'none';
 }
 
-/* =========================
-ID CARD
-========================= */
+});
 
-function generateIdCard(){
+});
 
-alert(
-"ID Card Generator Coming Soon"
-);
-}
+/* AUTO LOAD */
 
-/* =========================
-PDF
-========================= */
+loadMembers();
+loadPayments();
 
-function generatePdf(){
-
-alert(
-"PDF Generator Coming Soon"
-);
-}
-
- function openAddMember(){
-
-document.getElementById(
-"addMemberModal"
-).style.display =
-"block";
-}
-
-function closeAddMember(){
-
-document.getElementById(
-"addMemberModal"
-).style.display =
-"none";
-}
-
-
- async function saveMember(){
-
-const memberData = {
-
-name:
-document.getElementById(
-"newMemberName"
-).value,
-
-phone:
-document.getElementById(
-"newMemberPhone"
-).value,
-
-email:
-document.getElementById(
-"newMemberEmail"
-).value,
-
-photo:
-document.getElementById(
-"newMemberPhoto"
-).value
-};
-
-try{
-const response =
-await fetch(
-
-API_URL,
-{
-
-method:"POST",
-
-body:JSON.stringify(
-memberData
-)
-}
-);
-
-const result =
-await response.json();
-
-alert(
-"Member Added Successfully\n\n" +
-"Member ID: " +
-result.memberId +
-"\nPassword: " +
-result.password
-);
-
-closeAddMember();
-}catch(error){
-console.log(error);
-
-alert(
-"Failed To Add Member"
-);
-}
-}
-
-
- /* =========================
-OPEN PAYMENT MODAL
-========================= */
-
-function openAddPayment(){
-
-document.getElementById(
-"paymentModal"
-).style.display =
-"block";
-
-}
-
-/* =========================
-CLOSE PAYMENT MODAL
-========================= */
-
-function closePaymentModal(){
-
-document.getElementById(
-"paymentModal"
-).style.display =
-"none";
-
-}
-
-/* =========================
-SAVE PAYMENT
-========================= */
-
-async function savePayment(){
-
-const paymentData = {
-
-memberId:
-document.getElementById(
-"paymentMemberId"
-).value,
-
-month:
-document.getElementById(
-"paymentMonth"
-).value,
-
-amount:
-document.getElementById(
-"paymentAmount"
-).value,
-
-fine:
-document.getElementById(
-"paymentFine"
-).value,
-
-status:
-document.getElementById(
-"paymentStatus"
-).value
-
-};
-
-try{
-
-const response =
-await fetch(
-
-API_URL,
-
-{
-
-method:"POST",
-
-body:JSON.stringify({
-
-action:"addPayment",
-
-...paymentData
-
-})
-
-}
-
-);
-
-const result =
-await response.json();
-
-alert(
-"Payment Added Successfully"
-);
-
-closePaymentModal();
-
-}catch(error){
-
-console.log(error);
-
-alert(
-"Payment Failed"
-);
-}
-}
-<!-- ====================================================================================================== -->
-
- /* =========================
-OPEN NOTICE MODAL
-========================= */
-
-function openNotice(){
-
-document.getElementById(
-"noticeModal"
-).style.display =
-"block";
-}
-
-/* =========================
-CLOSE NOTICE MODAL
-========================= */
-
-function closeNoticeModal(){
-
-document.getElementById(
-"noticeModal"
-).style.display =
-"none";
-}
-
-/* =========================
-PUBLISH NOTICE
-========================= */
-
-async function publishNotice(){
-
-const noticeData = {
-
-action:"publishNotice",
-
-title:
-document.getElementById(
-"noticeTitle"
-).value,
-
-message:
-document.getElementById(
-"noticeMessage"
-).value,
-
-status:
-document.getElementById(
-"noticeStatus"
-).value
-};
-
-try{
-
-const response =
-await fetch(
-
-API_URL,
-
-{
-
-method:"POST",
-
-body:JSON.stringify(
-noticeData
-)
-}
-);
-
-const result =
-await response.json();
-
-alert(
-"Notice Published Successfully"
-);
-
-closeNoticeModal();
-
-}catch(error){
-
-console.log(error);
-
-alert(
-"Notice Publish Failed"
-);
-}
-}
-  
 </script>
-
-
-<!-- =========================
-ADD MEMBER MODAL
-========================= -->
-
-<div id="addMemberModal" class="modal" style="display:none;">
-<div class="modal-content"><h2>Add Member</h2>
-<input type="text" id="newMemberName" placeholder="Full Name">
-<input type="text" id="newMemberPhone" placeholder="Mobile Number">
-<input type="email" id="newMemberEmail" placeholder="Email Address">
-<input type="text" id="newMemberPhoto" placeholder="Photo URL">
-
-<button onclick="saveMember()">Save Member</button>
-<button onclick="closeAddMember()">Close</button>
-</div>
-</div>
 
 </body>
 </html>
