@@ -1303,9 +1303,33 @@ AUTO LOAD
 ========================= */
 
 fetchMembers();
-
 loadPayments();
+updateDashboard();
 
+  function updateDashboard(){
+
+let totalCollection = 0;
+
+payments.forEach(payment => {
+
+totalCollection +=
+Number(payment.amount);
+
+});
+
+
+document.getElementById(
+'totalCollection'
+).innerText =
+'৳ ' + totalCollection;
+
+
+document.getElementById(
+'totalPayments'
+).innerText =
+payments.length;
+
+}
 </script>
 
 </body>
