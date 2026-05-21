@@ -869,13 +869,14 @@ console.log(error);
 /* =========================
 DUMMY PAYMENTS
 ========================= */
+let payments = [];
 
-let payments = []; 
-  
 async function loadPayments(){
 
- try{
-  
+console.log("LOAD PAYMENTS RUNNING");
+
+try{
+
 const response =
 await fetch(
 API_URL + '?action=recentPayments'
@@ -883,6 +884,8 @@ API_URL + '?action=recentPayments'
 
 payments =
 await response.json();
+
+console.log(payments);
 
 let recentHtml = '';
 let tableHtml = '';
@@ -983,8 +986,11 @@ payments.length;
 }catch(error){
 
 console.log(error);
+
 }
+
 }
+
 
 
 /* =========================
@@ -1671,6 +1677,9 @@ document.getElementById(
 payments.length;
 
 }
+
+  fetchMembers();
+  loadPayments();
 </script>
 
 <!-- ADD MEMBER MODAL -->
