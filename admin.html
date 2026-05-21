@@ -870,16 +870,18 @@ console.log(error);
 DUMMY PAYMENTS
 ========================= */
 
+let payments = []; 
+  
 async function loadPayments(){
 
-try{
-
+ try{
+  
 const response =
 await fetch(
 API_URL + '?action=recentPayments'
 );
 
-const payments =
+payments =
 await response.json();
 
 let recentHtml = '';
