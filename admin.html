@@ -741,8 +741,14 @@ align-items:flex-start;
 
 const API_URL =
 "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
-  
+
+
 let members = [];
+
+
+/* =========================
+FETCH MEMBERS
+========================= */
 
 async function fetchMembers(){
 
@@ -754,7 +760,7 @@ API_URL + '?action=members'
 
 members = await response.json();
 
-console.log(members);
+console.log("TOTAL MEMBERS:", members.length);
 
 loadMembers();
 
@@ -766,29 +772,79 @@ console.log(error);
 
 }
 
-const payments = [ ... ];
 
-/* SECTION */
+/* =========================
+DUMMY PAYMENTS
+========================= */
+
+const payments = [
+
+{
+receipt:'RCPT001',
+memberId:'ege0101',
+name:'Tariquzzaman',
+amount:'2000',
+status:'Paid',
+month:'May'
+},
+
+{
+receipt:'RCPT002',
+memberId:'ege0102',
+name:'Solayman Masud',
+amount:'2000',
+status:'Paid',
+month:'June'
+}
+
+];
+
+
+/* =========================
+SECTION SYSTEM
+========================= */
 
 function showSection(sectionId, element){
 
-const sections = document.querySelectorAll('.page-section');
+const sections =
+document.querySelectorAll('.page-section');
+
 sections.forEach(section => {
-section.classList.remove('active-section');
+
+section.classList.remove(
+'active-section'
+);
+
 });
 
-document.getElementById(sectionId).classList.add('active-section');
+document.getElementById(
+sectionId
+).classList.add(
+'active-section'
+);
 
-const links = document.querySelectorAll('.menu a');
+
+const links =
+document.querySelectorAll('.menu a');
+
 links.forEach(link => {
+
 link.classList.remove('active');
+
 });
+
+if(element){
 
 element.classList.add('active');
 
 }
 
-/* MEMBERS */
+}
+
+
+/* =========================
+LOAD MEMBERS
+========================= */
 
 function loadMembers(){
 
@@ -797,20 +853,31 @@ let html = '';
 members.forEach(member => {
 
 html += `
+
 <tr>
+
 <td>
-<img src="${member.photo}"
+
+<img
+src="${member.photo}"
 class="member-photo">
+
 </td>
 
 <td>${member.memberId}</td>
+
 <td>${member.name}</td>
+
 <td>${member.phone}</td>
 
 <td>
+
 <span class="status active-status">
+
 ${member.status}
+
 </span>
+
 </td>
 
 <td>
@@ -843,13 +910,18 @@ Suspend
 </td>
 
 </tr>
+
 `;
 
 });
 
+
 document.getElementById(
 'membersTable'
 ).innerHTML = html;
+
+
+/* DASHBOARD COUNT */
 
 document.getElementById(
 'totalMembers'
@@ -861,40 +933,85 @@ document.getElementById(
 
 }
 
-/* SEARCH MEMBER */
+
+/* =========================
+SEARCH MEMBER
+========================= */
 
 function searchMember(){
 
-const memberId = document.getElementById('searchMemberId').value;
+const memberId =
+document.getElementById(
+'searchMemberId'
+).value.trim();
 
-const member = members.find(m => m.memberId === memberId);
+
+const member =
+members.find(
+m => m.memberId === memberId
+);
+
 
 if(member){
 
-document.getElementById('searchResult').innerHTML = `
+document.getElementById(
+'searchResult'
+).innerHTML = `
+
 <div style="display:flex;gap:20px;align-items:center;">
-<img src="${member.photo}" class="member-photo" style="width:80px;height:80px;">
+
+<img
+src="${member.photo}"
+class="member-photo"
+style="width:80px;height:80px;"
+>
+
 <div>
+
 <h3>${member.name}</h3>
-<p>Member ID: ${member.memberId}</p>
-<p>Phone: ${member.phone}</p>
-<p>Email: ${member.email}</p>
-<p>Status: ${member.status}</p>
-<p>Total Payment: ${member.payment}</p>
-<p>Due: ${member.due}</p>
+
+<p>
+Member ID:
+${member.memberId}
+</p>
+
+<p>
+Phone:
+${member.phone}
+</p>
+
+<p>
+Email:
+${member.email}
+</p>
+
+<p>
+Status:
+${member.status}
+</p>
+
 </div>
+
 </div>
+
 `;
 
 }else{
 
-document.getElementById('searchResult').innerHTML = 'Member Not Found';
+document.getElementById(
+'searchResult'
+).innerHTML =
+
+'<p>Member Not Found</p>';
 
 }
 
 }
 
-/* PAYMENTS */
+
+/* =========================
+LOAD PAYMENTS
+========================= */
 
 function loadPayments(){
 
@@ -904,129 +1021,289 @@ let tableHtml = '';
 payments.forEach(payment => {
 
 recentHtml += `
+
 <div class="payment-item">
+
 <div>
+
 <h4>${payment.memberId}</h4>
+
 <p>${payment.month}</p>
+
 </div>
+
 <div>
-<p>৳ ${payment.amount}</p>
-<span class="status active-status">${payment.status}</span>
+
+<p>
+৳ ${payment.amount}
+</p>
+
+<span class="status active-status">
+
+${payment.status}
+
+</span>
+
 </div>
+
 </div>
+
 `;
 
 
 tableHtml += `
+
 <tr>
+
 <td>${payment.receipt}</td>
+
 <td>${payment.memberId}</td>
+
 <td>${payment.name}</td>
-<td>৳ ${payment.amount}</td>
-<td><span class="status active-status">${payment.status}</span></td>
+
+<td>
+৳ ${payment.amount}
+</td>
+
+<td>
+
+<span class="status active-status">
+
+${payment.status}
+
+</span>
+
+</td>
+
 </tr>
+
 `;
 
 });
 
 
-document.getElementById('recentPayments').innerHTML = recentHtml;
+document.getElementById(
+'recentPayments'
+).innerHTML = recentHtml;
 
-document.getElementById('paymentTable').innerHTML = tableHtml;
+
+document.getElementById(
+'paymentTable'
+).innerHTML = tableHtml;
 
 }
 
-/* QUICK ACTION */
+
+/* =========================
+QUICK ACTIONS
+========================= */
 
 function openAddMember(){
-showSection('membersSection', document.querySelectorAll('.menu a')[1]);
+
+showSection(
+'membersSection',
+document.querySelectorAll('.menu a')[1]
+);
+
 }
+
 
 function openAddPayment(){
-showSection('paymentsSection', document.querySelectorAll('.menu a')[2]);
+
+showSection(
+'paymentsSection',
+document.querySelectorAll('.menu a')[2]
+);
+
 }
+
 
 function openNoticeModal(){
-showSection('noticesSection', document.querySelectorAll('.menu a')[3]);
+
+showSection(
+'noticeSection',
+document.querySelectorAll('.menu a')[3]
+);
+
 }
+
 
 function generateIdCard(){
-alert('ID Card Generator Ready');
+
+alert(
+'ID Card Generator Ready'
+);
+
 }
+
 
 function generatePDF(){
-alert('PDF Generator Ready');
+
+alert(
+'PDF Generator Ready'
+);
+
 }
 
-/* VIEW PROFILE */
+
+/* =========================
+VIEW MEMBER PROFILE
+========================= */
 
 function viewMember(memberId){
 
-const member = members.find(m => m.memberId === memberId);
+const member =
+members.find(
+m => m.memberId === memberId
+);
+
 
 if(member){
 
 const html = `
+
 <div style="text-align:center;">
-<img src="${member.photo}" style="width:100px;height:100px;border-radius:50%;margin-bottom:15px;">
+
+<img
+src="${member.photo}"
+style="
+width:100px;
+height:100px;
+border-radius:50%;
+margin-bottom:15px;
+"
+>
+
 <h2>${member.name}</h2>
-<p>Phone: ${member.phone}</p>
-<p>Email: ${member.email}</p>
-<p>Payment: ${member.payment}</p>
-<p>Due: ${member.due}</p>
+
+<p>
+Phone:
+${member.phone}
+</p>
+
+<p>
+Email:
+${member.email}
+</p>
+
+<p>
+Blood:
+${member.blood}
+</p>
+
+<p>
+Address:
+${member.address}
+</p>
+
+<p>
+Status:
+${member.status}
+</p>
+
 </div>
+
 `;
 
 
-document.getElementById('modalContent').innerHTML = html;
+document.getElementById(
+'modalContent'
+).innerHTML = html;
 
-document.getElementById('memberModal').style.display = 'flex';
+
+document.getElementById(
+'memberModal'
+).style.display = 'flex';
 
 }
 
 }
+
+
+/* =========================
+CLOSE MODAL
+========================= */
 
 function closeModal(){
-document.getElementById('memberModal').style.display = 'none';
+
+document.getElementById(
+'memberModal'
+).style.display = 'none';
+
 }
 
-/* PAYMENT AUTO */
+
+/* =========================
+SAVE PAYMENT
+========================= */
 
 function savePayment(){
-alert('Payment Saved Successfully');
+
+alert(
+'Payment Saved Successfully'
+);
+
 }
 
-/* SETTINGS */
+
+/* =========================
+LOGOUT
+========================= */
 
 function logout(){
-alert('Logout Success');
+
+alert(
+'Logout Success'
+);
+
 }
 
-/* LIVE SEARCH */
 
-document.getElementById('memberSearch').addEventListener('keyup', function(){
+/* =========================
+LIVE SEARCH
+========================= */
 
-const value = this.value.toLowerCase();
+document.getElementById(
+'memberSearch'
+).addEventListener(
+'keyup',
+function(){
 
-const rows = document.querySelectorAll('#membersTable tr');
+const value =
+this.value.toLowerCase();
+
+const rows =
+document.querySelectorAll(
+'#membersTable tr'
+);
 
 rows.forEach(row => {
 
-const text = row.innerText.toLowerCase();
+const text =
+row.innerText.toLowerCase();
 
 if(text.includes(value)){
+
 row.style.display = '';
+
 }else{
+
 row.style.display = 'none';
+
 }
 
 });
 
-});
+}
+);
 
-/* AUTO LOAD */
+
+/* =========================
+AUTO LOAD
+========================= */
 
 fetchMembers();
+
 loadPayments();
 
 </script>
