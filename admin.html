@@ -316,7 +316,46 @@ border-radius:12px;
 cursor:pointer;
 font-weight:600;
 }
- 
+
+ .modal{
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:
+rgba(0,0,0,0.5);
+z-index:999;
+}
+
+.modal-content{
+background:#fff;
+width:90%;
+max-width:400px;
+margin:50px auto;
+padding:20px;
+border-radius:10px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.modal-content input{
+padding:10px;
+font-size:16px;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+.modal-content button{
+padding:12px;
+background:#0f766e;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
 </style>
 </head>
 
@@ -944,7 +983,8 @@ document.getElementById(
 "none";
 }
 
-async function saveMember(){
+
+ async function saveMember(){
 
 const memberData = {
 
@@ -967,16 +1007,13 @@ photo:
 document.getElementById(
 "newMemberPhoto"
 ).value
-
 };
 
 try{
-
 const response =
 await fetch(
 
 API_URL,
-
 {
 
 method:"POST",
@@ -991,23 +1028,15 @@ const result =
 await response.json();
 
 alert(
-
 "Member Added Successfully\n\n" +
-
 "Member ID: " +
-
 result.memberId +
-
 "\nPassword: " +
-
 result.password
-
 );
 
 closeAddMember();
-
 }catch(error){
-
 console.log(error);
 
 alert(
@@ -1208,6 +1237,23 @@ alert(
 }
   
 </script>
+
+
+<!-- =========================
+ADD MEMBER MODAL
+========================= -->
+
+<div id="addMemberModal" class="modal" style="display:none;">
+<div class="modal-content"><h2>Add Member</h2>
+<input type="text" id="newMemberName" placeholder="Full Name">
+<input type="text" id="newMemberPhone" placeholder="Mobile Number">
+<input type="email" id="newMemberEmail" placeholder="Email Address">
+<input type="text" id="newMemberPhoto" placeholder="Photo URL">
+
+<button onclick="saveMember()">Save Member</button>
+<button onclick="closeAddMember()">Close</button>
+</div>
+</div>
 
 </body>
 </html>
