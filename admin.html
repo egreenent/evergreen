@@ -713,15 +713,42 @@ Save Member
 <div class="section">
 <h2>📢 Notices</h2>
 
-<div class="notice-card">
+<div class="page-section" id="noticeSection">
+
+<div class="section">
+
+<h2>📢 Notices</h2>
+
+<div id="noticeContainer">
+
+<div class="notice-item">
+
 <h3>Monthly Meeting Notice</h3>
-<p>All members are requested to attend the monthly meeting.</p>
+
+<small>2026-05-20</small>
+
+<p>
+All members are requested to attend the monthly meeting.
+</p>
+
 </div>
 
-<div class="notice-card">
+
+<div class="notice-item">
+
 <h3>Payment Reminder</h3>
-<p>Please complete your monthly payment before 10th.</p>
+
+<small>2026-05-21</small>
+
+<p>
+Please complete your monthly payment before 10th.
+</p>
+
 </div>
+</div>
+</div>
+</div>
+
 
 </div>
 
@@ -1280,9 +1307,69 @@ document.querySelectorAll('.menu a')[2]
 
 function openNoticeModal(){
 
-showSection(
-'noticeSection',
-document.querySelectorAll('.menu a')[3]
+document.getElementById(
+'noticeModal'
+).style.display = 'flex';
+
+}
+
+
+function closeNoticeModal(){
+
+document.getElementById(
+'noticeModal'
+).style.display = 'none';
+
+}
+
+
+function publishNotice(){
+
+const title =
+document.getElementById(
+'noticeTitle'
+).value;
+
+const date =
+document.getElementById(
+'noticeDate'
+).value;
+
+const message =
+document.getElementById(
+'noticeMessage'
+).value;
+
+
+const html = `
+
+<div class="notice-item">
+
+<h3>${title}</h3>
+
+<small>${date}</small>
+
+<p>${message}</p>
+
+</div>
+
+`;
+
+
+document.getElementById(
+'noticeContainer'
+).innerHTML =
+html +
+document.getElementById(
+'noticeContainer'
+).innerHTML;
+
+
+closeNoticeModal();
+
+
+alert(
+'Notice Published Successfully'
 );
 
 }
@@ -1530,6 +1617,57 @@ Submit Application
 </button>
 </div>
 </div>
-  
+
+  <!-- NOTICE MODAL -->
+<div id="noticeModal" class="modal">
+<div class="modal-box">
+<div class="modal-header">
+<h2>Publish Notice</h2>
+
+<span
+class="close-btn"
+onclick="closeNoticeModal()"
+>
+×
+</span>
+</div>
+
+
+<input
+type="text"
+id="noticeTitle"
+placeholder="Notice Title"
+style="width:100%;margin-bottom:15px;"
+>
+
+<input
+type="date"
+id="noticeDate"
+style="width:100%;margin-bottom:15px;"
+>
+
+<textarea
+id="noticeMessage"
+placeholder="Write Notice..."
+style="
+width:100%;
+height:150px;
+padding:15px;
+border-radius:8px;
+border:1px solid #ccc;
+margin-bottom:20px;
+"
+></textarea>
+
+<button
+class="action-btn"
+onclick="publishNotice()"
+>
+
+Publish Notice
+</button>
+</div>
+</div>
+
 </body>
 </html>
