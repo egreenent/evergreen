@@ -477,7 +477,7 @@ align-items:flex-start;
 
 <div class="card">
 <h3>Total Members</h3>
-<h2 id="totalMembers">4</h2>
+<h2 id="totalMembers">0</h2>
 </div>
 
 <div class="card">
@@ -810,24 +810,66 @@ members.forEach(member => {
 
 html += `
 <tr>
-<td><img src="${member.photo}" class="member-photo"></td>
+<td>
+<img src="${member.photo}"
+class="member-photo">
+</td>
+
 <td>${member.memberId}</td>
 <td>${member.name}</td>
 <td>${member.phone}</td>
-<td><span class="status active-status">${member.status}</span></td>
+
 <td>
-<div class="action-buttons">
-<button class="small-btn view-btn" onclick="viewMember('${member.memberId}')">View</button>
-<button class="small-btn edit-btn">Edit</button>
-<button class="small-btn delete-btn">Suspend</button>
-</div>
+<span class="status active-status">
+${member.status}
+</span>
 </td>
+
+<td>
+
+<div class="action-buttons">
+
+<button
+class="small-btn view-btn"
+onclick="viewMember('${member.memberId}')"
+>
+
+View
+
+</button>
+
+<button class="small-btn edit-btn">
+
+Edit
+
+</button>
+
+<button class="small-btn delete-btn">
+
+Suspend
+
+</button>
+
+</div>
+
+</td>
+
 </tr>
 `;
 
 });
 
-document.getElementById('membersTable').innerHTML = html;
+document.getElementById(
+'membersTable'
+).innerHTML = html;
+
+document.getElementById(
+'totalMembers'
+).innerText = members.length;
+
+document.getElementById(
+'activeMembers'
+).innerText = members.length;
 
 }
 
