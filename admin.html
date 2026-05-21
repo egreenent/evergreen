@@ -558,6 +558,19 @@ align-items:flex-start;
 <div class="page-section" id="membersSection">
 
 <div class="section">
+  
+<div id="addMemberForm" style="display:none;margin-top:20px;">
+<h3>Add New Member</h3>
+<input type="text" placeholder="Member ID">
+<input type="text" placeholder="Full Name">
+<input type="text" placeholder="Phone">
+<input type="email" placeholder="Email">
+<button class="action-btn">
+Save Member
+</button>
+</div>
+
+  
 <h2>👥 Members List</h2>
 
 <div class="search-box">
@@ -1104,6 +1117,10 @@ showSection(
 'membersSection',
 document.querySelectorAll('.menu a')[1]
 );
+
+document.getElementById(
+'addMemberForm'
+).style.display = 'block';
 
 }
 
