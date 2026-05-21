@@ -374,25 +374,54 @@ align-items:flex-start;
 </div>
 
 <div class="section">
-<!-- Quick Actions -->
+<!-- QUICK ACTIONS -->
+
+
+<div class="section">
+<h2>Quick Actions</h2>
 <div class="quick-actions">
 
-  <button onclick="openAddMember()">
-    ➕ Add Member
-  </button>
+<div
+class="action-btn"
+onclick="openAddMember()"
+>
+➕ Add Member
+</div>
 
-  <button onclick="openAddPayment()">
-    💰 Add Payment
-  </button>
+<div
+class="action-btn"
+onclick="openAddPayment()"
+>
+💰 Add Payment
+</div>
 
-  <button onclick="publishNotice()">
-    📢 Publish Notice
-  </button>
+<div
+class="action-btn"
+onclick="openNotice()"
+>
+📢 Publish Notice
+</div>
 
+<div
+class="action-btn"
+onclick="generateIdCard()"
+>
+🪪 Generate ID Card
+</div>
+
+<div
+class="action-btn"
+onclick="generatePdf()"
+>
+
+📄 Generate PDF
+
+</div>
+</div>
 </div>
 
 
- <!-- SEARCH -->
+<!-- SEARCH -->
 
 <div class="section">
 <h2>Search Member</h2>
@@ -415,7 +444,6 @@ Search
  </div>
 
 </div>
- 
 
 
 <div class="section">
@@ -803,7 +831,353 @@ alert(
     window.location.href =
       "member-details.html?id=" + memberId;
   }
+<!-- #####################################################################################################################-->
+/* =========================
+ADD MEMBER
+========================= */
 
+
+function openAddMember(){
+
+document.getElementById(
+"addMemberModal"
+).style.display =
+"block";
+
+}
+
+function closeAddMember(){
+
+document.getElementById(
+"addMemberModal"
+).style.display =
+"none";
+
+}
+
+/* =========================
+ADD PAYMENT
+========================= */
+
+function openAddPayment(){
+
+alert(
+"Add Payment Panel Coming Soon"
+);
+}
+
+/* =========================
+NOTICE
+========================= */
+
+function openNotice(){
+
+alert(
+"Publish Notice Panel Coming Soon"
+);
+}
+
+/* =========================
+ID CARD
+========================= */
+
+function generateIdCard(){
+
+alert(
+"ID Card Generator Coming Soon"
+);
+}
+
+/* =========================
+PDF
+========================= */
+
+function generatePdf(){
+
+alert(
+"PDF Generator Coming Soon"
+);
+}
+
+ function openAddMember(){
+
+document.getElementById(
+"addMemberModal"
+).style.display =
+"block";
+}
+
+function closeAddMember(){
+
+document.getElementById(
+"addMemberModal"
+).style.display =
+"none";
+}
+
+async function saveMember(){
+
+const memberData = {
+
+name:
+document.getElementById(
+"newMemberName"
+).value,
+
+phone:
+document.getElementById(
+"newMemberPhone"
+).value,
+
+email:
+document.getElementById(
+"newMemberEmail"
+).value,
+
+photo:
+document.getElementById(
+"newMemberPhoto"
+).value
+
+};
+
+try{
+
+const response =
+await fetch(
+
+API_URL,
+
+{
+
+method:"POST",
+
+body:JSON.stringify(
+memberData
+)
+}
+);
+
+const result =
+await response.json();
+
+alert(
+
+"Member Added Successfully\n\n" +
+
+"Member ID: " +
+
+result.memberId +
+
+"\nPassword: " +
+
+result.password
+
+);
+
+closeAddMember();
+
+}catch(error){
+
+console.log(error);
+
+alert(
+"Failed To Add Member"
+);
+}
+}
+
+
+ /* =========================
+OPEN PAYMENT MODAL
+========================= */
+
+function openAddPayment(){
+
+document.getElementById(
+"paymentModal"
+).style.display =
+"block";
+
+}
+
+/* =========================
+CLOSE PAYMENT MODAL
+========================= */
+
+function closePaymentModal(){
+
+document.getElementById(
+"paymentModal"
+).style.display =
+"none";
+
+}
+
+/* =========================
+SAVE PAYMENT
+========================= */
+
+async function savePayment(){
+
+const paymentData = {
+
+memberId:
+document.getElementById(
+"paymentMemberId"
+).value,
+
+month:
+document.getElementById(
+"paymentMonth"
+).value,
+
+amount:
+document.getElementById(
+"paymentAmount"
+).value,
+
+fine:
+document.getElementById(
+"paymentFine"
+).value,
+
+status:
+document.getElementById(
+"paymentStatus"
+).value
+
+};
+
+try{
+
+const response =
+await fetch(
+
+API_URL,
+
+{
+
+method:"POST",
+
+body:JSON.stringify({
+
+action:"addPayment",
+
+...paymentData
+
+})
+
+}
+
+);
+
+const result =
+await response.json();
+
+alert(
+"Payment Added Successfully"
+);
+
+closePaymentModal();
+
+}catch(error){
+
+console.log(error);
+
+alert(
+"Payment Failed"
+);
+}
+}
+<!-- ====================================================================================================== -->
+
+ /* =========================
+OPEN NOTICE MODAL
+========================= */
+
+function openNotice(){
+
+document.getElementById(
+"noticeModal"
+).style.display =
+"block";
+}
+
+/* =========================
+CLOSE NOTICE MODAL
+========================= */
+
+function closeNoticeModal(){
+
+document.getElementById(
+"noticeModal"
+).style.display =
+"none";
+}
+
+/* =========================
+PUBLISH NOTICE
+========================= */
+
+async function publishNotice(){
+
+const noticeData = {
+
+action:"publishNotice",
+
+title:
+document.getElementById(
+"noticeTitle"
+).value,
+
+message:
+document.getElementById(
+"noticeMessage"
+).value,
+
+status:
+document.getElementById(
+"noticeStatus"
+).value
+};
+
+try{
+
+const response =
+await fetch(
+
+API_URL,
+
+{
+
+method:"POST",
+
+body:JSON.stringify(
+noticeData
+)
+}
+);
+
+const result =
+await response.json();
+
+alert(
+"Notice Published Successfully"
+);
+
+closeNoticeModal();
+
+}catch(error){
+
+console.log(error);
+
+alert(
+"Notice Publish Failed"
+);
+}
+}
+  
 </script>
 
 </body>
