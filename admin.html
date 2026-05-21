@@ -1181,13 +1181,22 @@ document.getElementById(
 
 }
 
+function generateMemberId(){
 
+const nextNumber =
+members.length + 1;
+
+return 'ege' +
+String(nextNumber).padStart(4,'0');
+
+}
+  
 async function saveNewMember(){
 
 const member = {
 
 memberId:
-document.getElementById('newMemberId').value,
+generateMemberId(),
 
 name:
 document.getElementById('newMemberName').value,
@@ -1501,7 +1510,6 @@ onclick="closeAddMemberModal()"
 
 </div>
 <div class="form-grid">
-<input type="text" id="newMemberId" placeholder="Member ID">
 <input type="text" id="newMemberName" placeholder="Full Name">
 <input type="text" id="newPhone" placeholder="Phone">
 <input type="email" id="newEmail" placeholder="Email">
