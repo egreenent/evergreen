@@ -420,9 +420,62 @@ flex-direction:column;
 gap:15px;
 align-items:flex-start;
 }
+}
+
+  .modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+justify-content:center;
+align-items:center;
+z-index:9999;
 
 }
 
+.modal-box{
+background:#fff;
+width:90%;
+max-width:700px;
+padding:25px;
+border-radius:12px;
+max-height:90vh;
+overflow-y:auto;
+
+}
+
+.modal-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+
+}
+
+.close-btn{
+font-size:28px;
+cursor:pointer;
+color:red;
+
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+margin-bottom:20px;
+
+}
+
+.form-grid input{
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+
+}
 </style>
 </head>
 
@@ -1113,15 +1166,96 @@ QUICK ACTIONS
 
 function openAddMember(){
 
-showSection(
-'membersSection',
-document.querySelectorAll('.menu a')[1]
-);
+document.getElementById(
+'addMemberModal'
+).style.display = 'flex';
+
+}
+
+
+function closeAddMemberModal(){
 
 document.getElementById(
-'addMemberForm'
-).style.display = 'block';
+'addMemberModal'
+).style.display = 'none';
 
+}
+
+
+async function saveNewMember(){
+
+const member = {
+
+memberId:
+document.getElementById('newMemberId').value,
+
+name:
+document.getElementById('newMemberName').value,
+
+phone:
+document.getElementById('newPhone').value,
+
+email:
+document.getElementById('newEmail').value,
+
+nid:
+document.getElementById('newNid').value,
+
+blood:
+document.getElementById('newBlood').value,
+
+address:
+document.getElementById('newAddress').value,
+
+nomineeName:
+document.getElementById('newNominee').value,
+
+nomineePhone:
+document.getElementById('newNomineePhone').value,
+
+monthlyFee:
+document.getElementById('newFee').value,
+
+password:
+document.getElementById('newPassword').value,
+
+photo:
+document.getElementById('newPhoto').value
+
+};
+
+
+try{
+
+await fetch(
+
+API_URL + '?action=addMember',
+
+{
+
+method:'POST',
+
+body:JSON.stringify(member)
+
+}
+
+);
+
+
+alert(
+'Member Added Successfully'
+);
+
+closeAddMemberModal();
+
+fetchMembers();
+
+}catch(error){
+
+console.log(error);
+
+alert('Failed To Add Member');
+}
 }
 
 
@@ -1349,5 +1483,45 @@ payments.length;
 }
 </script>
 
+<!-- ADD MEMBER MODAL -->
+
+<div id="addMemberModal" class="modal">
+<div class="modal-box">
+<div class="modal-header">
+<h2>Membership Application Form</h2>
+
+<span
+class="close-btn"
+onclick="closeAddMemberModal()"
+>
+
+×
+
+</span>
+
+</div>
+<div class="form-grid">
+<input type="text" id="newMemberId" placeholder="Member ID">
+<input type="text" id="newMemberName" placeholder="Full Name">
+<input type="text" id="newPhone" placeholder="Phone">
+<input type="email" id="newEmail" placeholder="Email">
+<input type="text" id="newNid" placeholder="NID">
+<input type="text" id="newBlood" placeholder="Blood Group">
+<input type="text" id="newAddress" placeholder="Address">
+<input type="text" id="newNominee" placeholder="Nominee Name">
+<input type="text" id="newNomineePhone" placeholder="Nominee Phone">
+<input type="number" id="newFee" placeholder="Monthly Fee">
+<input type="password" id="newPassword" placeholder="Password">
+<input type="text" id="newPhoto" placeholder="Photo URL">
+</div>
+
+<button
+class="action-btn"
+onclick="saveNewMember()">
+Submit Application
+</button>
+</div>
+</div>
+  
 </body>
 </html>
