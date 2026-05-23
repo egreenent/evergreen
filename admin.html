@@ -831,68 +831,98 @@ Please complete your monthly payment before 10th.
 </div>
 
 <script>
-
-const API_URL =
-"https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
-
+const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
 
 let members = [];
+let payments = []; // গ্লোবাল পেমেন্ট অ্যারে
 
-
-/* =========================
-FETCH MEMBERS
-========================= */
-
-// আপনার ফাইলের প্রধান ফাংশনটি যদি এরকম হয়:
+/* ==============================================
+   ১. FETCH MEMBERS (মেম্বার ডাটা লোড)
+   ============================================== */
 async function fetchMembers() {
     try {
         const response = await fetch(API_URL + '?action=members');
         members = await response.json();
+        console.log("TOTAL MEMBERS LOADED:", members.length);
         
-        // মেম্বারদের ডাটা আসার পর ড্যাশবোর্ডকে কল করুন
+        // মেম্বার লোড হওয়ার পর ড্যাশবোর্ড ও মেম্বার টেবিল আপডেট হবে
+        loadMembers();
         updateDashboard(); 
-        
     } catch(error) {
-        console.log(error);
+        console.error("Error fetching members:", error);
     }
 }
 
+/* ==============================================
+   ২. LOAD MEMBERS INTO TABLE (মেম্বার টেবিল ভিউ)
+   ============================================== */
+function loadMembers(){
+    let html = '';
+    members.forEach(member => {
+        html += `
+            <tr>
+                <td><img src="${member.photo || 'logo.png'}" class="member-photo"></td>
+                <td>${member.memberId || 'N/A'}</td>
+                <td>${member.name || 'N/A'}</td>
+                <td>${member.phone || 'N/A'}</td>
+                <td><span class="status active-status">${member.status || 'Active'}</span></td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="small-btn view-btn" onclick="viewMember('${member.memberId}')">View</button>
+                        <button class="small-btn edit-btn">Edit</button>
+                        <button class="small-btn delete-btn">Suspend</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+
+    const tableBody = document.getElementById('membersTable');
+    if (tableBody) tableBody.innerHTML = html;
+
+    /* DASHBOARD COUNT */
+    if (document.getElementById('totalMembers')) document.getElementById('totalMembers').innerText = members.length;
+    if (document.getElementById('activeMembers')) document.getElementById('activeMembers').innerText = members.length;
+}
 
 /* ==============================================
-   LOAD PAYMENTS HISTORY (৫ কলামের নতুন টেবিল কোড)
+   ৩. LOAD PAYMENTS HISTORY (সংশোধিত ও সচল পেমেন্ট ফাংশন)
    ============================================== */
 async function loadPayments() {
+    console.log("LOAD PAYMENTS RUNNING...");
     const tableBody = document.getElementById('paymentTable'); 
-    if (!tableBody) {
-        console.error("Error: 'paymentTable' ID missing in HTML!");
-        return;
+    const recentDiv = document.getElementById('recentPayments');
+
+    if (tableBody) {
+        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">Loading Recent Payments...</td></tr>`;
     }
 
-    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">Loading Recent Payments...</td></tr>`;
-
     try {
-        // আপনার কোডের action=recentPayments এর সাথে মিলিয়ে ডাটা কল করা হচ্ছে
-        const response = await fetch(API_URL + '?action=recentPayments');
-        const livePayments = await response.json();
+        // আপনার গুগল অ্যাপস স্ক্রিপ্টের পেমেন্ট অ্যাকশন অনুযায়ী কল করা হচ্ছে
+        const response = await fetch(API_URL + '?action=payments');
+        payments = await response.json();
 
-        console.log("Loaded Live Payments:", livePayments);
+        console.log("Live Payments Loaded:", payments);
 
-        if (livePayments.error || !livePayments || livePayments.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">No recent payments found.</td></tr>`;
+        if (payments.error || !payments || payments.length === 0) {
+            if (tableBody) tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">No recent payments found.</td></tr>`;
+            if (recentDiv) recentDiv.innerHTML = `<p style="text-align:center; padding:10px;">No recent payments.</p>`;
             return;
         }
 
         let tableHtml = '';
         let recentHtml = '';
+        let totalCollection = 0;
 
-        livePayments.forEach(payment => {
-            // স্ট্যাটাস অনুযায়ী রঙের ব্যাজ (Paid = সবুজ, Due = লাল)
+        payments.forEach(payment => {
+            totalCollection += Number(payment.amount || 0);
+
             const isPaid = String(payment.status).toLowerCase() === 'paid';
             const statusStyle = isPaid 
                 ? 'background:#d1e7dd; color:#0f5132; padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; display:inline-block;' 
                 : 'background:#f8d7da; color:#842029; padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; display:inline-block;';
 
-            // আপনার নতুন ৫টি কলাম: Receipt No, Member ID, Name, Amount, Status
+            // ড্যাশবোর্ডের ভেতরের টেবিল রো (Receipt No, Member ID, Name, Amount, Status)
             tableHtml += `
                 <tr>
                     <td><strong>${payment.receipt || 'N/A'}</strong></td>
@@ -903,928 +933,207 @@ async function loadPayments() {
                 </tr>
             `;
 
-            // টেবিলের উপরে থাকা <div id="recentPayments"> সেকশনের জন্য
+            // <div id="recentPayments"> বক্সের জন্য ডিজাইন
             recentHtml += `
-                <div class="payment-item" style="display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; align-items: center;">
+                <div class="payment-item" style="display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; align-items: center; background:#fff; margin-bottom:10px; border-radius:10px;">
                     <div>
                         <h4 style="margin:0; color:#333;">ID: ${payment.memberId}</h4>
                         <small style="color:#666;">Month: ${payment.month || 'N/A'}</small>
                     </div>
                     <div style="text-align: right;">
-                        <p style="margin:0; font-weight:600; color:#2c3e50;">৳ ${Number(payment.amount || 0).toLocaleString('en-US')}</p>
-                        <span style="${statusStyle} font-size:11px; padding:3px 8px; margin-top:4px;">${payment.status}</span>
+                        <p style="margin:0; font-weight:600; color:#0b6b2d;">৳ ${Number(payment.amount || 0).toLocaleString('en-US')}</p>
+                        <span style="${statusStyle} font-size:11px; padding:3px 8px; margin-top:4px;">${payment.status || 'Paid'}</span>
                     </div>
                 </div>
             `;
         });
 
-        // টেবিল এবং উপরের ডিভ—উভয় জায়গায় ডাটা পুশ করা হলো
-        tableBody.innerHTML = tableHtml;
+        if (tableBody) tableBody.innerHTML = tableHtml;
+        if (recentDiv) recentDiv.innerHTML = recentHtml;
 
-        const recentDiv = document.getElementById('recentPayments');
-        if (recentDiv) {
-            recentDiv.innerHTML = recentHtml;
+        // ড্যাশবোর্ড আপডেট করার জন্য লাইভ ডাটা না মিললে এটি ব্যাকআপ হিসেবে কাজ করবে
+        if (document.getElementById('totalCollection') && !document.getElementById('totalCollection').innerText.includes(',')) {
+            document.getElementById('totalCollection').innerText = '৳ ' + totalCollection.toLocaleString('en-US');
+            document.getElementById('totalPayments').innerText = payments.length;
         }
 
     } catch (error) {
         console.error("Error loading payments:", error);
-        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red; padding: 20px;">Failed to load data from Server!</td></tr>`;
+        if (tableBody) tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red; padding: 20px;">Failed to load data from Server!</td></tr>`;
     }
 }
 
-// পেজ লোড হওয়ার সাথে সাথে ফাংশনটি রান করানোর জন্য
-window.addEventListener('DOMContentLoaded', () => {
-    loadPayments();
-});
-
 /* ==============================================
-   DASHBOARD UPDATE (SyntaxError মুক্ত সম্পূর্ণ কোড)
+   ৪. DASHBOARD UPDATE (লাইভ কালেকশন ও হিসাব)
    ============================================== */
 async function updateDashboard() {
     try {
-        console.log("UPDATE DASHBOARD RUNNING");
-        
-        // সরাসরি গুগল অ্যাপস স্ক্রিপ্ট থেকে ড্যাশবোর্ডের লাইভ হিসাব নিয়ে আসা হচ্ছে
         const response = await fetch(API_URL + '?action=dashboard');
         const data = await response.json();
-        
         console.log("Dashboard Live Data:", data);
 
-        // ১. টোটাল কালেকশন আপডেট (ইংরেজি সংখ্যা এবং কমা ফরম্যাটে)
         if (document.getElementById('totalCollection')) {
             const collectionAmount = Number(data.totalCollection) || 0;
             document.getElementById('totalCollection').innerText = '৳ ' + collectionAmount.toLocaleString('en-US');
         }
-
-        // ২. টোটাল পেমেন্ট সংখ্যা আপডেট
         if (document.getElementById('totalPayments')) {
             document.getElementById('totalPayments').innerText = data.totalPayments || 0;
         }
-
-        // ৩. মোট মেম্বার সংখ্যা আপডেট
-        if (document.getElementById('totalMembers')) {
-            document.getElementById('totalMembers').innerText = data.totalMembers || 0;
-        }
-
-        // ৪. একটিভ মেম্বার সংখ্যা আপডেট
-        if (document.getElementById('activeMembers')) {
-            document.getElementById('activeMembers').innerText = data.activeMembers || 0;
-        }
-
     } catch (error) {
-        console.log("Dashboard Live Fetch Error, using fallback:", error);
-        
-        // ব্যাকআপ লজিক: যদি লাইভ ডাটা না আসে তবে লোকাল ভ্যারিয়েবল দিয়ে হিসাব করবে
+        console.error("Dashboard Update Error, using backup logic:", error);
         let localCollection = 0;
-        if (typeof payments !== 'undefined' && Array.isArray(payments)) {
-            payments.forEach(payment => {
-                localCollection += Number(payment.amount) || 0;
-            });
-            
-            if (document.getElementById('totalCollection')) {
-                document.getElementById('totalCollection').innerText = '৳ ' + localCollection.toLocaleString('en-US');
-            }
-            if (document.getElementById('totalPayments')) {
-                document.getElementById('totalPayments').innerText = payments.length;
-            }
+        payments.forEach(p => {
+            localCollection += (Number(p.amount) || 0) + (Number(p.fine) || 0);
+        });
+        if (document.getElementById('totalCollection')) {
+            document.getElementById('totalCollection').innerText = '৳ ' + localCollection.toLocaleString('en-US');
+        }
+        if (document.getElementById('totalPayments')) {
+            document.getElementById('totalPayments').innerText = payments.length;
         }
     }
-} // <--- এই ব্র্যাকেটটি দিয়ে ফাংশনটি এখানে সঠিকভাবে শেষ হলো
+}
 
-
-/* =========================
-SECTION SYSTEM
-========================= */
-
+/* ==============================================
+   ৫. SECTION SYSTEM (ট্যাব সুইচ)
+   ============================================== */
 function showSection(sectionId, element){
+    const sections = document.querySelectorAll('.page-section');
+    sections.forEach(section => {
+        section.classList.remove('active-section');
+    });
+    document.getElementById(sectionId).classList.add('active-section');
 
-const sections =
-document.querySelectorAll('.page-section');
-
-sections.forEach(section => {
-
-section.classList.remove(
-'active-section'
-);
-
-});
-
-document.getElementById(
-sectionId
-).classList.add(
-'active-section'
-);
-
-
-const links =
-document.querySelectorAll('.menu a');
-
-links.forEach(link => {
-
-link.classList.remove('active');
-
-});
-
-if(element){
-
-element.classList.add('active');
-
+    const links = document.querySelectorAll('.menu a');
+    links.forEach(link => {
+        link.classList.remove('active');
+    });
+    if(element){
+        element.classList.add('active');
+    }
 }
 
-}
-
-
-/* =========================
-LOAD MEMBERS
-========================= */
-
-function loadMembers(){
-
-let html = '';
-
-members.forEach(member => {
-
-html += `
-
-<tr>
-
-<td>
-
-<img
-src="${member.photo}"
-class="member-photo">
-
-</td>
-
-<td>${member.memberId}</td>
-
-<td>${member.name}</td>
-
-<td>${member.phone}</td>
-
-<td>
-
-<span class="status active-status">
-
-${member.status}
-
-</span>
-
-</td>
-
-<td>
-
-<div class="action-buttons">
-
-<button
-class="small-btn view-btn"
-onclick="viewMember('${member.memberId}')"
->
-
-View
-
-</button>
-
-<button class="small-btn edit-btn">
-
-Edit
-
-</button>
-
-<button class="small-btn delete-btn">
-
-Suspend
-
-</button>
-
-</div>
-
-</td>
-
-</tr>
-
-`;
-
-});
-
-
-document.getElementById(
-'membersTable'
-).innerHTML = html;
-
-
-/* DASHBOARD COUNT */
-
-document.getElementById(
-'totalMembers'
-).innerText = members.length;
-
-document.getElementById(
-'activeMembers'
-).innerText = members.length;
-
-}
-
-
-/* =========================
-SEARCH MEMBER
-========================= */
-
+/* ==============================================
+   ৬. SEARCH MEMBER (আইডি দিয়ে মেম্বার সার্চ)
+   ============================================== */
 function searchMember(){
+    const memberId = document.getElementById('searchMemberId').value.trim();
+    const member = members.find(m => String(m.memberId).toLowerCase() === memberId.toLowerCase());
 
-const memberId =
-document.getElementById(
-'searchMemberId'
-).value.trim();
-
-
-const member =
-members.find(
-m => m.memberId === memberId
-);
-
-
-if(member){
-
-document.getElementById(
-'searchResult'
-).innerHTML = `
-
-<div style="display:flex;gap:20px;align-items:center;">
-
-<img
-src="${member.photo}"
-class="member-photo"
-style="width:80px;height:80px;"
->
-
-<div>
-
-<h3>${member.name}</h3>
-
-<p>
-Member ID:
-${member.memberId}
-</p>
-
-<p>
-Phone:
-${member.phone}
-</p>
-
-<p>
-Email:
-${member.email}
-</p>
-
-<p>
-Status:
-${member.status}
-</p>
-
-</div>
-
-</div>
-
-`;
-
-}else{
-
-document.getElementById(
-'searchResult'
-).innerHTML =
-
-'<p>Member Not Found</p>';
-
+    if(member){
+        document.getElementById('searchResult').innerHTML = `
+            <div style="display:flex;gap:20px;align-items:center; background:#fff; padding:15px; border-radius:12px; margin-top:15px;">
+                <img src="${member.photo || 'logo.png'}" class="member-photo" style="width:80px;height:80px;">
+                <div>
+                    <h3>${member.name}</h3>
+                    <p>Member ID: ${member.memberId}</p>
+                    <p>Phone: ${member.phone}</p>
+                    <p>Email: ${member.email}</p>
+                    <p>Status: ${member.status}</p>
+                </div>
+            </div>
+        `;
+    } else {
+        document.getElementById('searchResult').innerHTML = '<p style="color:red; margin-top:15px;">Member Not Found</p>';
+    }
 }
 
-}
-
-
-/* =========================
-LOAD PAYMENTS
-========================= */
-
-function loadPayments(){
-
-let recentHtml = '';
-let tableHtml = '';
-
-payments.forEach(payment => {
-
-recentHtml += `
-
-<div class="payment-item">
-
-<div>
-
-<h4>${payment.memberId}</h4>
-
-<p>${payment.month}</p>
-
-</div>
-
-<div>
-
-<p>
-৳ ${payment.amount}
-</p>
-
-<span class="status active-status">
-
-${payment.status}
-
-</span>
-
-</div>
-
-</div>
-
-`;
-
-
-tableHtml += `
-
-<tr>
-
-<td>${payment.receipt}</td>
-
-<td>${payment.memberId}</td>
-
-<td>${payment.name}</td>
-
-<td>
-৳ ${payment.amount}
-</td>
-
-<td>
-
-<span class="status active-status">
-
-${payment.status}
-
-</span>
-
-</td>
-
-</tr>
-
-`;
-
-});
-
-
-document.getElementById(
-'recentPayments'
-).innerHTML = recentHtml;
-
-
-document.getElementById(
-'paymentTable'
-).innerHTML = tableHtml;
-
-}
-
-
-/* =========================
-QUICK ACTIONS
-========================= */
-
-function openAddMember(){
-
-document.getElementById(
-'addMemberModal'
-).style.display = 'flex';
-
-}
-
-
-function closeAddMemberModal(){
-
-document.getElementById(
-'addMemberModal'
-).style.display = 'none';
-
-}
+/* ==============================================
+   ৭. QUICK ACTIONS & APPLICATION
+   ============================================== */
+function openAddMember(){ document.getElementById('addMemberModal').style.display = 'flex'; }
+function closeAddMemberModal(){ document.getElementById('addMemberModal').style.display = 'none'; }
+function openAddPayment(){ document.getElementById('paymentModal').style.display = 'flex'; }
+function closePaymentModal(){ document.getElementById('paymentModal').style.display = 'none'; }
+function openNoticeModal(){ document.getElementById('noticeModal').style.display = 'flex'; }
+function closeNoticeModal(){ document.getElementById('noticeModal').style.display = 'none'; }
 
 function generateMemberId(){
-
-const nextNumber =
-members.length + 1;
-
-return 'ege' +
-String(nextNumber).padStart(4,'0');
-
+    return 'ege' + String(members.length + 1).padStart(4,'0');
 }
   
 async function saveNewMember(){
+    const member = {
+        memberId: generateMemberId(),
+        name: document.getElementById('newMemberName').value,
+        phone: document.getElementById('newPhone').value,
+        email: document.getElementById('newEmail').value,
+        nid: document.getElementById('newNid').value,
+        blood: document.getElementById('newBlood').value,
+        address: document.getElementById('newAddress').value,
+        nomineeName: document.getElementById('newNominee').value,
+        nomineePhone: document.getElementById('newNomineePhone').value,
+        monthlyFee: document.getElementById('newFee').value,
+        password: document.getElementById('newPassword').value,
+        photo: document.getElementById('newPhoto').value
+    };
 
-const member = {
-
-memberId:
-generateMemberId(),
-
-name:
-document.getElementById('newMemberName').value,
-
-phone:
-document.getElementById('newPhone').value,
-
-email:
-document.getElementById('newEmail').value,
-
-nid:
-document.getElementById('newNid').value,
-
-blood:
-document.getElementById('newBlood').value,
-
-address:
-document.getElementById('newAddress').value,
-
-nomineeName:
-document.getElementById('newNominee').value,
-
-nomineePhone:
-document.getElementById('newNomineePhone').value,
-
-monthlyFee:
-document.getElementById('newFee').value,
-
-password:
-document.getElementById('newPassword').value,
-
-photo:
-document.getElementById('newPhoto').value
-
-};
-
-
-try{
-
-await fetch(
-
-API_URL + '?action=addMember',
-
-{
-
-method:'POST',
-
-body:JSON.stringify(member)
-
-}
-
-);
-
-
-alert(
-'Member Added Successfully'
-);
-
-closeAddMemberModal();
-
-fetchMembers();
-
-}catch(error){
-
-console.log(error);
-
-alert('Failed To Add Member');
-}
-}
-
-
-function openAddPayment(){
-
-document.getElementById(
-'paymentModal'
-).style.display = 'flex';
-
-}
-
-
-function openNoticeModal(){
-
-document.getElementById(
-'noticeModal'
-).style.display = 'flex';
-
-}
-
-
-function closeNoticeModal(){
-
-document.getElementById(
-'noticeModal'
-).style.display = 'none';
-
-}
-
-
-function publishNotice(){
-
-const title =
-document.getElementById(
-'noticeTitle'
-).value;
-
-const date =
-document.getElementById(
-'noticeDate'
-).value;
-
-const message =
-document.getElementById(
-'noticeMessage'
-).value;
-
-
-const html = `
-
-<div class="notice-item">
-
-<h3>${title}</h3>
-
-<small>${date}</small>
-
-<p>${message}</p>
-
-</div>
-
-`;
-
-
-document.getElementById(
-'noticeContainer'
-).innerHTML =
-html +
-document.getElementById(
-'noticeContainer'
-).innerHTML;
-
-
-closeNoticeModal();
-
-
-alert(
-'Notice Published Successfully'
-);
-
-}
-
-
-function generateIdCard(){
-
-alert(
-'ID Card Generator Ready'
-);
-
-}
-
-
-function generatePDF(){
-
-alert(
-'PDF Generator Ready'
-);
-
-}
-
-
-/* =========================
-VIEW MEMBER PROFILE
-========================= */
-
-function viewMember(memberId){
-
-const member =
-members.find(
-m => m.memberId === memberId
-);
-
-
-if(member){
-
-const html = `
-
-<div style="text-align:center;">
-
-<img
-src="${member.photo}"
-style="
-width:100px;
-height:100px;
-border-radius:50%;
-margin-bottom:15px;
-"
->
-
-<h2>${member.name}</h2>
-
-<p>
-Phone:
-${member.phone}
-</p>
-
-<p>
-Email:
-${member.email}
-</p>
-
-<p>
-Blood:
-${member.blood}
-</p>
-
-<p>
-Address:
-${member.address}
-</p>
-
-<p>
-Status:
-${member.status}
-</p>
-
-</div>
-
-`;
-
-
-document.getElementById(
-'modalContent'
-).innerHTML = html;
-
-
-document.getElementById(
-'memberModal'
-).style.display = 'flex';
-
-}
-
-}
-
-
-/* =========================
-CLOSE MODAL
-========================= */
-
-function closeModal(){
-
-document.getElementById(
-'memberModal'
-).style.display = 'none';
-
-}
-
-
-/* =========================
-SAVE PAYMENT
-========================= */
-
-async function savePayment(){
-
-const memberId =
-document.getElementById(
-'paymentMemberId'
-).value.trim();
-
-
-const memberName =
-document.getElementById(
-'paymentMemberName'
-).value.trim();
-
-
-/* VALIDATION */
-
-if(memberName === ''){
-
-alert(
-'Invalid Member ID'
-);
-
-return;
-}
-
-
-const payment = {
-
-memberId:memberId,
-
-name:memberName,
-
-month:
-document.getElementById(
-'paymentMonth'
-).value,
-
-amount:
-document.getElementById(
-'paymentAmount'
-).value,
-
-fine:
-document.getElementById(
-'paymentFine'
-).value,
-
-status:
-document.getElementById(
-'paymentStatus'
-).value
-};
-
-
-try{
-
-const response =
-await fetch(
-
-API_URL + '?action=addPayment',
-
-{
-
-method:'POST',
-
-body:JSON.stringify(payment)
-}
-);
-
-
-const result =
-await response.json();
-
-console.log(result);
-
-
-/* ==============================================
-           SUCCESS / ERROR HANDLING (সংশোধিত অংশ)
-           ============================================== */
-        if (result.success) {
-            alert('পেমেন্ট সফলভাবে গুগল শিটে সেভ হয়েছে!');
-            closePaymentModal();
-            
-            // ইনপুট ফিল্ডগুলো খালি করে দেওয়া
-            document.getElementById('modalPaymentMemberId').value = '';
-            document.getElementById('modalPaymentMemberName').value = '';
-            document.getElementById('modalPaymentMonth').value = '';
-            document.getElementById('modalPaymentAmount').value = '';
-            document.getElementById('modalPaymentFine').value = '';
-            
-            // পেমেন্ট সেভ হওয়ার সাথে সাথে ড্যাশবোর্ড এবং পেমেন্ট লিস্ট নতুন করে আপডেট হবে
-            updateDashboard(); 
-            if(typeof loadPayments === "function") loadPayments();
-        } else {
-            alert('Payment Failed: ' + (result.message || 'Unknown Error'));
-        }
-
-    } catch (error) {
-        console.log("Error in savePayment:", error);
-        alert('Server Error: সার্ভারে ডাটা পাঠানো যায়নি।');
-    }
-}
-
-
-
-/* ==============================================
-   LOGOUT FUNCTION (সংশোধিত ও সচল কোড)
-   ============================================== */
-function logout() {
-    // লগইন করার সময় যে ডাটাগুলো ব্রাউজারে সেভ হয়েছিল তা মুছে ফেলা হচ্ছে
-    localStorage.removeItem("adminLoggedIn");
-    localStorage.removeItem("adminId");
-    localStorage.removeItem("memberLoggedIn");
-    localStorage.removeItem("memberId");
-
-    alert("You have been logged out successfully!");
-
-    // লগআউট হওয়ার পর ব্যবহারকারীকে আবার মূল লগইন পেজে পাঠিয়ে দেওয়া হবে
-    window.location.href = "login.html"; 
-}
-
-
-/* =========================
-LIVE SEARCH
-========================= */
-
-document.getElementById(
-'memberSearch'
-).addEventListener(
-'keyup',
-function(){
-
-const value =
-this.value.toLowerCase();
-
-const rows =
-document.querySelectorAll(
-'#membersTable tr'
-);
-
-rows.forEach(row => {
-
-const text =
-row.innerText.toLowerCase();
-
-if(text.includes(value)){
-
-row.style.display = '';
-
-}else{
-
-row.style.display = 'none';
-
-}
-
-});
-
-}
-);
-
-
-/* =========================
-AUTO LOAD
-========================= */
-
-fetchMembers();
-loadPayments();
-updateDashboard();
-
-/* ==============================================
-   DASHBOARD UPDATE (SyntaxError মুক্ত নিখুঁত কোড)
-   ============================================== */
-async function updateDashboard() {
     try {
-        // সরাসরি গুগল অ্যাপস স্ক্রিপ্ট থেকে ড্যাশবোর্ডের লাইভ হিসাব নিয়ে আসা হচ্ছে
-        const response = await fetch(API_URL + '?action=dashboard');
-        const data = await response.json();
-        
-        console.log("Dashboard Live Data:", data);
-
-        // ১. টোটাল কালেকশন আপডেট
-        if (document.getElementById('totalCollection')) {
-            const collectionAmount = Number(data.totalCollection) || 0;
-            document.getElementById('totalCollection').innerText = '৳ ' + collectionAmount.toLocaleString('en-US');
-        }
-
-        // ২. টোটাল পেমেন্ট সংখ্যা আপডেট
-        if (document.getElementById('totalPayments')) {
-            document.getElementById('totalPayments').innerText = data.totalPayments || 0;
-        }
-
-        // ৩. মোট মেম্বার সংখ্যা আপডেট
-        if (document.getElementById('totalMembers')) {
-            document.getElementById('totalMembers').innerText = data.totalMembers || 0;
-        }
-
-        // ৪. একটিভ মেম্বার সংখ্যা আপডেট
-        if (document.getElementById('activeMembers')) {
-            document.getElementById('activeMembers').innerText = data.activeMembers || 0;
-        }
-
-    } catch (error) {
-        console.error("Dashboard Update Error:", error);
-        
-        // যদি কোনো কারণে সার্ভার এরর হয়, তবে ব্রাউজারের ব্যাকআপ ডেটা দিয়ে দেখাবে
-        let localCollection = 0;
-        if (typeof payments !== 'undefined' && Array.isArray(payments)) {
-            payments.forEach(p => {
-                localCollection += (Number(p.amount) || 0) + (Number(p.fine) || 0);
-            });
-            if (document.getElementById('totalCollection')) {
-                document.getElementById('totalCollection').innerText = '৳ ' + localCollection;
-            }
-            if (document.getElementById('totalPayments')) {
-                document.getElementById('totalPayments').innerText = payments.length;
-            }
-        }
+        await fetch(API_URL + '?action=addMember', {
+            method: 'POST',
+            body: JSON.stringify(member)
+        });
+        alert('Member Added Successfully');
+        closeAddMemberModal();
+        fetchMembers();
+    } catch(error) {
+        console.error(error);
+        alert('Failed To Add Member');
     }
 }
 
-<!-- -------------------------===========================---------------------------------- -->
-  function closePaymentModal(){
-
-document.getElementById(
-'paymentModal'
-).style.display = 'none';
-}
-  
-  fetchMembers();
-  loadPayments();
-  
 /* ==============================================
-   MEMBER ID দিয়ে নাম খোঁজা
+   📢 NOTICES MANAGEMENT
    ============================================== */
+function publishNotice(){
+    const title = document.getElementById('noticeTitle').value;
+    const date = document.getElementById('noticeDate').value;
+    const message = document.getElementById('noticeMessage').value;
+
+    const html = `
+        <div class="notice-item" style="background:#fff; padding:15px; border-radius:10px; margin-bottom:10px;">
+            <h3>${title}</h3>
+            <small>${date}</small>
+            <p>${message}</p>
+        </div>
+    `;
+    document.getElementById('noticeContainer').innerHTML = html + document.getElementById('noticeContainer').innerHTML;
+    closeNoticeModal();
+    alert('Notice Published Successfully');
+}
+
+function generateIdCard(){ alert('ID Card Generator Ready'); }
+function generatePDF(){ alert('PDF Generator Ready'); }
+
+/* ==============================================
+   ৮. VIEW PROFILE & MODAL FINDER
+   ============================================== */
+function viewMember(memberId){
+    const member = members.find(m => String(m.memberId).toLowerCase() === String(memberId).toLowerCase());
+    if(member){
+        const html = `
+            <div style="text-align:center;">
+                <img src="${member.photo || 'logo.png'}" style="width:100px;height:100px;border-radius:50%;margin-bottom:15px;">
+                <h2>${member.name}</h2>
+                <p>Phone: ${member.phone}</p>
+                <p>Email: ${member.email}</p>
+                <p>Blood: ${member.blood || 'N/A'}</p>
+                <p>Address: ${member.address || 'N/A'}</p>
+                <p>Status: ${member.status}</p>
+            </div>
+        `;
+        document.getElementById('modalContent').innerHTML = html;
+        document.getElementById('memberModal').style.display = 'flex';
+    }
+}
+
+function closeModal(){ document.getElementById('memberModal').style.display = 'none'; }
+
 function findMemberName(){
     const input = document.getElementById('modalPaymentMemberId');
     if (!input) return;
-    
     const memberId = input.value.trim().toLowerCase();
-
-    // মেম্বার লিস্ট থেকে আইডি মেলানো
     const member = members.find(m => String(m.memberId).trim().toLowerCase() === memberId);
-
     if(member){
         document.getElementById('modalPaymentMemberName').value = member.name;
     } else {
@@ -1833,43 +1142,36 @@ function findMemberName(){
 }
 
 /* ==============================================
-   পেমেন্ট সেভ করা (TypeError এররটি স্থায়ী সমাধান)
+   ৯. SAVE PAYMENT FROM FORM
    ============================================== */
 async function savePayment(){
-    // এখানে getElementById ব্যবহার করা হয়েছে যেন 'null' এরর আর না আসে
-    const memberIdEl = document.getElementById('modalPaymentMemberId');
-    const memberNameEl = document.getElementById('modalPaymentMemberName');
-    const monthEl = document.getElementById('modalPaymentMonth');
-    const amountEl = document.getElementById('modalPaymentAmount');
-    const fineEl = document.getElementById('modalPaymentFine');
-    const statusEl = document.getElementById('modalPaymentStatus');
+    const memberIdEl = document.getElementById('modalPaymentMemberId') || document.getElementById('paymentMemberId');
+    const memberNameEl = document.getElementById('modalPaymentMemberName') || document.getElementById('paymentMemberName');
+    const monthEl = document.getElementById('modalPaymentMonth') || document.getElementById('paymentMonth');
+    const amountEl = document.getElementById('modalPaymentAmount') || document.getElementById('paymentAmount');
+    const fineEl = document.getElementById('modalPaymentFine') || document.getElementById('paymentFine');
+    const statusEl = document.getElementById('modalPaymentStatus') || document.getElementById('paymentStatus');
 
-    // কোনো কারণে এলিমেন্ট না পাওয়া গেলে সতর্কবার্তা দিবে
-    if (!memberIdEl || !memberNameEl || !amountEl) {
-        alert("Error: Payment form inputs not found in HTML!");
+    if (!memberIdEl || !amountEl) {
+        alert("Error: Payment form inputs not found!");
         return;
     }
 
     const memberId = memberIdEl.value.trim();
-    const memberName = memberNameEl.value.trim();
+    const memberName = memberNameEl ? memberNameEl.value.trim() : '';
     const month = monthEl.value;
     const amount = amountEl.value.trim();
-    const fine = fineEl.value || 0;
+    const fine = fineEl ? fineEl.value : 0;
     const status = statusEl.value;
 
-    /* ভ্যালিডেশন চেক */
-    if(memberId === '' || memberName === ''){
-        alert('সঠিক মেম্বার আইডি দিন যেন নাম অটো লোড হয়।');
-        return;
-    }
-    if(amount === ''){
-        alert('টাকার পরিমাণ (Amount) লিখুন।');
+    if(memberId === '' || amount === ''){
+        alert('সঠিক মেম্বার আইডি এবং টাকার পরিমাণ (Amount) লিখুন।');
         return;
     }
 
     const payment = {
         memberId: memberId,
-        name: memberName,
+        name: memberName || 'N/A',
         month: month,
         amount: amount,
         fine: fine,
@@ -1888,33 +1190,52 @@ async function savePayment(){
             alert('পেমেন্ট সফলভাবে গুগল শিটে সেভ হয়েছে!');
             closePaymentModal();
             
-            // মডালের ইনপুট ফিল্ডগুলো খালি করে দেওয়া
             memberIdEl.value = '';
-            memberNameEl.value = '';
-            monthEl.value = '';
+            if(memberNameEl) memberNameEl.value = '';
             amountEl.value = '';
-            fineEl.value = '';
+            if(fineEl) fineEl.value = '';
             
-            // ডেটা রিলোড করা
-            if(typeof fetchMembers === "function") fetchMembers();
-            if(typeof loadPayments === "function") loadPayments();
+            // ডাটা রিফ্রেশ ও ড্যাশবোর্ড আপডেট
+            fetchMembers();
+            loadPayments();
         } else {
             alert('পেমেন্ট সেভ করতে ব্যর্থ হয়েছে।');
         }
     } catch(error) {
-        console.error(error);
+        console.error("Error saving payment:", error);
         alert('সার্ভার ত্রুটি! গুগল অ্যাপস স্ক্রিপ্ট চেক করুন।');
     }
 }
 
-  // পেজটি ব্রাউজারে সম্পূর্ণ লোড হওয়ার সাথে সাথে ড্যাশবোর্ড এবং পেমেন্ট টেবিল রান হবে
-window.addEventListener('DOMContentLoaded', () => {
-    if (typeof updateDashboard === "function") updateDashboard();
-    if (typeof loadPayments === "function") loadPayments();
-});
-  
-</script>
+/* ==============================================
+   ১০. LOGOUT & LIVE SEARCH
+   ============================================== */
+function logout() {
+    localStorage.removeItem("adminLoggedIn");
+    localStorage.removeItem("adminId");
+    localStorage.removeItem("memberLoggedIn");
+    localStorage.removeItem("memberId");
+    alert("You have been logged out successfully!");
+    window.location.href = "login.html"; 
+}
 
+document.getElementById('memberSearch').addEventListener('keyup', function(){
+    const value = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#membersTable tr');
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(value) ? '' : 'none';
+    });
+});
+
+/* ==============================================
+   ১১. AUTO LOAD INITIALIZATION (পেজ লোড সিস্টেম)
+   ============================================== */
+window.addEventListener('DOMContentLoaded', () => {
+    fetchMembers();
+    loadPayments();
+});
+</script>
 <!-- ADD MEMBER MODAL -->
 
 <div id="addMemberModal" class="modal">
