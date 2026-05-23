@@ -867,22 +867,20 @@ console.log(error);
 
 
 /* ==============================================
-   LOAD PAYMENTS HISTORY (সংশোধিত ও ১০০% কার্যকরী কোড)
+   LOAD PAYMENTS HISTORY (৫ কলামের নতুন টেবিল কোড)
    ============================================== */
 async function loadPayments() {
-    // আপনার নতুন HTML টেবিলের আইডি 'paymentTable' এখানে ধরা হয়েছে
     const tableBody = document.getElementById('paymentTable'); 
     if (!tableBody) {
         console.error("Error: 'paymentTable' ID missing in HTML!");
         return;
     }
 
-    // ডাটা লোড হওয়ার সময় টেবিলের ভেতরে একটি সুন্দর মেসেজ দেখাবে
     tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">Loading Recent Payments...</td></tr>`;
 
     try {
-        // গুগল অ্যাপস স্ক্রিপ্ট থেকে সঠিক অ্যাকশনে পেমেন্টের লাইভ ডাটা আনা হচ্ছে
-        const response = await fetch(API_URL + '?action=payments');
+        // আপনার কোডের action=recentPayments এর সাথে মিলিয়ে ডাটা কল করা হচ্ছে
+        const response = await fetch(API_URL + '?action=recentPayments');
         const livePayments = await response.json();
 
         console.log("Loaded Live Payments:", livePayments);
@@ -895,15 +893,14 @@ async function loadPayments() {
         let tableHtml = '';
         let recentHtml = '';
 
-        // লুপ চালিয়ে আপনার দেওয়া ৫টি কলাম (Receipt No, Member ID, Name, Amount, Status) অনুযায়ী ডাটা সাজানো
         livePayments.forEach(payment => {
-            // স্ট্যাটাস অনুযায়ী সুন্দর রঙের ব্যাজ তৈরি (Paid = সবুজ, Due = লাল)
+            // স্ট্যাটাস অনুযায়ী রঙের ব্যাজ (Paid = সবুজ, Due = লাল)
             const isPaid = String(payment.status).toLowerCase() === 'paid';
             const statusStyle = isPaid 
                 ? 'background:#d1e7dd; color:#0f5132; padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; display:inline-block;' 
                 : 'background:#f8d7da; color:#842029; padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; display:inline-block;';
 
-            // ১. আপনার প্রধান টেবিলের জন্য HTML (৫টি কলাম)
+            // আপনার নতুন ৫টি কলাম: Receipt No, Member ID, Name, Amount, Status
             tableHtml += `
                 <tr>
                     <td><strong>${payment.receipt || 'N/A'}</strong></td>
@@ -914,25 +911,24 @@ async function loadPayments() {
                 </tr>
             `;
 
-            // ২. যদি টেবিলের উপরে থাকা <div id="recentPayments"> এ ছোট আইটেম বক্স দেখাতে চান (ব্যাকআপ)
+            // টেবিলের উপরে থাকা <div id="recentPayments"> সেকশনের জন্য
             recentHtml += `
-                <div class="payment-item" style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
+                <div class="payment-item" style="display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; align-items: center;">
                     <div>
-                        <h4>${payment.memberId}</h4>
-                        <small>${payment.month || ''}</small>
+                        <h4 style="margin:0; color:#333;">ID: ${payment.memberId}</h4>
+                        <small style="color:#666;">Month: ${payment.month || 'N/A'}</small>
                     </div>
                     <div style="text-align: right;">
-                        <p>৳ ${Number(payment.amount || 0).toLocaleString('en-US')}</p>
-                        <span style="${statusStyle}">${payment.status}</span>
+                        <p style="margin:0; font-weight:600; color:#2c3e50;">৳ ${Number(payment.amount || 0).toLocaleString('en-US')}</p>
+                        <span style="${statusStyle} font-size:11px; padding:3px 8px; margin-top:4px;">${payment.status}</span>
                     </div>
                 </div>
             `;
         });
 
-        // আপনার HTML টেবিল বডিতে ডাটা পুশ করা
+        // টেবিল এবং উপরের ডিভ—উভয় জায়গায় ডাটা পুশ করা হলো
         tableBody.innerHTML = tableHtml;
 
-        // টেবিলের উপরে যদি <div id="recentPayments"> থাকে, সেখানেও ডাটা আপডেট হবে
         const recentDiv = document.getElementById('recentPayments');
         if (recentDiv) {
             recentDiv.innerHTML = recentHtml;
@@ -944,7 +940,7 @@ async function loadPayments() {
     }
 }
 
-// পেজটি ব্রাউজারে খোলার সাথে সাথেই যেন পেমেন্ট লিস্ট নিজে নিজেই রান হয়
+// পেজ লোড হওয়ার সাথে সাথে ফাংশনটি রান করানোর জন্য
 window.addEventListener('DOMContentLoaded', () => {
     loadPayments();
 });
