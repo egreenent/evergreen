@@ -494,17 +494,11 @@ border-radius:8px;
 <div class="menu">
 
 <a href="#" onclick="showSection('dashboardSection', this)" class="active">🏠 Dashboard</a>
-
 <a href="#" onclick="showSection('membersSection', this)">👥 Members</a>
-
 <a href="#" onclick="showSection('paymentsSection', this)">💰 Payments</a>
-
 <a href="#" onclick="showSection('noticesSection', this)">📢 Notices</a>
-
 <a href="#" onclick="showSection('downloadsSection', this)">📥 Downloads</a>
-
 <a href="#" onclick="showSection('analyticsSection', this)">📊 Analytics</a>
-
 <a href="#" onclick="showSection('settingsSection', this)">⚙ Settings</a>
 
 <a href="javascript:void(0);" onclick="logout()" style="text-decoration: none; color: inherit; display: block;">🚪 Logout</a>
@@ -1077,22 +1071,34 @@ async function saveNotice() {
     } catch(error) { alert('নোটিশ পাবলিশ ব্যর্থ হয়েছে।'); }
 }
 
-/* =========================================
-   ৭. NAVIGATION CONTROLS (সেকশন পরিবর্তন)
-   ========================================= */
-function showSection(sectionId) {
+/* =======================================================
+   ৭. NAVIGATION CONTROLS (আপনার মেনুর সাথে মিল রেখে সংশোধিত)
+   ======================================================= */
+function showSection(sectionId, element) {
+    // ১. প্রথমে সব পেজ সেকশন লুকিয়ে ফেলা হচ্ছে
     document.querySelectorAll('.page-section').forEach(section => {
         section.classList.remove('active');
+        section.style.display = 'none'; // সুরক্ষার জন্য ডিসপ্লে ওয়ান করা হচ্ছে
     });
-    const target = document.getElementById(sectionId);
-    if(target) target.classList.add('active');
 
-    document.querySelectorAll('.sidebar menu li').forEach(item => {
+    // ২. যে সেকশনে ক্লিক করা হয়েছে শুধু সেটি দেখানো হচ্ছে
+    const target = document.getElementById(sectionId);
+    if (target) {
+        target.classList.add('active');
+        target.style.display = 'block'; // সেকশনটি দৃশ্যমান হবে
+    } else {
+        console.error("Error: HTML ফাইলে '" + sectionId + "' আইডির কোনো সেকশন খুঁজে পাওয়া যায়নি!");
+    }
+
+    // ৩. মেনুর ভেতরের 'active' কালার পরিবর্তন করা হচ্ছে
+    document.querySelectorAll('.menu a').forEach(item => {
         item.classList.remove('active');
     });
-    // ক্লিক করা সাইডবার মেনুকে একটিভ করা
-    const clickedMenu = Array.from(document.querySelectorAll('.sidebar menu li')).find(li => li.getAttribute('onclick') && li.getAttribute('onclick').includes(sectionId));
-    if(clickedMenu) clickedMenu.classList.add('active');
+    
+    // ৪. যে লিংকে ক্লিক করা হয়েছে সেটিকে একটিভ মার্ক করা হচ্ছে
+    if (element) {
+        element.classList.add('active');
+    }
 }
 </script>
 
