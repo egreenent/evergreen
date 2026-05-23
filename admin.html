@@ -1787,49 +1787,94 @@ document.getElementById(
   fetchMembers();
   loadPayments();
   
-/* FIND MEMBER NAME */
-  function findMemberName(){
+/* ==============================================
+   পেমেন্ট মডালের জন্য মেম্বার আইডি দিয়ে নাম খোঁজা (ঠিক করা হয়েছে)
+   ============================================== */
+function findMemberName() {
+    // পেমেন্ট মডালের ভেতরের সঠিক ইনপুটটি ধরার জন্য querySelector ব্যবহার করা হয়েছে
+    const memberIdInput = document.querySelector('#paymentModal #paymentMemberId');
+    const memberNameInput = document.querySelector('#paymentModal #paymentMemberName');
+    
+    if (!memberIdInput || !memberNameInput) return;
 
-const input =
-document.getElementById(
-'paymentMemberId'
-);
+    const memberId = memberIdInput.value.trim().toLowerCase(); // ছোট হাতের অক্ষরে রূপান্তর
+    console.log("SEARCHING FOR PAYMENT:", memberId);
 
-console.log(input);
+    // মেম্বার লিস্ট থেকে আইডি মেলানো
+    const member = members.find(m => String(m.memberId).trim().toLowerCase() === memberId);
 
-const memberId =
-input.value.trim();
-
-console.log(
-"SEARCHING:",
-memberId
-);
-
-
-const member =
-members.find(m =>
-
-String(m.memberId).trim()
-=== memberId
-
-);
-
-
-if(member){
-
-document.getElementById(
-'paymentMemberName'
-).value =
-member.name;
-
-}else{
-
-document.getElementById(
-'paymentMemberName'
-).value = '';
-
+    if (member) {
+        memberNameInput.value = member.name; // নাম খুঁজে পেলে বসাবে
+    } else {
+        memberNameInput.value = ''; // না পেলে খালি থাকবে
+    }
 }
 
+/* ==============================================
+   গুগল শিটে পেমেন্ট সেভ করা (ঠিক করা হয়েছে)
+   ============================================== */
+async function savePayment() {
+    // পেমেন্ট মডালের ভেতরের ইনপুটগুলোর ডেটা নেওয়া হচ্ছে
+    const memberId = document.querySelector('#paymentModal #paymentMemberId').value.trim();
+    const memberName = document.querySelector('#paymentModal #paymentMemberName').value.trim();
+    const month = document.querySelector('#paymentModal #paymentMonth').value;
+    const amount = document.querySelector('#paymentModal #paymentAmount').value;
+    const fine = document.querySelector('#paymentModal #paymentFine').value || 0; // খালি থাকলে ০ বসবে
+    const status = document.querySelector('#paymentModal #paymentStatus').value;
+
+    /* ভ্যালিডেশন */
+    if (memberId === '' || memberName === '') {
+        alert('অনুগ্রহ করে সঠিক মেম্বার আইডি দিন যেন নাম অটো লোড হয়।');
+        return;
+    }
+    if (amount === '') {
+        alert('টাকার পরিমাণ (Amount) লিখুন।');
+        return;
+    }
+
+    const payment = {
+        memberId: memberId,
+        name: memberName,
+        month: month,
+        amount: amount,
+        fine: fine,
+        status: status
+    };
+
+    try {
+        // ডেটা পাঠানোর সময় লোডিং অ্যালার্ট বা কনসোল চেক
+        console.log("Sending Payment Data:", payment);
+
+        const response = await fetch(API_URL + '?action=addPayment', {
+            method: 'POST',
+            mode: 'cors', // CORS সমস্যা এড়াতে
+            body: JSON.stringify(payment)
+        });
+
+        const result = await response.json();
+        console.log("Server Response:", result);
+
+        if (result.success || result.status === "success") {
+            alert('পেমেন্ট সফলভাবে গুগল শিটে সেভ হয়েছে!');
+            closePaymentModal();
+            
+            // ইনপুট ফিল্ডগুলো খালি করে দেওয়া
+            document.querySelector('#paymentModal #paymentMemberId').value = '';
+            document.querySelector('#paymentModal #paymentMemberName').value = '';
+            document.querySelector('#paymentModal #paymentMonth').value = '';
+            document.querySelector('#paymentModal #paymentAmount').value = '';
+            document.querySelector('#paymentModal #paymentFine').value = '';
+            
+            // নতুন পেমেন্ট লিস্ট ও ড্যাশবোর্ড আপডেট করা
+            if(typeof loadPayments === "function") loadPayments();
+        } else {
+            alert('শিটে ডেটা সেভ হতে ব্যর্থ হয়েছে: ' + (result.message || 'অজানা কারণ'));
+        }
+
+    } catch (error) {
+        console.error("Error saving payment:", error);
+        alert('সার্ভারে ডেটা পাঠানো যায়নি! আপনার গুগল অ্যাপস স্ক্রিপ্টের doPost(e) ফাংশনটি চেক করুন।');
+    }
 }
   
 </script>
