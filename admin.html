@@ -1150,28 +1150,27 @@ async function saveNotice() {
   </div>
 </div>
 
+
 <div id="paymentModal" class="modal">
-  <div class="modal-box">
+  <div class="modal-box" style="max-width: 500px;">
     <div class="modal-header">
-      <h2>💰 Add New Payment</h2>
+      <h2 style="color: #0b6b2d; font-size: 24px;">💰 Add New Payment</h2>
       <span class="close-btn" onclick="closePaymentModal()">&times;</span>
     </div>
 
-<div class="form-group" style="margin-bottom: 15px;">
-  <label style="display:block; margin-bottom:4px; font-weight:500;">Member ID</label>
-  <input type="text" id="modalPaymentMemberId" placeholder="e.g. ege0001" onkeyup="findMemberName()" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; box-sizing: border-box;">
-</div>
-      </select>
+    <div class="form-group" style="margin-bottom: 15px;">
+      <label style="display:block; margin-bottom:6px; font-weight:600;">Member ID</label>
+      <input type="text" id="modalPaymentMemberId" placeholder="e.g. ege0001" onkeyup="findMemberName()" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc;">
     </div>
 
     <div class="form-group" style="margin-bottom: 15px;">
-      <label style="display:block; margin-bottom:4px; font-weight:500;">Member Name</label>
-      <input type="text" id="modalPaymentMemberName" placeholder="Name will load automatically" readonly style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; background:#e9ecef; box-sizing: border-box;">
+      <label style="display:block; margin-bottom:6px; font-weight:600;">Member Name</label>
+      <input type="text" id="modalPaymentMemberName" placeholder="Name will load automatically" readonly style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; background: #f0f0f0; color: #555; font-weight: 500;">
     </div>
 
     <div class="form-group" style="margin-bottom: 15px;">
-      <label style="display:block; margin-bottom:4px; font-weight:500;">Select Month</label>
-      <select id="modalPaymentMonth" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; background:#fff; font-size:14px; box-sizing: border-box;">
+      <label style="display:block; margin-bottom:6px; font-weight:600;">Select Month</label>
+      <select id="modalPaymentMonth" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; background:#fff;">
         <option value="January">January</option>
         <option value="February">February</option>
         <option value="March">March</option>
@@ -1187,30 +1186,31 @@ async function saveNotice() {
       </select>
     </div>
 
-    <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+    <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;">
       <div class="form-group">
-        <label style="display:block; margin-bottom:4px; font-weight:500;">Amount (৳)</label>
-        <input type="number" id="modalPaymentAmount" placeholder="Amount" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; box-sizing: border-box;">
+        <label style="display:block; margin-bottom:6px; font-weight:600;">Amount (৳)</label>
+        <input type="number" id="modalPaymentAmount" placeholder="Amount" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc;">
       </div>
       <div class="form-group">
-        <label style="display:block; margin-bottom:4px; font-weight:500;">Fine (৳)</label>
-        <input type="number" id="modalPaymentFine" placeholder="0" value="0" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; box-sizing: border-box;">
+        <label style="display:block; margin-bottom:6px; font-weight:600;">Fine (৳)</label>
+        <input type="number" id="modalPaymentFine" placeholder="0" value="0" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc;">
       </div>
     </div>
 
-    <div class="form-group" style="margin-bottom: 20px;">
-      <label style="display:block; margin-bottom:4px; font-weight:500;">Status</label>
-      <select id="modalPaymentStatus" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; background:#fff; font-size:14px; box-sizing: border-box;">
+    <div class="form-group" style="margin-bottom: 25px;">
+      <label style="display:block; margin-bottom:6px; font-weight:600;">Status</label>
+      <select id="modalPaymentStatus" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; background:#fff;">
         <option value="Paid">Paid</option>
         <option value="Due">Due</option>
       </select>
     </div>
 
-    <button class="action-btn" onclick="savePayment()" style="width:100%; background:#0b6b2d;">
+    <button class="action-btn" onclick="savePayment()" style="width: 100%; background: #0b6b2d; color: #fff; padding: 14px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">
       🚀 Submit & Save Payment
     </button>
   </div>
 </div>
+  
 
 <div id="noticeModal" class="modal">
   <div class="modal-box">
