@@ -163,26 +163,61 @@ font-size:32px;
 }
 }
 
-  .password{
-position:relative;
+ /* পাসওয়ার্ড ফিল্ডের জন্য পজিশন ঠিক করা হয়েছে */
+.password-wrapper {
+ position: relative;
+ }
+
+.input-group input {
+width: 100%;
+padding: 15px;
+padding-right: 50px; /* চোখের আইকনের জন্য ডানে জায়গা রাখা হয়েছে */
+border-radius: 10px;
+border: 1px solid #2f8732;
+background: #f9fbf9;
+font-size: 16px;
+outline: none;
 }
 
-.password input{
-width:100%;
-padding:12px;
-padding-right:45px;
-border:1px solid #ccc;
-border-radius:8px;
-}
+        /* চোখ বাটনটির পজিশন সুন্দর করা হয়েছে */
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 20px;
+            user-select: none;
+            color: #666;
+        }
 
-.toggle-password{
-position:absolute;
-right:15px;
-top:50%;
-transform:translateY(-50%);
-cursor:pointer;
-font-size:18px;
-}
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: #2f8732;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #256d28;
+        }
+
+        @media(max-width:500px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 22px;
+            }
+
+            .title {
+                font-size: 32px;
+            }
+        }
 </style>
 
 </head>
