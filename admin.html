@@ -999,28 +999,15 @@ async function updateDashboard() {
 /* =========================================
    ৬. QUICK ACTIONS & MODAL CONTROLS
    ========================================= */
-function openAddPayment(){ 
-    // ১. পেমেন্ট মডাল বা পপআপ বক্সটি ওপেন করা হলো
-    document.getElementById('paymentModal').style.display = 'flex'; 
-    
-    // ২. মডালের ভেতরের মেম্বার আইডি ড্রপডাউন (Select) এলিমেন্টটি ধরা হলো
-    const memberSelect = document.getElementById('modalPaymentMemberId');
-    if(!memberSelect) return;
-    
-    // ৩. ড্রপডাউনটি প্রথমে খালি করে একটি ডিফল্ট অপশন সেট করা হলো
-    memberSelect.innerHTML = '<option value="">-- Select Member ID --</option>';
-    
-    // ৪. গ্লোবাল members অ্যারেতে থাকা সব মেম্বারদের আইডি ও নাম ড্রপডাউনে অপশন হিসেবে যোগ করা হচ্ছে
-    members.forEach(m => {
-        let opt = document.createElement('option');
-        opt.value = m.memberId;
-        opt.innerHTML = `${m.memberId} - ${m.name}`; // এটি ড্রপডাউনের ভেতরে (ID - Name) আকারে দেখাবে
-        memberSelect.appendChild(opt);
-    });
-}
+function openAddMember(){ document.getElementById('addMemberModal').style.display = 'flex'; }
+function closeAddMemberModal(){ document.getElementById('addMemberModal').style.display = 'none'; }
+function openAddPayment(){ document.getElementById('paymentModal').style.display = 'flex'; }
+function closePaymentModal(){ document.getElementById('paymentModal').style.display = 'none'; }
+function openNoticeModal(){ document.getElementById('noticeModal').style.display = 'flex'; }
+function closeNoticeModal(){ document.getElementById('noticeModal').style.display = 'none'; }
 
-function closePaymentModal(){ 
-    document.getElementById('paymentModal').style.display = 'none'; 
+function generateMemberId(){
+    return 'ege' + String(members.length + 1).padStart(4, '0');
 }
 
 function findMemberName() {
@@ -1028,16 +1015,10 @@ function findMemberName() {
     const nameField = document.getElementById('modalPaymentMemberName');
     if (!input || !nameField) return;
 
-    // ড্রপডাউন থেকে সিলেক্ট করা মেম্বার আইডি সংগ্রহ করা হচ্ছে
     const memberId = input.value.trim().toLowerCase();
-    
-    // আইডি অনুযায়ী মেম্বার লিস্ট থেকে সঠিক মেম্বারকে খোঁজা হচ্ছে
     const member = members.find(m => String(m.memberId).trim().toLowerCase() === memberId);
-    
-    // মেম্বার পাওয়া গেলে তার নাম বক্সে বসবে, না পাওয়া গেলে বক্স খালি থাকবে
     nameField.value = member ? member.name : '';
 }
-
 /* =========================================
    ৭. SAVE DATA FUNCTIONS (POST REQUESTS)
    ========================================= */
@@ -1148,10 +1129,10 @@ async function saveNotice() {
       <h2 style="color: #0b6b2d;">💰 Add New Payment</h2>
       <span class="close-btn" onclick="closePaymentModal()">&times;</span>
     </div>
-    <div class="form-group" style="margin-bottom: 15px;">
-  <label style="display:block; margin-bottom:4px; font-weight:500;">Select Member ID</label>
-  <select id="modalPaymentMemberId" onchange="findMemberName()" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; background:#fff;">
-    <option value="">-- Select Member ID --</option>
+<div class="form-group" style="margin-bottom: 15px;">
+      <label style="display:block; margin-bottom:4px; font-weight:500;">Member ID</label>
+      <input type="text" id="modalPaymentMemberId" placeholder="e.g. ege0001" onkeyup="findMemberName()" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;">
+    </div> 
   </select>
 </div>
     <div class="form-group" style="margin-bottom: 15px;">
