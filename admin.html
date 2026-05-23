@@ -830,129 +830,120 @@ Please complete your monthly payment before 10th.
 <div id="modalContent"></div>
 </div>
 </div>
-
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec"; // আপনার জেনারেট করা নতুন লিংকটি এখানে বসাবেন
 
 let members = [];
-let payments = []; // গ্লোবাল পেমেন্ট অ্যারে
+let payments = [];
 
-/* ==============================================
-   ১. FETCH MEMBERS (মেম্বার ডাটা লোড)
-   ============================================== */
+// পেজ লোড হওয়ার সাথে সাথে সব ডাটা কল করা
+window.onload = function() {
+    fetchMembers();
+    loadPayments();
+    updateDashboard();
+};
+
+/* =========================================
+   ১. FETCH MEMBERS LIST & DISPLAY IN TABLE
+   ========================================= */
 async function fetchMembers() {
+    const tableBody = document.getElementById('membersTableBody');
+    if(tableBody) tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Loading members...</td></tr>`;
+
     try {
         const response = await fetch(API_URL + '?action=members');
         members = await response.json();
-        console.log("TOTAL MEMBERS LOADED:", members.length);
         
-        // মেম্বার লোড হওয়ার পর ড্যাশবোর্ড ও মেম্বার টেবিল আপডেট হবে
-        loadMembers();
-        updateDashboard(); 
+        displayMembers(members); // টেবিলে শো করা
+        updateDashboard();      // ড্যাশবোর্ড আপডেট করা
     } catch(error) {
-        console.error("Error fetching members:", error);
+        console.error(error);
     }
 }
 
-/* ==============================================
-   ২. LOAD MEMBERS INTO TABLE (মেম্বার টেবিল ভিউ)
-   ============================================== */
-function loadMembers(){
+function displayMembers(dataList) {
+    const tableBody = document.getElementById('membersTableBody');
+    if (!tableBody) return;
+    
+    if (dataList.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">No members found.</td></tr>`;
+        return;
+    }
+
     let html = '';
-    members.forEach(member => {
+    dataList.forEach(m => {
         html += `
             <tr>
-                <td><img src="${member.photo || 'logo.png'}" class="member-photo"></td>
-                <td>${member.memberId || 'N/A'}</td>
-                <td>${member.name || 'N/A'}</td>
-                <td>${member.phone || 'N/A'}</td>
-                <td><span class="status active-status">${member.status || 'Active'}</span></td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="small-btn view-btn" onclick="viewMember('${member.memberId}')">View</button>
-                        <button class="small-btn edit-btn">Edit</button>
-                        <button class="small-btn delete-btn">Suspend</button>
-                    </div>
-                </td>
+                <td><img src="${m.photo}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;"></td>
+                <td><strong>${m.memberId}</strong></td>
+                <td>${m.name}</td>
+                <td>${m.phone}</td>
+                <td>${m.blood || 'N/A'}</td>
+                <td>৳ ${m.monthlyFee}</td>
+                <td><span class="status-badge" style="background:#d1e7dd; color:#0f5132; padding:4px 10px; border-radius:12px; font-size:12px;">${m.status}</span></td>
             </tr>
         `;
     });
-
-    const tableBody = document.getElementById('membersTable');
-    if (tableBody) tableBody.innerHTML = html;
-
-    /* DASHBOARD COUNT */
-    if (document.getElementById('totalMembers')) document.getElementById('totalMembers').innerText = members.length;
-    if (document.getElementById('activeMembers')) document.getElementById('activeMembers').innerText = members.length;
+    tableBody.innerHTML = html;
 }
 
-/* ==============================================
-   ৩. LOAD PAYMENTS HISTORY (ReferenceError মুক্ত কোড)
-   ============================================== */
-async function loadPayments() {
-    console.log("LOAD PAYMENTS RUNNING...");
-    const tableBody = document.getElementById('paymentTable'); 
-    const recentDiv = document.getElementById('recentPayments');
+/* =========================================
+   ২. SEARCH MEMBER LOGIC (লাইভ ফিল্টার)
+   ========================================= */
+function searchMember() {
+    const query = document.getElementById('searchBar').value.toLowerCase().trim();
+    const filtered = members.filter(m => 
+        m.name.toLowerCase().includes(query) || 
+        m.memberId.toLowerCase().includes(query) || 
+        m.phone.includes(query)
+    );
+    displayMembers(filtered);
+}
 
-    if (tableBody) {
-        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">Loading Recent Payments...</td></tr>`;
-    }
+/* =========================================
+   ৩. LOAD PAYMENTS HISTORY
+   ========================================= */
+async function loadPayments() {
+    const tableBody = document.getElementById('paymentTable');
+    const recentDiv = document.getElementById('recentPayments');
+    if (tableBody) tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Loading...</td></tr>`;
 
     try {
-        // গুগল অ্যাপস স্ক্রিপ্ট থেকে ডাটা আনা হচ্ছে
         const response = await fetch(API_URL + '?action=payments');
-        const liveData = await response.json();
+        payments = await response.json();
 
-        console.log("Live Payments Loaded:", liveData);
-
-        // গ্লোবাল ভ্যারিয়েবলে ডাটা সেভ করা হচ্ছে যেন অন্য ফাংশনও এটি পায়
-        if (Array.isArray(liveData)) {
-            payments = liveData;
-        } else {
-            payments = [];
-        }
-
-        if (payments.error || !payments || payments.length === 0) {
-            if (tableBody) tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">No recent payments found.</td></tr>`;
-            if (recentDiv) recentDiv.innerHTML = `<p style="text-align:center; padding:10px;">No recent payments.</p>`;
+        if (!payments || payments.length === 0 || payments.error) {
+            if(tableBody) tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No recent payments.</td></tr>`;
             return;
         }
 
         let tableHtml = '';
         let recentHtml = '';
-        let totalCollection = 0;
 
-        payments.forEach(payment => {
-            totalCollection += Number(payment.amount || 0);
+        payments.forEach((p, index) => {
+            const statusStyle = String(p.status).toLowerCase() === 'paid' 
+                ? 'background:#d1e7dd; color:#0f5132;' 
+                : 'background:#f8d7da; color:#842029;';
 
-            const isPaid = String(payment.status).toLowerCase() === 'paid';
-            const statusStyle = isPaid 
-                ? 'background:#d1e7dd; color:#0f5132; padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; display:inline-block;' 
-                : 'background:#f8d7da; color:#842029; padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; display:inline-block;';
+            // ড্যাশবোর্ডের প্রধান টেবিল (৫ কলাম)
+            if (index < 10) { // সর্বোচ্চ ১০টি রিসেন্ট ডাটা দেখাবে
+                tableHtml += `
+                    <tr>
+                        <td><strong>${p.receipt || 'N/A'}</strong></td>
+                        <td>${p.memberId}</td>
+                        <td>${p.name}</td>
+                        <td>৳ ${Number(p.amount).toLocaleString()}</td>
+                        <td><span style="padding:4px 10px; border-radius:15px; font-size:12px; ${statusStyle}">${p.status}</span></td>
+                    </tr>
+                `;
+            }
 
-            // ৫ কলামের প্রধান টেবিল বডি
-            tableHtml += `
-                <tr>
-                    <td><strong>${payment.receipt || 'N/A'}</strong></td>
-                    <td>${payment.memberId || 'N/A'}</td>
-                    <td>${payment.name || 'N/A'}</td>
-                    <td>৳ ${Number(payment.amount || 0).toLocaleString('en-US')}</td>
-                    <td><span style="${statusStyle}">${payment.status || 'Paid'}</span></td>
-                </tr>
-            `;
-
-            // সাম্প্রতিক পেমেন্টের ছোট আইটেম বক্স (<div id="recentPayments">)
-            if (recentDiv) {
+            // ড্যাশবোর্ডের ডানদিকের ছোট রিসেন্ট পেমেন্ট বক্স (<div id="recentPayments">)
+            if (index < 4) {
                 recentHtml += `
-                    <div class="payment-item" style="display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; align-items: center; background:#fff; margin-bottom:10px; border-radius:10px;">
-                        <div>
-                            <h4 style="margin:0; color:#333;">ID: ${payment.memberId}</h4>
-                            <small style="color:#666;">Month: ${payment.month || 'N/A'}</small>
-                        </div>
-                        <div style="text-align: right;">
-                            <p style="margin:0; font-weight:600; color:#0b6b2d;">৳ ${Number(payment.amount || 0).toLocaleString('en-US')}</p>
-                            <span style="${statusStyle} font-size:11px; padding:3px 8px; margin-top:4px;">${payment.status || 'Paid'}</span>
-                        </div>
+                    <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;">
+                        <div><h5 style="margin:0;">ID: ${p.memberId}</h5><small style="color:#666;">${p.month}</small></div>
+                        <div style="text-align:right;"><p style="margin:0; font-weight:600; color:#0b6b2d;">৳ ${p.amount}</p></div>
                     </div>
                 `;
             }
@@ -960,91 +951,31 @@ async function loadPayments() {
 
         if (tableBody) tableBody.innerHTML = tableHtml;
         if (recentDiv) recentDiv.innerHTML = recentHtml;
-
     } catch (error) {
-        console.error("Error loading payments:", error);
-        if (tableBody) tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red; padding: 20px;">Failed to load data from Server!</td></tr>`;
+        console.error(error);
     }
 }
 
-/* ==============================================
-   ৪. DASHBOARD UPDATE (লাইভ কালেকশন ও হিসাব)
-   ============================================== */
+/* =========================================
+   ৪. DASHBOARD METRICS UPDATE
+   ========================================= */
 async function updateDashboard() {
     try {
         const response = await fetch(API_URL + '?action=dashboard');
-        const data = await response.json();
-        console.log("Dashboard Live Data:", data);
-
-        if (document.getElementById('totalCollection')) {
-            const collectionAmount = Number(data.totalCollection) || 0;
-            document.getElementById('totalCollection').innerText = '৳ ' + collectionAmount.toLocaleString('en-US');
-        }
-        if (document.getElementById('totalPayments')) {
-            document.getElementById('totalPayments').innerText = data.totalPayments || 0;
-        }
-    } catch (error) {
-        console.error("Dashboard Update Error, using backup logic:", error);
-        let localCollection = 0;
-        payments.forEach(p => {
-            localCollection += (Number(p.amount) || 0) + (Number(p.fine) || 0);
-        });
-        if (document.getElementById('totalCollection')) {
-            document.getElementById('totalCollection').innerText = '৳ ' + localCollection.toLocaleString('en-US');
-        }
-        if (document.getElementById('totalPayments')) {
-            document.getElementById('totalPayments').innerText = payments.length;
-        }
+        const d = await response.json();
+        
+        if(document.getElementById('totalMembers')) document.getElementById('totalMembers').innerText = d.totalMembers;
+        if(document.getElementById('activeMembers')) document.getElementById('activeMembers').innerText = d.activeMembers;
+        if(document.getElementById('totalPayments')) document.getElementById('totalPayments').innerText = d.totalPayments;
+        if(document.getElementById('totalCollection')) document.getElementById('totalCollection').innerText = "৳ " + d.totalCollection.toLocaleString();
+    } catch(error) {
+        console.error(error);
     }
 }
 
-/* ==============================================
-   ৫. SECTION SYSTEM (ট্যাব সুইচ)
-   ============================================== */
-function showSection(sectionId, element){
-    const sections = document.querySelectorAll('.page-section');
-    sections.forEach(section => {
-        section.classList.remove('active-section');
-    });
-    document.getElementById(sectionId).classList.add('active-section');
-
-    const links = document.querySelectorAll('.menu a');
-    links.forEach(link => {
-        link.classList.remove('active');
-    });
-    if(element){
-        element.classList.add('active');
-    }
-}
-
-/* ==============================================
-   ৬. SEARCH MEMBER (আইডি দিয়ে মেম্বার সার্চ)
-   ============================================== */
-function searchMember(){
-    const memberId = document.getElementById('searchMemberId').value.trim();
-    const member = members.find(m => String(m.memberId).toLowerCase() === memberId.toLowerCase());
-
-    if(member){
-        document.getElementById('searchResult').innerHTML = `
-            <div style="display:flex;gap:20px;align-items:center; background:#fff; padding:15px; border-radius:12px; margin-top:15px;">
-                <img src="${member.photo || 'logo.png'}" class="member-photo" style="width:80px;height:80px;">
-                <div>
-                    <h3>${member.name}</h3>
-                    <p>Member ID: ${member.memberId}</p>
-                    <p>Phone: ${member.phone}</p>
-                    <p>Email: ${member.email}</p>
-                    <p>Status: ${member.status}</p>
-                </div>
-            </div>
-        `;
-    } else {
-        document.getElementById('searchResult').innerHTML = '<p style="color:red; margin-top:15px;">Member Not Found</p>';
-    }
-}
-
-/* ==============================================
-   ৭. QUICK ACTIONS & APPLICATION
-   ============================================== */
+/* =========================================
+   ৫. QUICK ACTIONS & MODAL CONTROLS
+   ========================================= */
 function openAddMember(){ document.getElementById('addMemberModal').style.display = 'flex'; }
 function closeAddMemberModal(){ document.getElementById('addMemberModal').style.display = 'none'; }
 function openAddPayment(){ document.getElementById('paymentModal').style.display = 'flex'; }
@@ -1053,14 +984,31 @@ function openNoticeModal(){ document.getElementById('noticeModal').style.display
 function closeNoticeModal(){ document.getElementById('noticeModal').style.display = 'none'; }
 
 function generateMemberId(){
-    return 'ege' + String(members.length + 1).padStart(4,'0');
+    return 'ege' + String(members.length + 1).padStart(4, '0');
 }
-  
+
+function findMemberName() {
+    const input = document.getElementById('modalPaymentMemberId');
+    const nameField = document.getElementById('modalPaymentMemberName');
+    if (!input || !nameField) return;
+
+    const memberId = input.value.trim().toLowerCase();
+    const member = members.find(m => String(m.memberId).trim().toLowerCase() === memberId);
+    nameField.value = member ? member.name : '';
+}
+
+/* =========================================
+   ৬. SAVE DATA FUNCTIONS (POST)
+   ========================================= */
 async function saveNewMember(){
+    const name = document.getElementById('newMemberName').value.trim();
+    const phone = document.getElementById('newPhone').value.trim();
+    if(!name || !phone) { alert("নাম ও ফোন নম্বর বাধ্যতামূলক!"); return; }
+
     const member = {
         memberId: generateMemberId(),
-        name: document.getElementById('newMemberName').value,
-        phone: document.getElementById('newPhone').value,
+        name: name,
+        phone: phone,
         email: document.getElementById('newEmail').value,
         nid: document.getElementById('newNid').value,
         blood: document.getElementById('newBlood').value,
@@ -1073,321 +1021,158 @@ async function saveNewMember(){
     };
 
     try {
-        await fetch(API_URL + '?action=addMember', {
-            method: 'POST',
-            body: JSON.stringify(member)
-        });
-        alert('Member Added Successfully');
-        closeAddMemberModal();
-        fetchMembers();
-    } catch(error) {
-        console.error(error);
-        alert('Failed To Add Member');
-    }
+        const res = await fetch(API_URL + '?action=addMember', { method: 'POST', body: JSON.stringify(member) });
+        const result = await res.json();
+        if(result.success) {
+            alert('Member Added Successfully');
+            closeAddMemberModal();
+            fetchMembers();
+        }
+    } catch(error) { alert('Failed To Add Member'); }
 }
 
-/* ==============================================
-   📢 NOTICES MANAGEMENT
-   ============================================== */
-function publishNotice(){
-    const title = document.getElementById('noticeTitle').value;
-    const date = document.getElementById('noticeDate').value;
-    const message = document.getElementById('noticeMessage').value;
-
-    const html = `
-        <div class="notice-item" style="background:#fff; padding:15px; border-radius:10px; margin-bottom:10px;">
-            <h3>${title}</h3>
-            <small>${date}</small>
-            <p>${message}</p>
-        </div>
-    `;
-    document.getElementById('noticeContainer').innerHTML = html + document.getElementById('noticeContainer').innerHTML;
-    closeNoticeModal();
-    alert('Notice Published Successfully');
-}
-
-function generateIdCard(){ alert('ID Card Generator Ready'); }
-function generatePDF(){ alert('PDF Generator Ready'); }
-
-/* ==============================================
-   ৮. VIEW PROFILE & MODAL FINDER
-   ============================================== */
-function viewMember(memberId){
-    const member = members.find(m => String(m.memberId).toLowerCase() === String(memberId).toLowerCase());
-    if(member){
-        const html = `
-            <div style="text-align:center;">
-                <img src="${member.photo || 'logo.png'}" style="width:100px;height:100px;border-radius:50%;margin-bottom:15px;">
-                <h2>${member.name}</h2>
-                <p>Phone: ${member.phone}</p>
-                <p>Email: ${member.email}</p>
-                <p>Blood: ${member.blood || 'N/A'}</p>
-                <p>Address: ${member.address || 'N/A'}</p>
-                <p>Status: ${member.status}</p>
-            </div>
-        `;
-        document.getElementById('modalContent').innerHTML = html;
-        document.getElementById('memberModal').style.display = 'flex';
-    }
-}
-
-function closeModal(){ document.getElementById('memberModal').style.display = 'none'; }
-
-function findMemberName(){
-    const input = document.getElementById('modalPaymentMemberId');
-    if (!input) return;
-    const memberId = input.value.trim().toLowerCase();
-    const member = members.find(m => String(m.memberId).trim().toLowerCase() === memberId);
-    if(member){
-        document.getElementById('modalPaymentMemberName').value = member.name;
-    } else {
-        document.getElementById('modalPaymentMemberName').value = '';
-    }
-}
-
-/* ==============================================
-   ৯. SAVE PAYMENT FROM FORM
-   ============================================== */
-async function savePayment(){
-    const memberIdEl = document.getElementById('modalPaymentMemberId') || document.getElementById('paymentMemberId');
-    const memberNameEl = document.getElementById('modalPaymentMemberName') || document.getElementById('paymentMemberName');
-    const monthEl = document.getElementById('modalPaymentMonth') || document.getElementById('paymentMonth');
-    const amountEl = document.getElementById('modalPaymentAmount') || document.getElementById('paymentAmount');
-    const fineEl = document.getElementById('modalPaymentFine') || document.getElementById('paymentFine');
-    const statusEl = document.getElementById('modalPaymentStatus') || document.getElementById('paymentStatus');
-
-    if (!memberIdEl || !amountEl) {
-        alert("Error: Payment form inputs not found!");
-        return;
-    }
-
-    const memberId = memberIdEl.value.trim();
-    const memberName = memberNameEl ? memberNameEl.value.trim() : '';
-    const month = monthEl.value;
-    const amount = amountEl.value.trim();
-    const fine = fineEl ? fineEl.value : 0;
-    const status = statusEl.value;
-
-    if(memberId === '' || amount === ''){
-        alert('সঠিক মেম্বার আইডি এবং টাকার পরিমাণ (Amount) লিখুন।');
-        return;
-    }
+async function savePayment() {
+    const memberIdEl = document.getElementById('modalPaymentMemberId');
+    const amountEl = document.getElementById('modalPaymentAmount');
+    if(!memberIdEl.value || !amountEl.value) { alert("সঠিক মেম্বার আইডি এবং অ্যামাউন্ট লিখুন!"); return; }
 
     const payment = {
-        memberId: memberId,
-        name: memberName || 'N/A',
-        month: month,
-        amount: amount,
-        fine: fine,
-        status: status
+        memberId: memberIdEl.value.trim(),
+        name: document.getElementById('modalPaymentMemberName').value,
+        month: document.getElementById('modalPaymentMonth').value,
+        amount: amountEl.value.trim(),
+        fine: document.getElementById('modalPaymentFine').value || 0,
+        status: document.getElementById('modalPaymentStatus').value
     };
 
     try {
-        const response = await fetch(API_URL + '?action=addPayment', {
-            method: 'POST',
-            body: JSON.stringify(payment)
-        });
-
-        const result = await response.json();
-
-        if(result.success){
-            alert('পেমেন্ট সফলভাবে গুগল শিটে সেভ হয়েছে!');
+        const res = await fetch(API_URL + '?action=addPayment', { method: 'POST', body: JSON.stringify(payment) });
+        const result = await res.json();
+        if(result.success) {
+            alert('পেমেন্ট সফলভাবে সেভ হয়েছে!');
             closePaymentModal();
-            
-            memberIdEl.value = '';
-            if(memberNameEl) memberNameEl.value = '';
-            amountEl.value = '';
-            if(fineEl) fineEl.value = '';
-            
-            // ডাটা রিফ্রেশ ও ড্যাশবোর্ড আপডেট
-            fetchMembers();
             loadPayments();
-        } else {
-            alert('পেমেন্ট সেভ করতে ব্যর্থ হয়েছে।');
+            fetchMembers();
         }
-    } catch(error) {
-        console.error("Error saving payment:", error);
-        alert('সার্ভার ত্রুটি! গুগল অ্যাপস স্ক্রিপ্ট চেক করুন।');
-    }
+    } catch(error) { alert('পেমেন্ট সেভ করতে ব্যর্থ হয়েছে।'); }
 }
 
-/* ==============================================
-   ১০. LOGOUT & LIVE SEARCH
-   ============================================== */
-function logout() {
-    localStorage.removeItem("adminLoggedIn");
-    localStorage.removeItem("adminId");
-    localStorage.removeItem("memberLoggedIn");
-    localStorage.removeItem("memberId");
-    alert("You have been logged out successfully!");
-    window.location.href = "login.html"; 
+async function saveNotice() {
+    const title = document.getElementById('noticeTitle').value.trim();
+    const date = document.getElementById('noticeDate').value;
+    const content = document.getElementById('noticeContent').value.trim();
+    if(!title || !content) { alert("নোটিশের টাইটেল ও বিবরণ লিখুন!"); return; }
+
+    const notice = { title: title, date: date, content: content };
+
+    try {
+        const res = await fetch(API_URL + '?action=addNotice', { method: 'POST', body: JSON.stringify(notice) });
+        const result = await res.json();
+        if(result.success) {
+            alert('নোটিশ সফলভাবে পাবলিশ হয়েছে!');
+            closeNoticeModal();
+            document.getElementById('noticeTitle').value = '';
+            document.getElementById('noticeContent').value = '';
+        }
+    } catch(error) { alert('নোটিশ পাবলিশ ব্যর্থ হয়েছে।'); }
 }
 
-document.getElementById('memberSearch').addEventListener('keyup', function(){
-    const value = this.value.toLowerCase();
-    const rows = document.querySelectorAll('#membersTable tr');
-    rows.forEach(row => {
-        const text = row.innerText.toLowerCase();
-        row.style.display = text.includes(value) ? '' : 'none';
+/* =========================================
+   ৭. NAVIGATION CONTROLS (সেকশন পরিবর্তন)
+   ========================================= */
+function showSection(sectionId) {
+    document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.remove('active');
     });
-});
+    const target = document.getElementById(sectionId);
+    if(target) target.classList.add('active');
 
-/* ==============================================
-   ১১. AUTO LOAD INITIALIZATION (পেজ লোড সিস্টেম)
-   ============================================== */
-window.addEventListener('DOMContentLoaded', () => {
-    fetchMembers();
-    loadPayments();
-});
+    document.querySelectorAll('.sidebar menu li').forEach(item => {
+        item.classList.remove('active');
+    });
+    // ক্লিক করা সাইডবার মেনুকে একটিভ করা
+    const clickedMenu = Array.from(document.querySelectorAll('.sidebar menu li')).find(li => li.getAttribute('onclick') && li.getAttribute('onclick').includes(sectionId));
+    if(clickedMenu) clickedMenu.classList.add('active');
+}
 </script>
-<!-- ADD MEMBER MODAL -->
 
-<div id="addMemberModal" class="modal">
-<div class="modal-box">
-<div class="modal-header">
-<h2>Membership Application Form</h2>
-
-<span
-class="close-btn"
-onclick="closeAddMemberModal()"
->
-
-×
-
-</span>
-
-</div>
-<div class="form-grid">
-<input type="text" id="newMemberName" placeholder="Full Name">
-<input type="text" id="newPhone" placeholder="Phone">
-<input type="email" id="newEmail" placeholder="Email">
-<input type="text" id="newNid" placeholder="NID">
-<input type="text" id="newBlood" placeholder="Blood Group">
-<input type="text" id="newAddress" placeholder="Address">
-<input type="text" id="newNominee" placeholder="Nominee Name">
-<input type="text" id="newNomineePhone" placeholder="Nominee Phone">
-<input type="number" id="newFee" placeholder="Monthly Fee">
-<input type="password" id="newPassword" placeholder="Password">
-<input type="text" id="newPhoto" placeholder="Photo URL">
+  <div id="addMemberModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>👥 Add New Member</h2>
+      <span class="close-btn" onclick="closeAddMemberModal()">&times;</span>
+    </div>
+    <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:15px;">
+      <input type="text" id="newMemberName" placeholder="Full Name">
+      <input type="text" id="newPhone" placeholder="Phone Number">
+      <input type="email" id="newEmail" placeholder="Email">
+      <input type="text" id="newNid" placeholder="NID">
+      <input type="text" id="newBlood" placeholder="Blood Group">
+      <input type="text" id="newAddress" placeholder="Address">
+      <input type="text" id="newNominee" placeholder="Nominee Name">
+      <input type="text" id="newNomineePhone" placeholder="Nominee Phone">
+      <input type="number" id="newFee" placeholder="Monthly Fee" value="500">
+      <input type="password" id="newPassword" placeholder="Password" value="123456">
+      <input type="text" id="newPhoto" placeholder="Photo URL">
+    </div>
+    <button class="action-btn" onclick="saveNewMember()" style="width:100%;">Submit & Add Member</button>
+  </div>
 </div>
 
-<button
-class="action-btn"
-onclick="saveNewMember()">
-Submit Application
-</button>
-</div>
-</div>
-
-  <!-- NOTICE MODAL -->
-<div id="noticeModal" class="modal">
-<div class="modal-box">
-<div class="modal-header">
-<h2>Publish Notice</h2>
-
-<span
-class="close-btn"
-onclick="closeNoticeModal()"
->
-×
-</span>
-</div>
-
-
-<input
-type="text"
-id="noticeTitle"
-placeholder="Notice Title"
-style="width:100%;margin-bottom:15px;"
->
-
-<input
-type="date"
-id="noticeDate"
-style="width:100%;margin-bottom:15px;"
->
-
-<textarea
-id="noticeMessage"
-placeholder="Write Notice..."
-style="
-width:100%;
-height:150px;
-padding:15px;
-border-radius:8px;
-border:1px solid #ccc;
-margin-bottom:20px;
-"
-></textarea>
-
-<button
-class="action-btn"
-onclick="publishNotice()"
->
-
-Publish Notice
-</button>
-</div>
-</div>
-
-<!-- ========================== PAYMENT MODAL ========================================= -->
 <div id="paymentModal" class="modal">
   <div class="modal-box" style="max-width: 500px;">
     <div class="modal-header">
-      <h2 style="color: #0b6b2d; font-size: 24px;">💰 Add New Payment</h2>
+      <h2 style="color: #0b6b2d;">💰 Add New Payment</h2>
       <span class="close-btn" onclick="closePaymentModal()">&times;</span>
     </div>
-
     <div class="form-group" style="margin-bottom: 15px;">
-      <label style="display:block; margin-bottom:6px; font-weight:600;">Member ID</label>
-      <input type="text" id="modalPaymentMemberId" placeholder="e.g. ege0001" onkeyup="findMemberName()" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc;">
+      <label style="display:block; margin-bottom:4px; font-weight:500;">Member ID</label>
+      <input type="text" id="modalPaymentMemberId" placeholder="e.g. ege0001" onkeyup="findMemberName()" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;">
     </div>
-
     <div class="form-group" style="margin-bottom: 15px;">
-      <label style="display:block; margin-bottom:6px; font-weight:600;">Member Name</label>
-      <input type="text" id="modalPaymentMemberName" placeholder="Name will load automatically" readonly style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; background: #f0f0f0; color: #555; font-weight: 500;">
+      <label style="display:block; margin-bottom:4px; font-weight:500;">Member Name</label>
+      <input type="text" id="modalPaymentMemberName" placeholder="Name loads automatically" readonly style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; background:#e9ecef;">
     </div>
-
     <div class="form-group" style="margin-bottom: 15px;">
-      <label style="display:block; margin-bottom:6px; font-weight:600;">Select Month</label>
-      <select id="modalPaymentMonth" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; background:#fff;">
-        <option value="January">January</option>
-        <option value="February">February</option>
-        <option value="March">March</option>
-        <option value="April">April</option>
-        <option value="May">May</option>
-        <option value="June">June</option>
-        <option value="July">July</option>
-        <option value="August">August</option>
-        <option value="September">September</option>
-        <option value="October">October</option>
-        <option value="November">November</option>
-        <option value="December">December</option>
+      <label style="display:block; margin-bottom:4px; font-weight:500;">Select Month</label>
+      <select id="modalPaymentMonth" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; background:#fff;">
+        <option value="January">January</option><option value="February">February</option><option value="March">March</option>
+        <option value="April">April</option><option value="May">May</option><option value="June">June</option>
+        <option value="July">July</option><option value="August">August</option><option value="September">September</option>
+        <option value="October">October</option><option value="November">November</option><option value="December">December</option>
       </select>
     </div>
-
-    <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;">
-      <div class="form-group">
-        <label style="display:block; margin-bottom:6px; font-weight:600;">Amount (৳)</label>
-        <input type="number" id="modalPaymentAmount" placeholder="Amount" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc;">
+    <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+      <div>
+        <label style="display:block; margin-bottom:4px; font-weight:500;">Amount (৳)</label>
+        <input type="number" id="modalPaymentAmount" placeholder="Amount" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;">
       </div>
-      <div class="form-group">
-        <label style="display:block; margin-bottom:6px; font-weight:600;">Fine (৳)</label>
-        <input type="number" id="modalPaymentFine" placeholder="0" value="0" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc;">
+      <div>
+        <label style="display:block; margin-bottom:4px; font-weight:500;">Fine (৳)</label>
+        <input type="number" id="modalPaymentFine" placeholder="0" value="0" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;">
       </div>
     </div>
-
-    <div class="form-group" style="margin-bottom: 25px;">
-      <label style="display:block; margin-bottom:6px; font-weight:600;">Status</label>
-      <select id="modalPaymentStatus" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; background:#fff;">
+    <div class="form-group" style="margin-bottom: 20px;">
+      <label style="display:block; margin-bottom:4px; font-weight:500;">Status</label>
+      <select id="modalPaymentStatus" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; background:#fff;">
         <option value="Paid">Paid</option>
         <option value="Due">Due</option>
       </select>
     </div>
+    <button class="action-btn" onclick="savePayment()" style="width:100%; background:#0b6b2d;">🚀 Submit & Save Payment</button>
+  </div>
+</div>
 
-    <button class="action-btn" onclick="savePayment()" style="width: 100%; background: #0b6b2d; color: #fff; padding: 14px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s;">
-      🚀 Submit & Save Payment
-    </button>
+<div id="noticeModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>📢 Publish Notice</h2>
+      <span class="close-btn" onclick="closeNoticeModal()">&times;</span>
+    </div>
+    <input type="text" id="noticeTitle" placeholder="Notice Title" style="width:100%; margin-bottom:15px; padding:10px;">
+    <input type="date" id="noticeDate" style="width:100%; margin-bottom:15px; padding:10px;">
+    <textarea id="noticeContent" placeholder="Write Notice Description here..." style="width:100%; height:120px; margin-bottom:15px; padding:10px; border-radius:6px; border:1px solid #ccc;"></textarea>
+    <button class="action-btn" onclick="saveNotice()" style="width:100%;">Publish & Save Notice</button>
   </div>
 </div>
  
