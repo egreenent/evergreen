@@ -938,17 +938,50 @@ function displayMembers(dataList) {
     tableBody.innerHTML = html;
 }
 
-/* =========================================
-   ৩. SEARCH MEMBER LOGIC (লাইভ ফিল্টার)
-   ========================================= */
+/* =======================================================
+   ৩. SEARCH MEMBER & SHOW MODAL POPUP (১০০% ফিক্সড)
+   ======================================================= */
 function searchMember() {
-    const query = document.getElementById('searchBar').value.toLowerCase().trim();
-    const filtered = members.filter(m => 
-        m.name.toLowerCase().includes(query) || 
-        m.memberId.toLowerCase().includes(query) || 
-        m.phone.includes(query)
-    );
-    displayMembers(filtered);
+    // ১. আপনার HTML এর 'searchMemberId' থেকে ইনপুট নেওয়া হচ্ছে
+    const searchInput = document.getElementById('searchMemberId');
+    if (!searchInput) return;
+
+    const query = searchInput.value.toLowerCase().trim();
+    if (query === "") {
+        alert("দয়া করে একটি মেম্বার আইডি লিখুন!");
+        return;
+    }
+
+    // ২. গ্লোবাল members লিস্ট থেকে ওই মেম্বার আইডিটি খুঁজে বের করা হচ্ছে
+    const m = members.find(user => String(user.memberId).toLowerCase().trim() === query);
+
+    // ৩. মেম্বার পাওয়া না গেলে অ্যালার্ট দেবে
+    if (!m) {
+        alert("দুঃখিত, এই আইডির কোনো মেম্বার খুঁজে পাওয়া যায়নি!");
+        return;
+    }
+
+    // ৪. মেম্বার পাওয়া গেলে পপআপ মডালের ভেতর ডাটাগুলো সাজানো হচ্ছে
+    document.getElementById('infoPhoto').src = m.photo || 'https://via.placeholder.com/150';
+    document.getElementById('infoName').innerText = m.name || 'N/A';
+    document.getElementById('infoId').innerText = m.memberId || 'N/A';
+    document.getElementById('infoPhone').innerText = m.phone || 'N/A';
+    document.getElementById('infoBlood').innerText = m.blood || 'N/A';
+    document.getElementById('infoEmail').innerText = m.email || 'N/A';
+    document.getElementById('infoNid').innerText = m.nid || 'N/A';
+    document.getElementById('infoFee').innerText = m.monthlyFee || '0';
+    document.getElementById('infoStatus').innerText = m.status || 'N/A';
+    document.getElementById('infoAddress').innerText = m.address || 'N/A';
+    document.getElementById('infoNominee').innerText = m.nomineeName || 'N/A';
+    document.getElementById('infoNomineePhone').innerText = m.nomineePhone || 'N/A';
+
+    // ৫. মাঝারি পপআপ মডালটি স্ক্রিনে প্রদর্শন করা হচ্ছে
+    document.getElementById('memberInfoModal').style.display = 'flex';
+}
+
+// মডাল বন্ধ করার ফাংশন
+function closeMemberInfoModal() {
+    document.getElementById('memberInfoModal').style.display = 'none';
 }
 
 /* =========================================
@@ -1226,23 +1259,30 @@ async function saveNotice() {
 </div>
 
 
-  <div id="memberInfoModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
-  <div class="modal-box" style="max-width: 550px; width: 100%; padding: 25px; border-radius: 12px; background: #fff; box-sizing: border-box; position: relative;">
+<div class="search-box">
+  <input type="text" id="searchMemberId" placeholder="Enter Member ID">
+  <button onclick="searchMember()">Search</button>
+</div>
+
+<div id="searchResult"></div>
+
+<div id="memberInfoModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+  <div class="modal-box" style="max-width: 500px; width: 100%; padding: 25px; border-radius: 12px; background: #fff; box-sizing: border-box; position: relative; font-family: sans-serif;">
     
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
       <h2 style="color: #0b6b2d; font-size: 20px; font-weight: 600; margin: 0;">👤 Member Detailed Profile</h2>
-      <span onclick="closeMemberInfoModal()" style="font-size: 28px; cursor: pointer; color: #aaa;">&times;</span>
+      <span onclick="closeMemberInfoModal()" style="font-size: 28px; cursor: pointer; color: #aaa; font-weight: bold;">&times;</span>
     </div>
 
     <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 20px; background: #f8f9fa; padding: 15px; border-radius: 8px;">
-      <img id="infoPhoto" src="" alt="Member Photo" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid #0b6b2d;">
+      <img id="infoPhoto" src="" alt="Member Photo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #0b6b2d;">
       <div>
-        <h3 id="infoName" style="margin: 0 0 5px 0; color: #333; font-size: 22px;">---</h3>
+        <h3 id="infoName" style="margin: 0 0 5px 0; color: #333; font-size: 20px;">---</h3>
         <p style="margin: 0; color: #666;">ID: <strong id="infoId" style="color: #0b6b2d;">---</strong></p>
       </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px; color: #333;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px; color: #333; text-align: left;">
       <div><strong>📞 Phone:</strong> <span id="infoPhone">---</span></div>
       <div><strong>🩸 Blood Group:</strong> <span id="infoBlood">---</span></div>
       <div><strong>📧 Email:</strong> <span id="infoEmail">---</span></div>
@@ -1255,7 +1295,7 @@ async function saveNotice() {
       </div>
     </div>
 
-    <button onclick="closeMemberInfoModal()" style="width: 100%; background: #6c757d; color: #fff; padding: 10px; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 20px;">Close Profile</button>
+    <button onclick="closeMemberInfoModal()" style="width: 100%; background: #6c757d; color: #fff; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 20px;">Close Profile</button>
   </div>
 </div>
 </body>
