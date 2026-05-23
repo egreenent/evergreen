@@ -1788,13 +1788,15 @@ document.getElementById(
   loadPayments();
   
 /* ==============================================
-   MEMBER ID দিয়ে নাম খোঁজা (নতুন আইডি অনুযায়ী)
+   MEMBER ID দিয়ে নাম খোঁজা
    ============================================== */
 function findMemberName(){
     const input = document.getElementById('modalPaymentMemberId');
-    const memberId = input.value.trim().toLowerCase(); // ছোট হাতের অক্ষরে রূপান্তর
+    if (!input) return;
+    
+    const memberId = input.value.trim().toLowerCase();
 
-    // মেম্বার লিস্টের আইডি গুলোর সাথে মেলানো
+    // মেম্বার লিস্ট থেকে আইডি মেলানো
     const member = members.find(m => String(m.memberId).trim().toLowerCase() === memberId);
 
     if(member){
@@ -1805,15 +1807,29 @@ function findMemberName(){
 }
 
 /* ==============================================
-   পেমেন্ট সেভ করা (নতুন আইডি অনুযায়ী)
+   পেমেন্ট সেভ করা (TypeError এররটি স্থায়ী সমাধান)
    ============================================== */
 async function savePayment(){
-    const memberId = document.getElementById('modalPaymentMemberId').value.trim();
-    const memberName = document.getElementById('modalPaymentMemberName').value.trim();
-    const month = document.getElementById('modalPaymentMonth').value;
-    const amount = document.getElementById('modalPaymentAmount').value.trim();
-    const fine = document.getElementById('modalPaymentFine').value || 0;
-    const status = document.getElementById('modalPaymentStatus').value;
+    // এখানে getElementById ব্যবহার করা হয়েছে যেন 'null' এরর আর না আসে
+    const memberIdEl = document.getElementById('modalPaymentMemberId');
+    const memberNameEl = document.getElementById('modalPaymentMemberName');
+    const monthEl = document.getElementById('modalPaymentMonth');
+    const amountEl = document.getElementById('modalPaymentAmount');
+    const fineEl = document.getElementById('modalPaymentFine');
+    const statusEl = document.getElementById('modalPaymentStatus');
+
+    // কোনো কারণে এলিমেন্ট না পাওয়া গেলে সতর্কবার্তা দিবে
+    if (!memberIdEl || !memberNameEl || !amountEl) {
+        alert("Error: Payment form inputs not found in HTML!");
+        return;
+    }
+
+    const memberId = memberIdEl.value.trim();
+    const memberName = memberNameEl.value.trim();
+    const month = monthEl.value;
+    const amount = amountEl.value.trim();
+    const fine = fineEl.value || 0;
+    const status = statusEl.value;
 
     /* ভ্যালিডেশন চেক */
     if(memberId === '' || memberName === ''){
@@ -1847,11 +1863,11 @@ async function savePayment(){
             closePaymentModal();
             
             // মডালের ইনপুট ফিল্ডগুলো খালি করে দেওয়া
-            document.getElementById('modalPaymentMemberId').value = '';
-            document.getElementById('modalPaymentMemberName').value = '';
-            document.getElementById('modalPaymentMonth').value = '';
-            document.getElementById('modalPaymentAmount').value = '';
-            document.getElementById('modalPaymentFine').value = '';
+            memberIdEl.value = '';
+            memberNameEl.value = '';
+            monthEl.value = '';
+            amountEl.value = '';
+            fineEl.value = '';
             
             // ডেটা রিলোড করা
             if(typeof fetchMembers === "function") fetchMembers();
@@ -1959,32 +1975,6 @@ Publish Notice
 
 <!-- ========================== PAYMENT MODAL ========================================= -->
 
-<div id="paymentModal" class="modal">
-<div class="modal-box">
-    <div class="modal-header">
-        <h2>💰 Add Payment</h2>
-        <span class="close-btn" onclick="closePaymentModal()">&times;</span>
-    </div>
-
-    <div class="form-grid">
-<input type="text" id="modalPaymentMemberId" placeholder="Enter Member ID" oninput="findMemberName()" autocomplete="off">
-
-<input type="text" id="modalPaymentMemberName" placeholder="Member Name" readonly>
-
-<input type="text" id="modalPaymentMonth" placeholder="Month">
-
-<input type="number" id="modalPaymentAmount" placeholder="Amount">
-
-<input type="number" id="modalPaymentFine" placeholder="Fine">
-
-<select id="modalPaymentStatus">
-    <option value="Paid">Paid</option>
-    <!-- <option value="Due">Due</option> -->
-</select>
-    </div>
-
-    <button class="action-btn" onclick="savePayment()">Save Payment</button>
-</div>
-</div>  
+ 
 </body>
 </html>
