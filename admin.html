@@ -1330,7 +1330,65 @@ Publish Notice
 </div>
 
 <!-- ========================== PAYMENT MODAL ========================================= -->
+<div id="paymentModal" class="modal">
+  <div class="modal-box" style="max-width: 500px;">
+    <div class="modal-header">
+      <h2 style="color: #0b6b2d; font-size: 24px;">💰 Add New Payment</h2>
+      <span class="close-btn" onclick="closePaymentModal()">&times;</span>
+    </div>
 
+    <div class="form-group" style="margin-bottom: 15px;">
+      <label style="display:block; margin-bottom:6px; font-weight:600;">Member ID</label>
+      <input type="text" id="modalPaymentMemberId" placeholder="e.g. ege0001" onkeyup="findMemberName()" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc;">
+    </div>
+
+    <div class="form-group" style="margin-bottom: 15px;">
+      <label style="display:block; margin-bottom:6px; font-weight:600;">Member Name</label>
+      <input type="text" id="modalPaymentMemberName" placeholder="Name will load automatically" readonly style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; background: #f0f0f0; color: #555; font-weight: 500;">
+    </div>
+
+    <div class="form-group" style="margin-bottom: 15px;">
+      <label style="display:block; margin-bottom:6px; font-weight:600;">Select Month</label>
+      <select id="modalPaymentMonth" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; background:#fff;">
+        <option value="January">January</option>
+        <option value="February">February</option>
+        <option value="March">March</option>
+        <option value="April">April</option>
+        <option value="May">May</option>
+        <option value="June">June</option>
+        <option value="July">July</option>
+        <option value="August">August</option>
+        <option value="September">September</option>
+        <option value="October">October</option>
+        <option value="November">November</option>
+        <option value="December">December</option>
+      </select>
+    </div>
+
+    <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;">
+      <div class="form-group">
+        <label style="display:block; margin-bottom:6px; font-weight:600;">Amount (৳)</label>
+        <input type="number" id="modalPaymentAmount" placeholder="Amount" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc;">
+      </div>
+      <div class="form-group">
+        <label style="display:block; margin-bottom:6px; font-weight:600;">Fine (৳)</label>
+        <input type="number" id="modalPaymentFine" placeholder="0" value="0" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc;">
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 25px;">
+      <label style="display:block; margin-bottom:6px; font-weight:600;">Status</label>
+      <select id="modalPaymentStatus" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; background:#fff;">
+        <option value="Paid">Paid</option>
+        <option value="Due">Due</option>
+      </select>
+    </div>
+
+    <button class="action-btn" onclick="savePayment()" style="width: 100%; background: #0b6b2d; color: #fff; padding: 14px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s;">
+      🚀 Submit & Save Payment
+    </button>
+  </div>
+</div>
  
 </body>
 </html>
