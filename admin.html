@@ -1583,13 +1583,112 @@ document.getElementById(
 SAVE PAYMENT
 ========================= */
 
-function savePayment(){
+async function savePayment(){
+
+const memberId =
+document.getElementById(
+'paymentMemberId'
+).value.trim();
+
+
+const memberName =
+document.getElementById(
+'paymentMemberName'
+).value.trim();
+
+
+/* VALIDATION */
+
+if(memberName === ''){
+
+alert(
+'Invalid Member ID'
+);
+
+return;
+}
+
+
+const payment = {
+
+memberId:memberId,
+
+name:memberName,
+
+month:
+document.getElementById(
+'paymentMonth'
+).value,
+
+amount:
+document.getElementById(
+'paymentAmount'
+).value,
+
+fine:
+document.getElementById(
+'paymentFine'
+).value,
+
+status:
+document.getElementById(
+'paymentStatus'
+).value
+};
+
+
+try{
+
+const response =
+await fetch(
+
+API_URL + '?action=addPayment',
+
+{
+
+method:'POST',
+
+body:JSON.stringify(payment)
+}
+);
+
+
+const result =
+await response.json();
+
+console.log(result);
+
+
+/* SUCCESS */
+
+if(result.success){
 
 alert(
 'Payment Saved Successfully'
 );
 
+closePaymentModal();
+
+loadPayments();
+
+}else{
+
+alert(
+'Payment Failed'
+);
+
 }
+
+}catch(error){
+
+console.log(error);
+
+alert(
+'Server Error'
+);
+}
+}
+
 
 
 /* =========================
@@ -1693,16 +1792,25 @@ function findMemberName(){
 const memberId =
 document.getElementById(
 'paymentMemberId'
-).value.trim().toLowerCase();
+).value.trim();
+
+
+console.log("SEARCHING:", memberId);
+
+console.log("MEMBERS:", members);
 
 
 const member =
-members.find(
-m => m.memberId.toLowerCase() === memberId
-);
+members.find(function(m){
+
+return m.memberId.trim() === memberId;
+
+});
 
 
 if(member){
+
+console.log("FOUND:", member);
 
 document.getElementById(
 'paymentMemberName'
@@ -1711,12 +1819,13 @@ member.name;
 
 }else{
 
+console.log("NOT FOUND");
+
 document.getElementById(
 'paymentMemberName'
 ).value = '';
 }
 }
-
 
   
   fetchMembers();
