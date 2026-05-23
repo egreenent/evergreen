@@ -1922,22 +1922,31 @@ Publish Notice
 </div>
 </div>
 
-<!-- PAYMENT MODAL -->
+<!-- ========================== PAYMENT MODAL ========================================= -->
 
 <div id="paymentModal" class="modal">
+
 <div class="modal-box">
+
 <div class="modal-header">
-<h2>Add Payment</h2>
+
+<h2>💰 Add Payment</h2>
 
 <span
 class="close-btn"
 onclick="closePaymentModal()"
 >
+
 ×
+
 </span>
+
 </div>
 
+
 <div class="form-grid">
+
+<!-- MEMBER ID -->
 
 <input
 type="text"
@@ -1947,6 +1956,8 @@ onkeyup="findMemberName()"
 >
 
 
+<!-- MEMBER NAME -->
+
 <input
 type="text"
 id="paymentMemberName"
@@ -1955,12 +1966,16 @@ readonly
 >
 
 
+<!-- MONTH -->
+
 <input
 type="text"
 id="paymentMonth"
 placeholder="Month"
 >
 
+
+<!-- AMOUNT -->
 
 <input
 type="number"
@@ -1969,30 +1984,47 @@ placeholder="Amount"
 >
 
 
+<!-- FINE -->
+
 <input
 type="number"
 id="paymentFine"
 placeholder="Fine"
 >
+
+
+<!-- STATUS -->
+
 <select id="paymentStatus">
 
 <option value="Paid">
+
 Paid
+
 </option>
 
-<!-- <option value="Due">
+<option value="Due">
+
 Due
-</option> -->
+
+</option>
+
 </select>
 
 </div>
+
+
 <button
 class="action-btn"
 onclick="savePayment()"
 >
+
 Save Payment
+
 </button>
+
 </div>
+
 </div>
   
 </body>
