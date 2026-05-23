@@ -1766,7 +1766,7 @@ async function updateDashboard() {
         // ১. টোটাল কালেকশন আপডেট
         if (document.getElementById('totalCollection')) {
             const collectionAmount = Number(data.totalCollection) || 0;
-            document.getElementById('totalCollection').innerText = '৳ ' + collectionAmount.toLocaleString('bn-BD');
+            document.getElementById('totalCollection').innerText = '৳ ' + collectionAmount.toLocaleString('en-US');
         }
 
         // ২. টোটাল পেমেন্ট সংখ্যা আপডেট
