@@ -826,7 +826,7 @@ Please complete your monthly payment before 10th.
 </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec"; 
+const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec"; 
 
 let members = [];
 let payments = [];
@@ -1019,6 +1019,7 @@ function findMemberName() {
     const member = members.find(m => String(m.memberId).trim().toLowerCase() === memberId);
     nameField.value = member ? member.name : '';
 }
+
 /* =========================================
    ৭. SAVE DATA FUNCTIONS (POST REQUESTS)
    ========================================= */
