@@ -999,43 +999,43 @@ async function updateDashboard() {
 /* =========================================
    ৬. QUICK ACTIONS & MODAL CONTROLS
    ========================================= */
-async function savePayment() {
-    const memberIdEl = document.getElementById('modalPaymentMemberId');
-    const amountEl = document.getElementById('modalPaymentAmount');
-    if(!memberIdEl.value || !amountEl.value) { 
-        alert("সঠিক মেম্বার আইডি এবং অ্যামাউন্ট লিখুন!"); 
-        return; 
-    }
+function openAddPayment(){ 
+    // ১. পেমেন্ট মডাল বা পপআপ বক্সটি ওপেন করা হলো
+    document.getElementById('paymentModal').style.display = 'flex'; 
+    
+    // ২. মডালের ভেতরের মেম্বার আইডি ড্রপডাউন (Select) এলিমেন্টটি ধরা হলো
+    const memberSelect = document.getElementById('modalPaymentMemberId');
+    if(!memberSelect) return;
+    
+    // ৩. ড্রপডাউনটি প্রথমে খালি করে একটি ডিফল্ট অপশন সেট করা হলো
+    memberSelect.innerHTML = '<option value="">-- Select Member ID --</option>';
+    
+    // ৪. গ্লোবাল members অ্যারেতে থাকা সব মেম্বারদের আইডি ও নাম ড্রপডাউনে অপশন হিসেবে যোগ করা হচ্ছে
+    members.forEach(m => {
+        let opt = document.createElement('option');
+        opt.value = m.memberId;
+        opt.innerHTML = `${m.memberId} - ${m.name}`; // এটি ড্রপডাউনের ভেতরে (ID - Name) আকারে দেখাবে
+        memberSelect.appendChild(opt);
+    });
+}
 
-    const payment = {
-        memberId: memberIdEl.value.trim(),
-        name: document.getElementById('modalPaymentMemberName').value,
-        month: document.getElementById('modalPaymentMonth').value,
-        amount: amountEl.value.trim(),
-        fine: document.getElementById('modalPaymentFine').value || 0,
-        status: document.getElementById('modalPaymentStatus').value
-    };
+function closePaymentModal(){ 
+    document.getElementById('paymentModal').style.display = 'none'; 
+}
 
-    try {
-        const res = await fetch(API_URL + '?action=addPayment', { method: 'POST', body: JSON.stringify(payment) });
-        const result = await res.json();
-        
-        if(result.success) {
-            // পেমেন্ট সফল হওয়ার পর নোটিশ/অ্যালার্ট দেবে
-            alert('💰 পেমেন্ট সফলভাবে সম্পন্ন হয়েছে এবং গুগল শিটে সেভ হয়েছে!');
-            
-            // মডাল বন্ধ করা এবং ডাটা রিফ্রেশ করা
-            closePaymentModal();
-            loadPayments(); // রিসেন্ট পেমেন্ট টেবিল আপডেট করবে
-            if(typeof fetchMembers === "function") fetchMembers();
-            if(typeof updateDashboard === "function") updateDashboard(); // ড্যাশবোর্ড ক্যালকুলেশন আপডেট করবে
-        } else {
-            alert('পেমেন্ট সেভ করতে ব্যর্থ হয়েছে: ' + result.error);
-        }
-    } catch(error) { 
-        console.error("Error saving payment:", error);
-        alert('সার্ভার ত্রুটি! পেমেন্ট সেভ করা যায়নি।'); 
-    }
+function findMemberName() {
+    const input = document.getElementById('modalPaymentMemberId');
+    const nameField = document.getElementById('modalPaymentMemberName');
+    if (!input || !nameField) return;
+
+    // ড্রপডাউন থেকে সিলেক্ট করা মেম্বার আইডি সংগ্রহ করা হচ্ছে
+    const memberId = input.value.trim().toLowerCase();
+    
+    // আইডি অনুযায়ী মেম্বার লিস্ট থেকে সঠিক মেম্বারকে খোঁজা হচ্ছে
+    const member = members.find(m => String(m.memberId).trim().toLowerCase() === memberId);
+    
+    // মেম্বার পাওয়া গেলে তার নাম বক্সে বসবে, না পাওয়া গেলে বক্স খালি থাকবে
+    nameField.value = member ? member.name : '';
 }
 
 /* =========================================
