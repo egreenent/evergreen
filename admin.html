@@ -1659,34 +1659,31 @@ await response.json();
 console.log(result);
 
 
-/* SUCCESS */
+/* ==============================================
+           SUCCESS / ERROR HANDLING (সংশোধিত অংশ)
+           ============================================== */
+        if (result.success) {
+            alert('পেমেন্ট সফলভাবে গুগল শিটে সেভ হয়েছে!');
+            closePaymentModal();
+            
+            // ইনপুট ফিল্ডগুলো খালি করে দেওয়া
+            document.getElementById('modalPaymentMemberId').value = '';
+            document.getElementById('modalPaymentMemberName').value = '';
+            document.getElementById('modalPaymentMonth').value = '';
+            document.getElementById('modalPaymentAmount').value = '';
+            document.getElementById('modalPaymentFine').value = '';
+            
+            // পেমেন্ট সেভ হওয়ার সাথে সাথে ড্যাশবোর্ড এবং পেমেন্ট লিস্ট নতুন করে আপডেট হবে
+            updateDashboard(); 
+            if(typeof loadPayments === "function") loadPayments();
+        } else {
+            alert('Payment Failed: ' + (result.message || 'Unknown Error'));
+        }
 
-if(result.success){
-    alert('পেমেন্ট সফলভাবে গুগল শিটে সেভ হয়েছে!');
-    closePaymentModal();
-    
-    // ... ইনপুট খালি করার কোডগুলো ...
-
-    // পেমেন্ট সেভ হওয়ার সাথে সাথে ড্যাশবোর্ড নতুন করে আপডেট করার জন্য এই লাইনটি রাখুন
-    updateDashboard(); 
-}
-
-}else{
-
-alert(
-'Payment Failed'
-);
-
-}
-
-}catch(error){
-
-console.log(error);
-
-alert(
-'Server Error'
-);
-}
+    } catch (error) {
+        console.log("Error in savePayment:", error);
+        alert('Server Error: সার্ভারে ডাটা পাঠানো যায়নি।');
+    }
 }
 
 
