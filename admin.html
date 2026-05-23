@@ -501,7 +501,7 @@ border-radius:8px;
 <a href="#" onclick="showSection('analyticsSection', this)">📊 Analytics</a>
 <a href="#" onclick="showSection('settingsSection', this)">⚙ Settings</a>
 
-<a href="javascript:void(0);" onclick="logout()" style="text-decoration: none; color: inherit; display: block;">🚪 Logout</a>
+<a href="javascript:void(0);" onclick="logout()">🚪 Logout</a>
 
 </div>
 
@@ -1233,12 +1233,18 @@ async function updateMemberData() {
 }
 
 
-  function logout() {
-    // সব সেশন ডাটা মুছে ফেলা
-    localStorage.clear(); 
+/* =========================================
+   ৮. LOGOUT FUNCTION (ফিক্সড করা হয়েছে)
+   ========================================= */
+function logout() {
+    // ১. ব্রাউজারে সেভ থাকা সকল লগইন সেশন বা টোকেন ডাটা সম্পূর্ণ মুছে ফেলা
+    localStorage.clear();
     sessionStorage.clear();
     
-    // লগইন পেজে রিডাইরেক্ট করা
+    alert("🔒 আপনি সফলভাবে লগআউট হয়েছেন!");
+    
+    // ২. আপনার মেইন লগইন পেজে রিডাইরেক্ট করা
+    // আপনার লগইন ফাইলের নাম যদি login.html না হয়ে অন্য কিছু হয় (যেমন index.html), তবে এখানে সেটি লিখে দিন
     window.location.href = "login.html"; 
 }
 </script>
