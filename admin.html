@@ -886,7 +886,7 @@ function loadMembers(){
 }
 
 /* ==============================================
-   ৩. LOAD PAYMENTS HISTORY (সংশোধিত ও সচল পেমেন্ট ফাংশন)
+   ৩. LOAD PAYMENTS HISTORY (ReferenceError মুক্ত কোড)
    ============================================== */
 async function loadPayments() {
     console.log("LOAD PAYMENTS RUNNING...");
@@ -898,11 +898,18 @@ async function loadPayments() {
     }
 
     try {
-        // আপনার গুগল অ্যাপস স্ক্রিপ্টের পেমেন্ট অ্যাকশন অনুযায়ী কল করা হচ্ছে
+        // গুগল অ্যাপস স্ক্রিপ্ট থেকে ডাটা আনা হচ্ছে
         const response = await fetch(API_URL + '?action=payments');
-        payments = await response.json();
+        const liveData = await response.json();
 
-        console.log("Live Payments Loaded:", payments);
+        console.log("Live Payments Loaded:", liveData);
+
+        // গ্লোবাল ভ্যারিয়েবলে ডাটা সেভ করা হচ্ছে যেন অন্য ফাংশনও এটি পায়
+        if (Array.isArray(liveData)) {
+            payments = liveData;
+        } else {
+            payments = [];
+        }
 
         if (payments.error || !payments || payments.length === 0) {
             if (tableBody) tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">No recent payments found.</td></tr>`;
@@ -922,40 +929,36 @@ async function loadPayments() {
                 ? 'background:#d1e7dd; color:#0f5132; padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; display:inline-block;' 
                 : 'background:#f8d7da; color:#842029; padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; display:inline-block;';
 
-            // ড্যাশবোর্ডের ভেতরের টেবিল রো (Receipt No, Member ID, Name, Amount, Status)
+            // ৫ কলামের প্রধান টেবিল বডি
             tableHtml += `
                 <tr>
                     <td><strong>${payment.receipt || 'N/A'}</strong></td>
                     <td>${payment.memberId || 'N/A'}</td>
                     <td>${payment.name || 'N/A'}</td>
                     <td>৳ ${Number(payment.amount || 0).toLocaleString('en-US')}</td>
-                    <td><span style="${statusStyle}">${payment.status || 'Due'}</span></td>
+                    <td><span style="${statusStyle}">${payment.status || 'Paid'}</span></td>
                 </tr>
             `;
 
-            // <div id="recentPayments"> বক্সের জন্য ডিজাইন
-            recentHtml += `
-                <div class="payment-item" style="display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; align-items: center; background:#fff; margin-bottom:10px; border-radius:10px;">
-                    <div>
-                        <h4 style="margin:0; color:#333;">ID: ${payment.memberId}</h4>
-                        <small style="color:#666;">Month: ${payment.month || 'N/A'}</small>
+            // সাম্প্রতিক পেমেন্টের ছোট আইটেম বক্স (<div id="recentPayments">)
+            if (recentDiv) {
+                recentHtml += `
+                    <div class="payment-item" style="display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; align-items: center; background:#fff; margin-bottom:10px; border-radius:10px;">
+                        <div>
+                            <h4 style="margin:0; color:#333;">ID: ${payment.memberId}</h4>
+                            <small style="color:#666;">Month: ${payment.month || 'N/A'}</small>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="margin:0; font-weight:600; color:#0b6b2d;">৳ ${Number(payment.amount || 0).toLocaleString('en-US')}</p>
+                            <span style="${statusStyle} font-size:11px; padding:3px 8px; margin-top:4px;">${payment.status || 'Paid'}</span>
+                        </div>
                     </div>
-                    <div style="text-align: right;">
-                        <p style="margin:0; font-weight:600; color:#0b6b2d;">৳ ${Number(payment.amount || 0).toLocaleString('en-US')}</p>
-                        <span style="${statusStyle} font-size:11px; padding:3px 8px; margin-top:4px;">${payment.status || 'Paid'}</span>
-                    </div>
-                </div>
-            `;
+                `;
+            }
         });
 
         if (tableBody) tableBody.innerHTML = tableHtml;
         if (recentDiv) recentDiv.innerHTML = recentHtml;
-
-        // ড্যাশবোর্ড আপডেট করার জন্য লাইভ ডাটা না মিললে এটি ব্যাকআপ হিসেবে কাজ করবে
-        if (document.getElementById('totalCollection') && !document.getElementById('totalCollection').innerText.includes(',')) {
-            document.getElementById('totalCollection').innerText = '৳ ' + totalCollection.toLocaleString('en-US');
-            document.getElementById('totalPayments').innerText = payments.length;
-        }
 
     } catch (error) {
         console.error("Error loading payments:", error);
