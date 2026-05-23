@@ -843,26 +843,18 @@ let members = [];
 FETCH MEMBERS
 ========================= */
 
-async function fetchMembers(){
-
-try{
-
-const response = await fetch(
-API_URL + '?action=members'
-);
-
-members = await response.json();
-
-console.log("TOTAL MEMBERS:", members.length);
-
-loadMembers();
-
-}catch(error){
-
-console.log(error);
-
-}
-
+// আপনার ফাইলের প্রধান ফাংশনটি যদি এরকম হয়:
+async function fetchMembers() {
+    try {
+        const response = await fetch(API_URL + '?action=members');
+        members = await response.json();
+        
+        // মেম্বারদের ডাটা আসার পর ড্যাশবোর্ডকে কল করুন
+        updateDashboard(); 
+        
+    } catch(error) {
+        console.log(error);
+    }
 }
 
 
@@ -1914,6 +1906,12 @@ async function savePayment(){
         alert('সার্ভার ত্রুটি! গুগল অ্যাপস স্ক্রিপ্ট চেক করুন।');
     }
 }
+
+  // পেজটি ব্রাউজারে সম্পূর্ণ লোড হওয়ার সাথে সাথে ড্যাশবোর্ড এবং পেমেন্ট টেবিল রান হবে
+window.addEventListener('DOMContentLoaded', () => {
+    if (typeof updateDashboard === "function") updateDashboard();
+    if (typeof loadPayments === "function") loadPayments();
+});
   
 </script>
 
