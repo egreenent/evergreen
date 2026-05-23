@@ -824,8 +824,9 @@ Please complete your monthly payment before 10th.
 <div id="modalContent"></div>
 </div>
 </div>
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec"; // আপনার জেনারেট করা নতুন লিংকটি এখানে বসাবেন
+
+
+  const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec"; 
 
 let members = [];
 let payments = [];
@@ -837,8 +838,38 @@ window.onload = function() {
     updateDashboard();
 };
 
+/* =======================================================
+   ১. NAVIGATION CONTROLS (আপনার Section মেনুর সাথে ১০০% মিল)
+   ======================================================= */
+function showSection(sectionId, element) {
+    // প্রথমে সব পেজ সেকশন লুকিয়ে ফেলা হচ্ছে
+    document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.remove('active');
+        section.style.display = 'none'; 
+    });
+
+    // যে সেকশনে ক্লিক করা হয়েছে শুধু সেটি দেখানো হচ্ছে
+    const target = document.getElementById(sectionId);
+    if (target) {
+        target.classList.add('active');
+        target.style.display = 'block'; 
+    } else {
+        console.error("Error: HTML ফাইলে '" + sectionId + "' আইডির কোনো সেকশন খুঁজে পাওয়া যায়নি!");
+    }
+
+    // মেনুর ভেতরের 'active' কালার পরিবর্তন করা হচ্ছে
+    document.querySelectorAll('.menu a').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // যে লিংকে ক্লিক করা হয়েছে সেটিকে একটিভ মার্ক করা হচ্ছে
+    if (element) {
+        element.classList.add('active');
+    }
+}
+
 /* =========================================
-   ১. FETCH MEMBERS LIST & DISPLAY IN TABLE
+   ২. FETCH MEMBERS LIST & DISPLAY IN TABLE
    ========================================= */
 async function fetchMembers() {
     const tableBody = document.getElementById('membersTableBody');
@@ -851,7 +882,7 @@ async function fetchMembers() {
         displayMembers(members); // টেবিলে শো করা
         updateDashboard();      // ড্যাশবোর্ড আপডেট করা
     } catch(error) {
-        console.error(error);
+        console.error("Error fetching members:", error);
     }
 }
 
@@ -882,7 +913,7 @@ function displayMembers(dataList) {
 }
 
 /* =========================================
-   ২. SEARCH MEMBER LOGIC (লাইভ ফিল্টার)
+   ৩. SEARCH MEMBER LOGIC (লাইভ ফিল্টার)
    ========================================= */
 function searchMember() {
     const query = document.getElementById('searchBar').value.toLowerCase().trim();
@@ -895,7 +926,7 @@ function searchMember() {
 }
 
 /* =========================================
-   ৩. LOAD PAYMENTS HISTORY
+   ৪. LOAD PAYMENTS HISTORY
    ========================================= */
 async function loadPayments() {
     const tableBody = document.getElementById('paymentTable');
@@ -919,20 +950,18 @@ async function loadPayments() {
                 ? 'background:#d1e7dd; color:#0f5132;' 
                 : 'background:#f8d7da; color:#842029;';
 
-            // ড্যাশবোর্ডের প্রধান টেবিল (৫ কলাম)
-            if (index < 10) { // সর্বোচ্চ ১০টি রিসেন্ট ডাটা দেখাবে
-                tableHtml += `
-                    <tr>
-                        <td><strong>${p.receipt || 'N/A'}</strong></td>
-                        <td>${p.memberId}</td>
-                        <td>${p.name}</td>
-                        <td>৳ ${Number(p.amount).toLocaleString()}</td>
-                        <td><span style="padding:4px 10px; border-radius:15px; font-size:12px; ${statusStyle}">${p.status}</span></td>
-                    </tr>
-                `;
-            }
+            // ড্যাশবোর্ড ও পেমেন্ট সেকশনের মেইন টেবিল
+            tableHtml += `
+                <tr>
+                    <td><strong>${p.receipt || 'N/A'}</strong></td>
+                    <td>${p.memberId}</td>
+                    <td>${p.name}</td>
+                    <td>৳ ${Number(p.amount).toLocaleString()}</td>
+                    <td><span style="padding:4px 10px; border-radius:15px; font-size:12px; ${statusStyle}">${p.status}</span></td>
+                </tr>
+            `;
 
-            // ড্যাশবোর্ডের ডানদিকের ছোট রিসেন্ট পেমেন্ট বক্স (<div id="recentPayments">)
+            // ড্যাশবোর্ডের ডানদিকের ছোট রিসেন্ট পেমেন্ট বক্সের জন্য (সর্বোচ্চ ৪ টি)
             if (index < 4) {
                 recentHtml += `
                     <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;">
@@ -946,12 +975,12 @@ async function loadPayments() {
         if (tableBody) tableBody.innerHTML = tableHtml;
         if (recentDiv) recentDiv.innerHTML = recentHtml;
     } catch (error) {
-        console.error(error);
+        console.error("Error loading payments:", error);
     }
 }
 
 /* =========================================
-   ৪. DASHBOARD METRICS UPDATE
+   ৫. DASHBOARD METRICS UPDATE
    ========================================= */
 async function updateDashboard() {
     try {
@@ -963,12 +992,12 @@ async function updateDashboard() {
         if(document.getElementById('totalPayments')) document.getElementById('totalPayments').innerText = d.totalPayments;
         if(document.getElementById('totalCollection')) document.getElementById('totalCollection').innerText = "৳ " + d.totalCollection.toLocaleString();
     } catch(error) {
-        console.error(error);
+        console.error("Error updating dashboard:", error);
     }
 }
 
 /* =========================================
-   ৫. QUICK ACTIONS & MODAL CONTROLS
+   ৬. QUICK ACTIONS & MODAL CONTROLS
    ========================================= */
 function openAddMember(){ document.getElementById('addMemberModal').style.display = 'flex'; }
 function closeAddMemberModal(){ document.getElementById('addMemberModal').style.display = 'none'; }
@@ -992,7 +1021,7 @@ function findMemberName() {
 }
 
 /* =========================================
-   ৬. SAVE DATA FUNCTIONS (POST)
+   ৭. SAVE DATA FUNCTIONS (POST REQUESTS)
    ========================================= */
 async function saveNewMember(){
     const name = document.getElementById('newMemberName').value.trim();
@@ -1070,37 +1099,6 @@ async function saveNotice() {
         }
     } catch(error) { alert('নোটিশ পাবলিশ ব্যর্থ হয়েছে।'); }
 }
-
-/* =======================================================
-   ৭. NAVIGATION CONTROLS (আপনার মেনুর সাথে মিল রেখে সংশোধিত)
-   ======================================================= */
-function showSection(sectionId, element) {
-    // ১. প্রথমে সব পেজ সেকশন লুকিয়ে ফেলা হচ্ছে
-    document.querySelectorAll('.page-section').forEach(section => {
-        section.classList.remove('active');
-        section.style.display = 'none'; // সুরক্ষার জন্য ডিসপ্লে ওয়ান করা হচ্ছে
-    });
-
-    // ২. যে সেকশনে ক্লিক করা হয়েছে শুধু সেটি দেখানো হচ্ছে
-    const target = document.getElementById(sectionId);
-    if (target) {
-        target.classList.add('active');
-        target.style.display = 'block'; // সেকশনটি দৃশ্যমান হবে
-    } else {
-        console.error("Error: HTML ফাইলে '" + sectionId + "' আইডির কোনো সেকশন খুঁজে পাওয়া যায়নি!");
-    }
-
-    // ৩. মেনুর ভেতরের 'active' কালার পরিবর্তন করা হচ্ছে
-    document.querySelectorAll('.menu a').forEach(item => {
-        item.classList.remove('active');
-    });
-    
-    // ৪. যে লিংকে ক্লিক করা হয়েছে সেটিকে একটিভ মার্ক করা হচ্ছে
-    if (element) {
-        element.classList.add('active');
-    }
-}
-</script>
 
   <div id="addMemberModal" class="modal">
   <div class="modal-box">
