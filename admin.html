@@ -1397,10 +1397,9 @@ alert('Failed To Add Member');
 
 function openAddPayment(){
 
-showSection(
-'paymentsSection',
-document.querySelectorAll('.menu a')[2]
-);
+document.getElementById(
+'paymentModal'
+).style.display = 'flex';
 
 }
 
@@ -1678,6 +1677,48 @@ payments.length;
 
 }
 
+<!-- -------------------------===========================---------------------------------- -->
+  function closePaymentModal(){
+
+document.getElementById(
+'paymentModal'
+).style.display = 'none';
+}
+
+
+/* FIND MEMBER NAME */
+
+function findMemberName(){
+
+const memberId =
+document.getElementById(
+'paymentMemberId'
+).value.trim();
+
+
+const member =
+members.find(
+m => m.memberId === memberId
+);
+
+
+if(member){
+
+document.getElementById(
+'paymentMemberName'
+).value =
+member.name;
+
+}else{
+
+document.getElementById(
+'paymentMemberName'
+).value = '';
+}
+}
+
+
+  
   fetchMembers();
   loadPayments();
 </script>
@@ -1772,5 +1813,78 @@ Publish Notice
 </div>
 </div>
 
+<!-- PAYMENT MODAL -->
+
+<div id="paymentModal" class="modal">
+<div class="modal-box">
+<div class="modal-header">
+<h2>Add Payment</h2>
+
+<span
+class="close-btn"
+onclick="closePaymentModal()"
+>
+×
+</span>
+</div>
+
+<div class="form-grid">
+
+<input
+type="text"
+id="paymentMemberId"
+placeholder="Member ID"
+onkeyup="findMemberName()"
+>
+
+
+<input
+type="text"
+id="paymentMemberName"
+placeholder="Member Name"
+readonly
+>
+
+
+<input
+type="text"
+id="paymentMonth"
+placeholder="Month"
+>
+
+
+<input
+type="number"
+id="paymentAmount"
+placeholder="Amount"
+>
+
+
+<input
+type="number"
+id="paymentFine"
+placeholder="Fine"
+>
+<select id="paymentStatus">
+
+<option value="Paid">
+Paid
+</option>
+
+<!-- <option value="Due">
+Due
+</option> -->
+</select>
+
+</div>
+<button
+class="action-btn"
+onclick="savePayment()"
+>
+Save Payment
+</button>
+</div>
+</div>
+  
 </body>
 </html>
