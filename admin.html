@@ -1756,7 +1756,7 @@ loadPayments();
 updateDashboard();
 
 /* ==============================================
-   DASHBOARD UPDATE (গুগল শিট থেকে লাইভ হিসাব নেওয়ার কোড)
+   DASHBOARD UPDATE (SyntaxError মুক্ত নিখুঁত কোড)
    ============================================== */
 async function updateDashboard() {
     try {
@@ -1766,7 +1766,7 @@ async function updateDashboard() {
         
         console.log("Dashboard Live Data:", data);
 
-        // ১. টোটাল কালেকশন (টাকা এবং জরিমানা একসাথে সুন্দর ফরম্যাটে দেখাবে)
+        // ১. টোটাল কালেকশন আপডেট
         if (document.getElementById('totalCollection')) {
             const collectionAmount = Number(data.totalCollection) || 0;
             document.getElementById('totalCollection').innerText = '৳ ' + collectionAmount.toLocaleString('bn-BD');
@@ -1777,10 +1777,12 @@ async function updateDashboard() {
             document.getElementById('totalPayments').innerText = data.totalPayments || 0;
         }
 
-        // ৩. মোট মেম্বার এবং একটিভ মেম্বার সংখ্যা আপডেট (নিরাপত্তার জন্য যোগ করা হলো)
+        // ৩. মোট মেম্বার সংখ্যা আপডেট
         if (document.getElementById('totalMembers')) {
             document.getElementById('totalMembers').innerText = data.totalMembers || 0;
         }
+
+        // ৪. একটিভ মেম্বার সংখ্যা আপডেট
         if (document.getElementById('activeMembers')) {
             document.getElementById('activeMembers').innerText = data.activeMembers || 0;
         }
@@ -1788,7 +1790,7 @@ async function updateDashboard() {
     } catch (error) {
         console.error("Dashboard Update Error:", error);
         
-        // কোনো কারণে গুগল শিটের লিঙ্ক কাজ না করলে ব্রাউজারের ব্যাকআপ ডেটা দিয়ে দেখাবে (Fallback)
+        // যদি কোনো কারণে সার্ভার এরর হয়, তবে ব্রাউজারের ব্যাকআপ ডেটা দিয়ে দেখাবে
         let localCollection = 0;
         if (typeof payments !== 'undefined' && Array.isArray(payments)) {
             payments.forEach(p => {
