@@ -945,27 +945,59 @@ window.addEventListener('DOMContentLoaded', () => {
     loadPayments();
 });
 
-/* DASHBOARD */
+/* ==============================================
+   DASHBOARD UPDATE (SyntaxError মুক্ত সম্পূর্ণ কোড)
+   ============================================== */
+async function updateDashboard() {
+    try {
+        console.log("UPDATE DASHBOARD RUNNING");
+        
+        // সরাসরি গুগল অ্যাপস স্ক্রিপ্ট থেকে ড্যাশবোর্ডের লাইভ হিসাব নিয়ে আসা হচ্ছে
+        const response = await fetch(API_URL + '?action=dashboard');
+        const data = await response.json();
+        
+        console.log("Dashboard Live Data:", data);
 
-document.getElementById(
-'totalCollection'
-).innerText =
-'৳ ' + totalCollection;
+        // ১. টোটাল কালেকশন আপডেট (ইংরেজি সংখ্যা এবং কমা ফরম্যাটে)
+        if (document.getElementById('totalCollection')) {
+            const collectionAmount = Number(data.totalCollection) || 0;
+            document.getElementById('totalCollection').innerText = '৳ ' + collectionAmount.toLocaleString('en-US');
+        }
 
+        // ২. টোটাল পেমেন্ট সংখ্যা আপডেট
+        if (document.getElementById('totalPayments')) {
+            document.getElementById('totalPayments').innerText = data.totalPayments || 0;
+        }
 
-document.getElementById(
-'totalPayments'
-).innerText =
-payments.length;
+        // ৩. মোট মেম্বার সংখ্যা আপডেট
+        if (document.getElementById('totalMembers')) {
+            document.getElementById('totalMembers').innerText = data.totalMembers || 0;
+        }
 
-}catch(error){
+        // ৪. একটিভ মেম্বার সংখ্যা আপডেট
+        if (document.getElementById('activeMembers')) {
+            document.getElementById('activeMembers').innerText = data.activeMembers || 0;
+        }
 
-console.log(error);
-
-}
-
-}
-
+    } catch (error) {
+        console.log("Dashboard Live Fetch Error, using fallback:", error);
+        
+        // ব্যাকআপ লজিক: যদি লাইভ ডাটা না আসে তবে লোকাল ভ্যারিয়েবল দিয়ে হিসাব করবে
+        let localCollection = 0;
+        if (typeof payments !== 'undefined' && Array.isArray(payments)) {
+            payments.forEach(payment => {
+                localCollection += Number(payment.amount) || 0;
+            });
+            
+            if (document.getElementById('totalCollection')) {
+                document.getElementById('totalCollection').innerText = '৳ ' + localCollection.toLocaleString('en-US');
+            }
+            if (document.getElementById('totalPayments')) {
+                document.getElementById('totalPayments').innerText = payments.length;
+            }
+        }
+    }
+} // <--- এই ব্র্যাকেটটি দিয়ে ফাংশনটি এখানে সঠিকভাবে শেষ হলো
 
 
 /* =========================
