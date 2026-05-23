@@ -145,32 +145,44 @@ font-size:20px;
 font-weight:500;
 cursor:pointer;
 transition:0.3s;
-
 }
 
 .login-btn:hover{
-
 background:#256d28;
-
 }
 
 @media(max-width:500px){
 
 .login-container{
-
 margin:20px;
 padding:30px 22px;
-
 }
 
 .title{
-
 font-size:32px;
-
+}
 }
 
+  .password{
+position:relative;
 }
 
+.password input{
+width:100%;
+padding:12px;
+padding-right:45px;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+.toggle-password{
+position:absolute;
+right:15px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+font-size:18px;
+}
 </style>
 
 </head>
@@ -238,6 +250,11 @@ Password
 id="password"
 placeholder="Enter Password">
 
+<span
+class="toggle-password"
+onclick="togglePassword()"
+>👁</span>
+  
 </div>
 
 <button class="login-btn"
@@ -427,11 +444,24 @@ window.location.href =
 alert(
 "Invalid Member Login"
 );
-
+}
+}
 }
 
-}
+  function togglePassword(){
 
+const passwordInput =
+document.getElementById(
+'password'
+);
+
+if(passwordInput.type === 'password'){
+
+passwordInput.type = 'text';
+}else{
+
+passwordInput.type = 'password';
+}
 }
 
 </script>
