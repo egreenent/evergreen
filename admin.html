@@ -1693,12 +1693,12 @@ function findMemberName(){
 const memberId =
 document.getElementById(
 'paymentMemberId'
-).value.trim();
+).value.trim().toLowerCase();
 
 
 const member =
 members.find(
-m => m.memberId === memberId
+m => m.memberId.toLowerCase() === memberId
 );
 
 
