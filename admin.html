@@ -886,51 +886,38 @@ async function fetchMembers() {
 }
 
 function displayMembers(dataList) {
-    const tableBody = document.getElementById('membersTableBody');
+    // আপনার আসল HTML এর আইডি 'membersTable' ধরা হলো
+    const tableBody = document.getElementById('membersTable');
     if (!tableBody) return;
     
+    // কলাম সংখ্যা ৬টি তাই colspan="6" করা হয়েছে
     if (dataList.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">No members found.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No members found.</td></tr>`;
         return;
     }
 
     let html = '';
     dataList.forEach(m => {
+        // স্ট্যাটাস অনুযায়ী সুন্দর কালার ব্যাজ
+        const statusColor = m.status === 'Active' ? '#0f5132' : '#842029';
+        const statusBg = m.status === 'Active' ? '#d1e7dd' : '#f8d7da';
+
         html += `
             <tr>
-                <td><img src="${m.photo}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;"></td>
-                <td><strong>${m.memberId}</strong></td>
-                <td>${m.name}</td>
-                <td>${m.phone}</td>
-                <td>${m.blood || 'N/A'}</td>
-                <td>৳ ${m.monthlyFee}</td>
-                <td><span class="status-badge" style="background:#d1e7dd; color:#0f5132; padding:4px 10px; border-radius:12px; font-size:12px;">${m.status}</span></td>
-            </tr>
-        `;
-    });
-    tableBody.innerHTML = html;
-}
-
-  function displayMembers(dataList) {
-    const tableBody = document.getElementById('membersTableBody');
-    if (!tableBody) return;
-    
-    if (dataList.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">No members found.</td></tr>`;
-        return;
-    }
-
-    let html = '';
-    dataList.forEach(m => {
-        html += `
-            <tr onclick="openMemberInfoModal('${m.memberId}')" style="cursor:pointer;" title="Click to view full profile">
-                <td><img src="${m.photo}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;"></td>
+                <td><img src="${m.photo || 'https://via.placeholder.com/150'}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;"></td>
                 <td><strong>${m.memberId}</strong></td>
                 <td style="color:#0b6b2d; font-weight:600;">${m.name}</td>
                 <td>${m.phone}</td>
-                <td>${m.blood || 'N/A'}</td>
-                <td>৳ ${m.monthlyFee}</td>
-                <td><span class="status-badge" style="background:#d1e7dd; color:#0f5132; padding:4px 10px; border-radius:12px; font-size:12px;">${m.status}</span></td>
+                <td>
+                    <span style="padding:4px 10px; border-radius:12px; font-size:12px; background:${statusBg}; color:${statusColor}; font-weight:500;">
+                        ${m.status || 'Active'}
+                    </span>
+                </td>
+                <td>
+                    <button onclick="openEditModal('${m.memberId}')" style="background:#0b6b2d; color:#fff; border:none; padding:5px 12px; border-radius:4px; cursor:pointer; font-size:12px; font-weight:600; transition:0.2s;">
+                        ✏️ Edit
+                    </button>
+                </td>
             </tr>
         `;
     });
