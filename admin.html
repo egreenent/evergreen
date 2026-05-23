@@ -1789,28 +1789,32 @@ document.getElementById(
 
 function findMemberName(){
 
-const memberId =
+const input =
 document.getElementById(
 'paymentMemberId'
-).value.trim();
+);
 
+console.log(input);
 
-console.log("SEARCHING:", memberId);
+const memberId =
+input.value.trim();
 
-console.log("MEMBERS:", members);
+console.log(
+"SEARCHING:",
+memberId
+);
 
 
 const member =
-members.find(function(m){
+members.find(m =>
 
-return m.memberId.trim() === memberId;
+String(m.memberId).trim()
+=== memberId
 
-});
+);
 
 
 if(member){
-
-console.log("FOUND:", member);
 
 document.getElementById(
 'paymentMemberName'
@@ -1819,14 +1823,13 @@ member.name;
 
 }else{
 
-console.log("NOT FOUND");
-
 document.getElementById(
 'paymentMemberName'
 ).value = '';
-}
+
 }
 
+}
   
   fetchMembers();
   loadPayments();
@@ -1951,8 +1954,9 @@ onclick="closePaymentModal()"
 <input
 type="text"
 id="paymentMemberId"
-placeholder="Member ID"
-onkeyup="findMemberName()"
+placeholder="Enter Member ID"
+oninput="findMemberName()"
+autocomplete="off"
 >
 
 
