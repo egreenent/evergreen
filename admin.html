@@ -1144,6 +1144,71 @@ async function saveNotice() {
         }
     } catch(error) { alert('নোটিশ পাবলিশ ব্যর্থ হয়েছে।'); }
 }
+
+// ১. এডিট মডাল খোলার ফাংশন (টেবিলের এডিট বাটনে ক্লিক করলে এটি রান হবে)
+function openEditModal(memberId) {
+    const m = members.find(user => String(user.memberId).trim() === String(memberId).trim());
+    if (!m) {
+        alert("মেম্বারের তথ্য পাওয়া যায়নি!");
+        return;
+    }
+
+    // পপআপের ইনপুট বক্সে মেম্বারের বর্তমান তথ্যগুলো বসিয়ে দেওয়া হচ্ছে
+    document.getElementById('editMemberId').value = m.memberId;
+    document.getElementById('editName').value = m.name;
+    document.getElementById('editPhone').value = m.phone;
+    document.getElementById('editStatus').value = m.status || 'Active';
+
+    // পপআপটি স্ক্রিনে শো করা হচ্ছে
+    document.getElementById('editMemberModal').style.display = 'flex';
+}
+
+// ২. এডিট মডাল বন্ধ করার ফাংশন
+function closeEditModal() {
+    document.getElementById('editMemberModal').style.display = 'none';
+}
+
+// ৩. নতুন তথ্য গুগল শিটে পাঠানোর ফাংশন
+async function updateMemberData() {
+    const memberId = document.getElementById('editMemberId').value;
+    const name = document.getElementById('editName').value.trim();
+    const phone = document.getElementById('editPhone').value.trim();
+    const status = document.getElementById('editStatus').value;
+
+    if (!name || !phone) {
+        alert("নাম এবং ফোন নম্বর খালি রাখা যাবে না!");
+        return;
+    }
+
+    const updatedInfo = {
+        memberId: memberId,
+        name: name,
+        phone: phone,
+        status: status
+    };
+
+    try {
+        // আপনার API_URL এ ডাটা পাঠানো হচ্ছে
+        const res = await fetch(API_URL + '?action=editMember', { 
+            method: 'POST', 
+            body: JSON.stringify(updatedInfo) 
+        });
+        const result = await res.json();
+        
+        if (result.success) {
+            alert('📝 মেম্বারের তথ্য সফলভাবে আপডেট হয়েছে!');
+            closeEditModal();
+            // টেবিল রিফ্রেশ করার জন্য আপনার আসল ফাংশনটি কল করুন
+            if (typeof fetchMembers === "function") fetchMembers(); 
+        } else {
+            alert('আপডেট ব্যর্থ হয়েছে: ' + result.error);
+        }
+    } catch (error) {
+        console.error("Error updating member:", error);
+        alert('সার্ভার ত্রুটি! ডাটা আপডেট করা যায়নি।');
+    }
+}
+  
 </script>
               
   <div id="addMemberModal" class="modal">
@@ -1276,6 +1341,44 @@ async function saveNotice() {
     </div>
 
     <button onclick="closeMemberInfoModal()" style="width: 100%; background: #6c757d; color: #fff; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 20px;">Close Profile</button>
+  </div>
+</div>
+
+
+  <div id="editMemberModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+  <div class="modal-box" style="max-width: 450px; width: 100%; padding: 25px; border-radius: 12px; background: #fff; box-sizing: border-box;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+      <h2 style="color: #0b6b2d; font-size: 20px; font-weight: 600; margin: 0;">📝 Edit Member Info</h2>
+      <span onclick="closeEditModal()" style="font-size: 28px; cursor: pointer; color: #aaa; font-weight: bold;">&times;</span>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 15px;">
+      <label style="display:block; margin-bottom:4px; font-weight:500;">Member ID</label>
+      <input type="text" id="editMemberId" readonly style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; background:#e9ecef; outline: none;">
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 15px;">
+      <label style="display:block; margin-bottom:4px; font-weight:500;">Full Name</label>
+      <input type="text" id="editName" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; box-sizing: border-box;">
+    </div>
+
+    <div class="form-group" style="margin-bottom: 15px;">
+      <label style="display:block; margin-bottom:4px; font-weight:500;">Phone Number</label>
+      <input type="text" id="editPhone" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; box-sizing: border-box;">
+    </div>
+
+    <div class="form-group" style="margin-bottom: 20px;">
+      <label style="display:block; margin-bottom:4px; font-weight:500;">Status</label>
+      <select id="editStatus" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; background:#fff; box-sizing: border-box;">
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+    </div>
+
+    <button onclick="updateMemberData()" style="width: 100%; background: #0b6b2d; color: #fff; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s;">
+      💾 Save Changes
+    </button>
   </div>
 </div>
 </body>
