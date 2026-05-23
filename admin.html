@@ -1783,11 +1783,12 @@ document.getElementById(
 'paymentModal'
 ).style.display = 'none';
 }
-
-
+  
+  fetchMembers();
+  loadPayments();
+  
 /* FIND MEMBER NAME */
-
-function findMemberName(){
+  function findMemberName(){
 
 const input =
 document.getElementById(
@@ -1831,8 +1832,6 @@ document.getElementById(
 
 }
   
-  fetchMembers();
-  loadPayments();
 </script>
 
 <!-- ADD MEMBER MODAL -->
