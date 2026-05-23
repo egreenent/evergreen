@@ -507,7 +507,7 @@ border-radius:8px;
 
 <a href="#" onclick="showSection('settingsSection', this)">⚙ Settings</a>
 
-<a href="#" onclick="logout()">🚪 Logout</a>
+<a href="javascript:void(0);" onclick="logout()" style="text-decoration: none; color: inherit; display: block;">🚪 Logout</a>
 
 </div>
 
@@ -519,7 +519,7 @@ border-radius:8px;
 
 <div class="topbar">
 <h1>EverGreen Admin Dashboard</h1>
-<button class="logout-btn">Logout</button>
+<button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
 <!-- DASHBOARD -->
@@ -1691,16 +1691,20 @@ alert(
 
 
 
-/* =========================
-LOGOUT
-========================= */
+/* ==============================================
+   LOGOUT FUNCTION (সংশোধিত ও সচল কোড)
+   ============================================== */
+function logout() {
+    // লগইন করার সময় যে ডাটাগুলো ব্রাউজারে সেভ হয়েছিল তা মুছে ফেলা হচ্ছে
+    localStorage.removeItem("adminLoggedIn");
+    localStorage.removeItem("adminId");
+    localStorage.removeItem("memberLoggedIn");
+    localStorage.removeItem("memberId");
 
-function logout(){
+    alert("You have been logged out successfully!");
 
-alert(
-'Logout Success'
-);
-
+    // লগআউট হওয়ার পর ব্যবহারকারীকে আবার মূল লগইন পেজে পাঠিয়ে দেওয়া হবে
+    window.location.href = "login.html"; 
 }
 
 
