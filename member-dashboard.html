@@ -401,22 +401,6 @@ class="download-btn"
 </div>
 </div>
 
-<div class="section">
-<h2>Online Payment</h2>
-
-<div class="payment-buttons">
-<button>bKash Payment</button>
-<button>Nagad Payment</button>
-<button>Rocket Payment</button>
-</div>
-
-<!-- <div class="payment-info">
-<p><strong>Monthly Fee:</strong> ৳ 500</p>
-<p><strong>Payment Status:</strong> Paid Until February</p>
-<p><strong>Next Due:</strong> March 15, 2026</p>
-</div> -->
-
-</div>
 
 <div class="section">
 
@@ -445,6 +429,23 @@ class="download-btn"
 
 </div>
 
+<div class="section">
+<h2>Online Payment</h2>
+
+<div class="payment-buttons">
+<button>bKash Payment</button>
+<button>Nagad Payment</button>
+<button>Rocket Payment</button>
+</div>
+
+<!-- <div class="payment-info">
+<p><strong>Monthly Fee:</strong> ৳ 500</p>
+<p><strong>Payment Status:</strong> Paid Until February</p>
+<p><strong>Next Due:</strong> March 15, 2026</p>
+</div> -->
+
+</div>
+  
 <div class="section">
 <h2>Online Payment History</h2>
 
@@ -478,150 +479,112 @@ class="download-btn"
 </div>
 
 <script>
+// ১. আপনার গুগল অ্যাপস স্ক্রিপ্টের ডেপ্লয়মেন্ট (Web App) ইউআরএলটি এখানে বসান
+const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec"; 
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
+window.onload = function() {
+    fetchMemberDashboardData();
+};
 
-if(localStorage.getItem("memberLoggedIn") !== "true"){
-window.location.href = "login.html";
+async function fetchMemberDashboardData() {
+    // ২. লগইন পেজ থেকে মেম্বার আইডি বা ফোন নম্বরটি লোকাল স্টোরেজে সেভ করা থাকলে সেটি নেওয়া হচ্ছে
+    // আপনার লগইন সিস্টেমে যে কি (Key) ব্যবহার করেছেন (যেমন 'memberId' বা 'userPhone') সেটি এখানে দিন
+    const loggedInUser = localStorage.getItem('memberId') || sessionStorage.getItem('memberId'); 
+
+    if (!loggedInUser) {
+        alert("🚨 আপনি লগইন অবস্থায় নেই! দয়া করে প্রথমে লগইন করুন।");
+        window.location.href = "login.html"; // লগইন পেজে পাঠিয়ে দেওয়া হবে
+        return;
+    }
+
+    try {
+        // ৩. মেম্বার এবং পেমেন্ট ডাটা ব্যাকএন্ড থেকে নিয়ে আসা
+        const responseMembers = await fetch(API_URL + '?action=members');
+        const allMembers = await responseMembers.json();
+
+        const responsePayments = await fetch(API_URL + '?action=payments');
+        const allPayments = await responsePayments.json();
+
+        // ৪. লগইন করা নির্দিষ্ট মেম্বারকে আইডি বা ফোন নম্বর দিয়ে খুঁজে বের করা
+        const currentMember = allMembers.find(m => 
+            String(m.memberId).trim().toLowerCase() === String(loggedInUser).trim().toLowerCase() ||
+            String(m.phone).trim() === String(loggedInUser).trim()
+        );
+
+        if (!currentMember) {
+            alert("❌ এই মেম্বারের কোনো তথ্য সিস্টেমে খুঁজে পাওয়া যায়নি!");
+            return;
+        }
+
+        // ৫. ওই মেম্বারের পেমেন্ট হিস্ট্রি ফিল্টার করা
+        const memberPayments = allPayments.filter(p => 
+            String(p.memberId).trim().toLowerCase() === String(currentMember.memberId).trim().toLowerCase()
+        );
+
+        // ৬. টোটাল পেমেন্ট এবং রসিদ সংখ্যা হিসাব করা
+        let totalPaidAmount = 0;
+        memberPayments.forEach(p => {
+            if(String(p.status).toLowerCase() === 'paid') {
+                totalPaidAmount += Number(p.amount) || 0;
+            }
+        });
+
+        // ৭. আপনার HTML এর আইডিগুলো অনুযায়ী ডাটা পুশ করা (আপনার ফাইলের স্ট্রাকচার অনুযায়ী ফিক্সড)
+        document.getElementById("displayMemberId").innerText = currentMember.memberId || 'N/A';
+        document.getElementById("memberName").innerText = currentMember.name || 'N/A';
+        document.getElementById("memberPhone").innerText = "📞 Phone: " + (currentMember.phone || 'N/A');
+        document.getElementById("memberEmail").innerText = "📧 Email: " + (currentMember.email || 'N/A');
+        document.getElementById("memberPhoto").src = currentMember.photo || "https://via.placeholder.com/150";
+        
+        // কাউন্টার কার্ডস আপডেট
+        document.getElementById("totalPayment").innerText = "৳ " + totalPaidAmount.toLocaleString();
+        document.getElementById("totalReceipts").innerText = memberPayments.length;
+        document.getElementById("membershipStatus").innerText = currentMember.status || "Active";
+        
+        // ডাউনলোড লিঙ্ক আপডেট
+        if(currentMember.pdfUrl) document.getElementById("membershipPdf").href = currentMember.pdfUrl;
+        if(currentMember.idCardUrl) document.getElementById("idCard").href = currentMember.idCardUrl;
+
+        // ৮. পেমেন্ট টেবিল ডাটা তৈরি করা
+        const tableBody = document.getElementById("paymentTableBody");
+        if (tableBody) {
+            if (memberPayments.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">কোনো পেমেন্ট রেকর্ড পাওয়া যায়নি।</td></tr>`;
+            } else {
+                let tableHTML = "";
+                let runningTotal = 0;
+
+                memberPayments.forEach(payment => {
+                    runningTotal += (Number(payment.amount) || 0) + (Number(payment.fine) || 0);
+                    
+                    const statusColor = String(payment.status).toLowerCase() === 'paid' ? '#0f5132' : '#842029';
+                    const statusBg = String(payment.status).toLowerCase() === 'paid' ? '#d1e7dd' : '#f8d7da';
+
+                    tableHTML += `
+                        <tr>
+                            <td>${payment.month || 'N/A'}</td>
+                            <td><span style="padding:4px 10px; border-radius:12px; font-size:12px; background:${statusBg}; color:${statusColor}; font-weight:600;">${payment.status}</span></td>
+                            <td>৳ ${(Number(payment.amount) || 0).toLocaleString()}</td>
+                            <td>৳ ${runningTotal.toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+                tableBody.innerHTML = tableHTML;
+            }
+        }
+
+    } catch (error) {
+        console.error("Dashboard Loading Error:", error);
+        alert("⚠️ সার্ভার থেকে তথ্য লোড করতে সমস্যা হচ্ছে। দয়া করে কিছুক্ষণ পর আবার চেষ্টা করুন।");
+    }
 }
 
-
-
-async function loadMember(){
-
-const memberId =
-localStorage.getItem("memberId");
-
-const response = await fetch(
-`${API_URL}?memberId=${memberId}`
-);
-
-const member =
-await response.json();
-
-document.getElementById(
-"memberIdText"
-).innerText =
-member.memberId;
-
-document.getElementById(
-"membershipPdf"
-).href =
-member.membershipPdf;
-
-document.getElementById(
-"idCard"
-).href =
-member.idCard;
-  
-document.getElementById(
-"memberName"
-).innerText =
-member.name;
-
-document.getElementById(
-"memberPhone"
-).innerText =
-"📞 Phone: " + member.phone;
-
-document.getElementById(
-"memberEmail"
-).innerText =
-"📧 Email: " + member.email;
-
-document.getElementById(
-"memberPhoto"
-).src =
-member.photo;
-
-document.getElementById(
-"totalPayment"
-).innerText =
-"৳ " + member.totalPayment;
-
-document.getElementById(
-"totalReceipts"
-).innerText =
-member.totalReceipts;
-
-document.getElementById(
-"dueAmount"
-).innerText =
-"৳ " + member.dueAmount;
-
-document.getElementById(
-"membershipStatus"
-).innerText =
-member.membershipStatus;
-
-if(member.noticeTitle){
-
-document.getElementById(
-"noticeBox"
-).innerHTML =
-
-"📢 <strong>" +
-member.noticeTitle +
-"</strong><br><br>" +
-
-member.noticeMessage;
-
-}
-
-let runningTotal = 0;
-
-let tableHTML = "";
-
-member.paymentHistory.forEach(payment => {
-
-runningTotal +=
-
-Number(payment.amount)
-
-+
-
-Number(payment.fine);
-
-tableHTML += `
-
-<tr>
-
-<td>${payment.month}</td>
-
-<td>${payment.status}</td>
-
-<td>৳ ${payment.amount}</td>
-
-<td>৳ ${runningTotal}</td>
-
-</tr>
-
-`;
-
-});
-
-document.getElementById(
-"paymentTableBody"
-).innerHTML =
-tableHTML;
-
-}
-
-loadMember();
-
-function logout(){
-
-localStorage.removeItem(
-"memberLoggedIn"
-);
-
-localStorage.removeItem(
-"memberId"
-);
-
-window.location.href =
-"login.html";
-
+// লগআউট ফাংশন
+function logout() {
+    localStorage.clear();
+    sessionStorage.clear();
+    alert("🔒 আপনি সফলভাবে লগআউট হয়েছেন!");
+    window.location.href = "login.html";
 }
 </script>
 
