@@ -1662,14 +1662,14 @@ console.log(result);
 /* SUCCESS */
 
 if(result.success){
+    alert('পেমেন্ট সফলভাবে গুগল শিটে সেভ হয়েছে!');
+    closePaymentModal();
+    
+    // ... ইনপুট খালি করার কোডগুলো ...
 
-alert(
-'Payment Saved Successfully'
-);
-
-closePaymentModal();
-
-loadPayments();
+    // পেমেন্ট সেভ হওয়ার সাথে সাথে ড্যাশবোর্ড নতুন করে আপডেট করার জন্য এই লাইনটি রাখুন
+    updateDashboard(); 
+}
 
 }else{
 
@@ -1755,29 +1755,53 @@ fetchMembers();
 loadPayments();
 updateDashboard();
 
-  function updateDashboard(){
+/* ==============================================
+   DASHBOARD UPDATE (গুগল শিট থেকে লাইভ হিসাব নেওয়ার কোড)
+   ============================================== */
+async function updateDashboard() {
+    try {
+        // সরাসরি গুগল অ্যাপস স্ক্রিপ্ট থেকে ড্যাশবোর্ডের লাইভ হিসাব নিয়ে আসা হচ্ছে
+        const response = await fetch(API_URL + '?action=dashboard');
+        const data = await response.json();
+        
+        console.log("Dashboard Live Data:", data);
 
-let totalCollection = 0;
+        // ১. টোটাল কালেকশন (টাকা এবং জরিমানা একসাথে সুন্দর ফরম্যাটে দেখাবে)
+        if (document.getElementById('totalCollection')) {
+            const collectionAmount = Number(data.totalCollection) || 0;
+            document.getElementById('totalCollection').innerText = '৳ ' + collectionAmount.toLocaleString('bn-BD');
+        }
 
-payments.forEach(payment => {
+        // ২. টোটাল পেমেন্ট সংখ্যা আপডেট
+        if (document.getElementById('totalPayments')) {
+            document.getElementById('totalPayments').innerText = data.totalPayments || 0;
+        }
 
-totalCollection +=
-Number(payment.amount);
+        // ৩. মোট মেম্বার এবং একটিভ মেম্বার সংখ্যা আপডেট (নিরাপত্তার জন্য যোগ করা হলো)
+        if (document.getElementById('totalMembers')) {
+            document.getElementById('totalMembers').innerText = data.totalMembers || 0;
+        }
+        if (document.getElementById('activeMembers')) {
+            document.getElementById('activeMembers').innerText = data.activeMembers || 0;
+        }
 
-});
-
-
-document.getElementById(
-'totalCollection'
-).innerText =
-'৳ ' + totalCollection;
-
-
-document.getElementById(
-'totalPayments'
-).innerText =
-payments.length;
-
+    } catch (error) {
+        console.error("Dashboard Update Error:", error);
+        
+        // কোনো কারণে গুগল শিটের লিঙ্ক কাজ না করলে ব্রাউজারের ব্যাকআপ ডেটা দিয়ে দেখাবে (Fallback)
+        let localCollection = 0;
+        if (typeof payments !== 'undefined' && Array.isArray(payments)) {
+            payments.forEach(p => {
+                localCollection += (Number(p.amount) || 0) + (Number(p.fine) || 0);
+            });
+            if (document.getElementById('totalCollection')) {
+                document.getElementById('totalCollection').innerText = '৳ ' + localCollection;
+            }
+            if (document.getElementById('totalPayments')) {
+                document.getElementById('totalPayments').innerText = payments.length;
+            }
+        }
+    }
 }
 
 <!-- -------------------------===========================---------------------------------- -->
