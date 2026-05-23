@@ -1186,6 +1186,7 @@ async function updateMemberData() {
     
     // অবজেক্টে ডাটা কালেকশন
     const updatedInfo = {
+        action: 'editMember', // বডির ভেতরেই অ্যাকশন টাইপ পাঠিয়ে দেওয়া হলো সবচেয়ে নিরাপদ কানেকশনের জন্য
         memberId: memberId,
         name: document.getElementById('editName').value.trim(),
         phone: document.getElementById('editPhone').value.trim(),
@@ -1211,7 +1212,8 @@ async function updateMemberData() {
     }
 
     try {
-        const res = await fetch(API_URL + '?action=editMember', { 
+        // ফিক্সড: আলাদা করে ইউআরএল-এর শেষে ?action= বসানোর আর প্রয়োজন নেই
+        const res = await fetch(API_URL, { 
             method: 'POST', 
             body: JSON.stringify(updatedInfo) 
         });
@@ -1220,7 +1222,7 @@ async function updateMemberData() {
         if (result.success) {
             alert('🚀 মেম্বারের সকল তথ্য সফলভাবে শিটে আপডেট হয়েছে!');
             closeEditModal();
-            if (typeof fetchMembers === "function") fetchMembers(); // রিফ্রেশ টেবিল
+            fetchMembers(); // আপনার মেইন ডাটা রিফ্রেশ ফাংশন কল
         } else {
             alert('আপডেট ব্যর্থ হয়েছে: ' + result.error);
         }
@@ -1229,7 +1231,6 @@ async function updateMemberData() {
         alert('সার্ভার ত্রুটি! ডাটা আপডেট করা যায়নি।');
     }
 }
-  
 </script>
               
   <div id="addMemberModal" class="modal">
