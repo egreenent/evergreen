@@ -866,109 +866,88 @@ console.log(error);
 }
 
 
-/* =========================
-DUMMY PAYMENTS
-========================= */
-let payments = [];
+/* ==============================================
+   LOAD PAYMENTS HISTORY (সংশোধিত ও ১০০% কার্যকরী কোড)
+   ============================================== */
+async function loadPayments() {
+    // আপনার নতুন HTML টেবিলের আইডি 'paymentTable' এখানে ধরা হয়েছে
+    const tableBody = document.getElementById('paymentTable'); 
+    if (!tableBody) {
+        console.error("Error: 'paymentTable' ID missing in HTML!");
+        return;
+    }
 
-async function loadPayments(){
+    // ডাটা লোড হওয়ার সময় টেবিলের ভেতরে একটি সুন্দর মেসেজ দেখাবে
+    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">Loading Recent Payments...</td></tr>`;
 
-console.log("LOAD PAYMENTS RUNNING");
+    try {
+        // গুগল অ্যাপস স্ক্রিপ্ট থেকে সঠিক অ্যাকশনে পেমেন্টের লাইভ ডাটা আনা হচ্ছে
+        const response = await fetch(API_URL + '?action=payments');
+        const livePayments = await response.json();
 
-try{
+        console.log("Loaded Live Payments:", livePayments);
 
-const response =
-await fetch(
-API_URL + '?action=recentPayments'
-);
+        if (livePayments.error || !livePayments || livePayments.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">No recent payments found.</td></tr>`;
+            return;
+        }
 
-payments =
-await response.json();
+        let tableHtml = '';
+        let recentHtml = '';
 
-console.log(payments);
+        // লুপ চালিয়ে আপনার দেওয়া ৫টি কলাম (Receipt No, Member ID, Name, Amount, Status) অনুযায়ী ডাটা সাজানো
+        livePayments.forEach(payment => {
+            // স্ট্যাটাস অনুযায়ী সুন্দর রঙের ব্যাজ তৈরি (Paid = সবুজ, Due = লাল)
+            const isPaid = String(payment.status).toLowerCase() === 'paid';
+            const statusStyle = isPaid 
+                ? 'background:#d1e7dd; color:#0f5132; padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; display:inline-block;' 
+                : 'background:#f8d7da; color:#842029; padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; display:inline-block;';
 
-let recentHtml = '';
-let tableHtml = '';
+            // ১. আপনার প্রধান টেবিলের জন্য HTML (৫টি কলাম)
+            tableHtml += `
+                <tr>
+                    <td><strong>${payment.receipt || 'N/A'}</strong></td>
+                    <td>${payment.memberId || 'N/A'}</td>
+                    <td>${payment.name || 'N/A'}</td>
+                    <td>৳ ${Number(payment.amount || 0).toLocaleString('en-US')}</td>
+                    <td><span style="${statusStyle}">${payment.status || 'Due'}</span></td>
+                </tr>
+            `;
 
-let totalCollection = 0;
+            // ২. যদি টেবিলের উপরে থাকা <div id="recentPayments"> এ ছোট আইটেম বক্স দেখাতে চান (ব্যাকআপ)
+            recentHtml += `
+                <div class="payment-item" style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
+                    <div>
+                        <h4>${payment.memberId}</h4>
+                        <small>${payment.month || ''}</small>
+                    </div>
+                    <div style="text-align: right;">
+                        <p>৳ ${Number(payment.amount || 0).toLocaleString('en-US')}</p>
+                        <span style="${statusStyle}">${payment.status}</span>
+                    </div>
+                </div>
+            `;
+        });
 
-payments.forEach(payment => {
+        // আপনার HTML টেবিল বডিতে ডাটা পুশ করা
+        tableBody.innerHTML = tableHtml;
 
-totalCollection +=
-Number(payment.amount);
+        // টেবিলের উপরে যদি <div id="recentPayments"> থাকে, সেখানেও ডাটা আপডেট হবে
+        const recentDiv = document.getElementById('recentPayments');
+        if (recentDiv) {
+            recentDiv.innerHTML = recentHtml;
+        }
 
+    } catch (error) {
+        console.error("Error loading payments:", error);
+        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red; padding: 20px;">Failed to load data from Server!</td></tr>`;
+    }
+}
 
-recentHtml += `
-
-<div class="payment-item">
-
-<div>
-
-<h4>${payment.memberId}</h4>
-
-<p>${payment.month}</p>
-
-</div>
-
-<div>
-
-<p>
-৳ ${payment.amount}
-</p>
-
-<span class="status active-status">
-
-${payment.status}
-
-</span>
-
-</div>
-
-</div>
-
-`;
-
-
-tableHtml += `
-
-<tr>
-
-<td>${payment.receipt}</td>
-
-<td>${payment.memberId}</td>
-
-<td>${payment.name}</td>
-
-<td>
-৳ ${payment.amount}
-</td>
-
-<td>
-
-<span class="status active-status">
-
-${payment.status}
-
-</span>
-
-</td>
-
-</tr>
-
-`;
-
+// পেজটি ব্রাউজারে খোলার সাথে সাথেই যেন পেমেন্ট লিস্ট নিজে নিজেই রান হয়
+window.addEventListener('DOMContentLoaded', () => {
+    loadPayments();
 });
-
-
-document.getElementById(
-'recentPayments'
-).innerHTML = recentHtml;
-
-
-document.getElementById(
-'paymentTable'
-).innerHTML = tableHtml;
-
 
 /* DASHBOARD */
 
