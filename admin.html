@@ -1231,6 +1231,16 @@ async function updateMemberData() {
         alert('সার্ভার ত্রুটি! ডাটা আপডেট করা যায়নি।');
     }
 }
+
+
+  function logout() {
+    // সব সেশন ডাটা মুছে ফেলা
+    localStorage.clear(); 
+    sessionStorage.clear();
+    
+    // লগইন পেজে রিডাইরেক্ট করা
+    window.location.href = "login.html"; 
+}
 </script>
               
   <div id="addMemberModal" class="modal">
