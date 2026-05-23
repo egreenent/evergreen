@@ -1787,16 +1787,14 @@ document.getElementById(
   fetchMembers();
   loadPayments();
   
-/* =========================
-FIND MEMBER NAME (সংশোধিত)
-========================= */
+/* ==============================================
+   MEMBER ID দিয়ে নাম খোঁজা (নতুন আইডি অনুযায়ী)
+   ============================================== */
 function findMemberName(){
     const input = document.getElementById('modalPaymentMemberId');
-    const memberId = input.value.trim().toLowerCase(); // ছোট হাতের অক্ষরে কনভার্ট
+    const memberId = input.value.trim().toLowerCase(); // ছোট হাতের অক্ষরে রূপান্তর
 
-    console.log("SEARCHING:", memberId);
-
-    // মেম্বার লিস্টের আইডি গুলোর সাথে নিখুঁতভাবে মেলানো
+    // মেম্বার লিস্টের আইডি গুলোর সাথে মেলানো
     const member = members.find(m => String(m.memberId).trim().toLowerCase() === memberId);
 
     if(member){
@@ -1807,25 +1805,22 @@ function findMemberName(){
 }
 
 /* ==============================================
-   SAVE PAYMENT (সংশোধিত ও নিখুঁত কোড)
+   পেমেন্ট সেভ করা (নতুন আইডি অনুযায়ী)
    ============================================== */
-async function savePayment() {
-    // এখানে querySelector ব্যবহার করে নির্দিষ্টভাবে পেমেন্ট মডালের ভেতরের ইনপুটগুলো ধরা হয়েছে
-    const memberId = document.querySelector('#paymentModal #paymentMemberId').value.trim();
-    const memberName = document.querySelector('#paymentModal #paymentMemberName').value.trim();
-    const month = document.querySelector('#paymentModal #paymentMonth').value;
-    const amount = document.querySelector('#paymentModal #paymentAmount').value.trim(); // মডালের টাকার ঘর
-    const fine = document.querySelector('#paymentModal #paymentFine').value || 0;
-    const status = document.querySelector('#paymentModal #paymentStatus').value;
+async function savePayment(){
+    const memberId = document.getElementById('modalPaymentMemberId').value.trim();
+    const memberName = document.getElementById('modalPaymentMemberName').value.trim();
+    const month = document.getElementById('modalPaymentMonth').value;
+    const amount = document.getElementById('modalPaymentAmount').value.trim();
+    const fine = document.getElementById('modalPaymentFine').value || 0;
+    const status = document.getElementById('modalPaymentStatus').value;
 
     /* ভ্যালিডেশন চেক */
-    if (memberId === '' || memberName === '') {
-        alert('অনুগ্রহ করে সঠিক মেম্বার আইডি দিন যেন নাম অটো লোড হয়।');
+    if(memberId === '' || memberName === ''){
+        alert('সঠিক মেম্বার আইডি দিন যেন নাম অটো লোড হয়।');
         return;
     }
-    
-    // এখন আর ফাঁকা দেখাবে না, কারণ এটি সরাসরি মডালের ইনপুট চেক করছে
-    if (amount === '') {
+    if(amount === ''){
         alert('টাকার পরিমাণ (Amount) লিখুন।');
         return;
     }
@@ -1847,27 +1842,28 @@ async function savePayment() {
 
         const result = await response.json();
 
-        if (result.success) {
+        if(result.success){
             alert('পেমেন্ট সফলভাবে গুগল শিটে সেভ হয়েছে!');
             closePaymentModal();
             
-            // ইনপুট ফিল্ডগুলো খালি করে দেওয়া
-            document.querySelector('#paymentModal #paymentMemberId').value = '';
-            document.querySelector('#paymentModal #paymentMemberName').value = '';
-            document.querySelector('#paymentModal #paymentMonth').value = '';
-            document.querySelector('#paymentModal #paymentAmount').value = '';
-            document.querySelector('#paymentModal #paymentFine').value = '';
+            // মডালের ইনপুট ফিল্ডগুলো খালি করে দেওয়া
+            document.getElementById('modalPaymentMemberId').value = '';
+            document.getElementById('modalPaymentMemberName').value = '';
+            document.getElementById('modalPaymentMonth').value = '';
+            document.getElementById('modalPaymentAmount').value = '';
+            document.getElementById('modalPaymentFine').value = '';
             
+            // ডেটা রিলোড করা
+            if(typeof fetchMembers === "function") fetchMembers();
             if(typeof loadPayments === "function") loadPayments();
         } else {
             alert('পেমেন্ট সেভ করতে ব্যর্থ হয়েছে।');
         }
-    } catch (error) {
+    } catch(error) {
         console.error(error);
-        alert('সার্ভার ত্রুটি! আপনার গুগল অ্যাপস স্ক্রিপ্ট ও ডিপ্লয়মেন্ট লিংক চেক করুন।');
+        alert('সার্ভার ত্রুটি! গুগল অ্যাপস স্ক্রিপ্ট চেক করুন।');
     }
 }
-
   
 </script>
 
@@ -1971,20 +1967,20 @@ Publish Notice
     </div>
 
     <div class="form-grid">
-        <input type="text" id="modalPaymentMemberId" placeholder="Enter Member ID" oninput="findMemberName()" autocomplete="off">
+<input type="text" id="modalPaymentMemberId" placeholder="Enter Member ID" oninput="findMemberName()" autocomplete="off">
 
-        <input type="text" id="modalPaymentMemberName" placeholder="Member Name" readonly>
+<input type="text" id="modalPaymentMemberName" placeholder="Member Name" readonly>
 
-        <input type="text" id="paymentMonth" placeholder="Month">
+<input type="text" id="modalPaymentMonth" placeholder="Month">
 
-        <input type="number" id="paymentAmount" placeholder="Amount">
+<input type="number" id="modalPaymentAmount" placeholder="Amount">
 
-        <input type="number" id="paymentFine" placeholder="Fine">
+<input type="number" id="modalPaymentFine" placeholder="Fine">
 
-        <select id="paymentStatus">
-            <option value="Paid">Paid</option>
-            <option value="Due">Due</option>
-        </select>
+<select id="modalPaymentStatus">
+    <option value="Paid">Paid</option>
+    <!-- <option value="Due">Due</option> -->
+</select>
     </div>
 
     <button class="action-btn" onclick="savePayment()">Save Payment</button>
