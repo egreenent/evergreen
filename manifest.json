@@ -1,21 +1,30 @@
 {
   "name": "EverGreen Enterprise",
   "short_name": "EverGreen",
-  "start_url": "index.html",
+  "description": "Official Membership Portal for EverGreen Enterprise.",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0b5d2a",
-  "theme_color": "#0b5d2a",
+  "background_color": "#edf2ed",
+  "theme_color": "#0b6623",
   "orientation": "portrait",
   "icons": [
     {
       "src": "logo.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "logo.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
