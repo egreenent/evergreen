@@ -1464,7 +1464,7 @@ function fetchLivePaymentData() {
     const tbody = document.getElementById('paymentTableBody');
     tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#0b6623; font-weight:600;">🔄 গুগল শিট থেকে লাইভ ডাটা লোড হচ্ছে...</td></tr>`;
 
-    fetch(`${APPS_SCRIPT_URL}?action=getPayments`)
+    fetch(APPS_SCRIPT_URL)
         .then(response => response.json())
         .then(data => {
             rawPaymentDatabase = data;
