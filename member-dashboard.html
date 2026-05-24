@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="./manifest.json">
 <title>Member Dashboard</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -499,19 +498,6 @@ class="download-btn"
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
 
-// সার্ভিস ওয়ার্কার ব্রাউজারে রেজিস্টার করার স্ক্রিপ্ট
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
-            .then((registration) => {
-                console.log('ServiceWorker successfully registered with scope: ', registration.scope);
-            })
-            .catch((error) => {
-                console.log('ServiceWorker registration failed: ', error);
-            });
-    });
-}
-  
 window.onload = function() {
     const loggedInId = localStorage.getItem('memberId');
     if (!loggedInId) {
@@ -531,13 +517,6 @@ async function fetchMemberDashboardData(memberId) {
             const m = result.profile;
             const payments = result.payments;
 
-// গুগল শিট থেকে মেম্বারের প্রোফাইল ডাটা আসার পর পেমেন্ট টেবিল সচল করা
-if (data && data.payments) {
-    renderMemberPaymentHistory(data.payments);
-}
-
-
-            
             // ১. বেসিক তথ্য (নাম, ফোন, ইমেইল, অ্যাড্রেস)
             document.getElementById("memberName").innerText = m.name;
             document.getElementById("memberPhone").innerText = "📞 " + m.phone;
@@ -651,48 +630,6 @@ function logout() {
     localStorage.clear();
     window.location.href = "login.html";
 }
-
-
-function renderMemberPaymentHistory(paymentsArray) {
-    const tbody = document.getElementById('paymentTableBody'); 
-    
-    // যদি কোনো কারণে পেজে এই আইডিটি খুঁজে না পাওয়া যায়, তবে এরর না দেখিয়ে এখানেই কোড থামিয়ে দাও
-    if (tbody === null || !tbody) {
-        console.warn("পেমেন্ট টেবিলের আইডি (paymentTableBody) এইচটিএমএল-এ খুঁজে পাওয়া যায়নি।");
-        return; 
-    }
-
-    tbody.innerHTML = ""; // আগের ডামি ডাটা ক্লিয়ার করা
-
-    // যদি গুগল শিটে এই মেম্বারের কোনো পেমেন্ট ডাটা না থাকে
-    if (!paymentsArray || paymentsArray.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#7f8c8d; padding:20px;">কোনো পেমেন্ট রেকর্ড খুঁজে পাওয়া যায়নি।</td></tr>`;
-        return;
-    }
-
-    // প্রতিটা পেমেন্ট রো আপনার টেবিলের কলাম অনুযায়ী সাজানো
-    paymentsArray.forEach(item => {
-        const amount = Number(item.amount || 0);
-        const fine = Number(item.fine || 0);
-        const total = amount + fine; // Amount এবং Fine যোগ করে Total বের করা
-        const status = String(item.status || 'Pending').trim();
-        
-        // স্ট্যাটাসের ওপর ভিত্তি করে ক্লাস (ডিজাইনের সুবিধার জন্য)
-        const statusClass = status.toLowerCase() === "paid" ? "status-paid" : "status-pending";
-
-        // আপনার টেবিলের ৪টি কলামের ক্রমানুসারে ডাটা বসানো হলো:
-        const rowHTML = `
-            <tr>
-                <td>${item.monthStr || '-'}</td>
-                <td><span class="status-pill ${statusClass}">${status}</span></td>
-                <td>৳ ${amount.toLocaleString()}</td>
-                <td><strong>৳ ${total.toLocaleString()}</strong></td>
-            </tr>`;
-            
-        tbody.innerHTML += rowHTML;
-    });
-}
-    
 </script>
 
 <div id="profilePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; overflow-y:auto;">
