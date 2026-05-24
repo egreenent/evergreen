@@ -468,15 +468,187 @@ display:grid;
 grid-template-columns:1fr 1fr;
 gap:15px;
 margin-bottom:20px;
-
 }
 
 .form-grid input{
 padding:12px;
 border:1px solid #ccc;
 border-radius:8px;
-
 }
+
+
+ /* ==========================================================================
+   Admin Payment Section Styles (paymentsSection)
+   ========================================================================== */
+
+.page-section#paymentsSection {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(11, 102, 35, 0.05);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ফিল্টার এরিয়া */
+.filter-wrapper {
+    background: #f8faf8;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+    margin-bottom: 30px;
+    border: 1px solid rgba(11, 102, 35, 0.05);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1 1 200px;
+}
+
+.filter-group label {
+    font-size: 13px;
+    color: #555;
+    font-weight: 600;
+}
+
+.filter-select {
+    padding: 12px;
+    font-size: 14px;
+    border: 2px solid rgba(11, 102, 35, 0.1);
+    border-radius: 10px;
+    outline: none;
+    background: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.filter-select:focus {
+    border-color: #d4a62b;
+}
+
+/* বাটন স্টাইল */
+.btn-action {
+    padding: 12px 25px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-filter { 
+    background: #0b6623; 
+    color: #fff; 
+}
+.btn-filter:hover { 
+    background: #053b13; 
+}
+
+.btn-pdf { 
+    background: #d4a62b; 
+    color: #fff; 
+}
+.btn-pdf:hover { 
+    background: #b58d22; 
+}
+
+/* মোট আদায় ও বকেয়া কার্ড */
+.payment-summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.summary-mini-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+    border: 1px solid rgba(11, 102, 35, 0.08);
+    border-left: 5px solid #0b6623;
+}
+
+.summary-mini-card.dues {
+    border-left-color: #ff3b30; /* বকেয়া কার্ডের বামে লাল বর্ডার */
+}
+
+.summary-mini-card h4 {
+    font-size: 13px;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.summary-mini-card p {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111;
+}
+
+/* টেবিল স্টাইল */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #edf2ed;
+}
+
+.admin-payment-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 14px;
+}
+
+.admin-payment-table th {
+    background: #0b6623;
+    color: #fff;
+    padding: 15px;
+    font-weight: 600;
+}
+
+.admin-payment-table td {
+    padding: 14px 15px;
+    border-bottom: 1px solid #edf2ed;
+    color: #333;
+}
+
+.admin-payment-table tr:hover { 
+    background: #f9fbf9; 
+}
+
+/* পেইড এবং পেন্ডিং ব্যাজ */
+.status-pill {
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+.status-paid { 
+    background: rgba(34, 197, 94, 0.15); 
+    color: #22c55e; 
+}
+.status-pending { 
+    background: rgba(255, 59, 48, 0.15); 
+    color: #ff3b30; 
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 40px;
+    color: #888;
+    font-style: italic;
+} 
 </style>
 </head>
 
@@ -648,56 +820,85 @@ Save Member
 
 <div class="page-section" id="paymentsSection">
 
-<!--- =================== Payments Sections Body =================-
-<div class="section">
-<h2>Add Payment</h2>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-<div class="form-group">
-<label>Member ID</label>
-<input type="text" id="paymentMemberId">
+<div class="page-section" id="paymentsSection">
+    
+    <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #edf2ed; padding-bottom: 10px;">
+        <span style="color: #0b6623; font-size: 24px; font-weight: 700;">💰 মেম্বার পেমেন্ট ও কালেকশন প্যানেল</span>
+        <button class="btn-action btn-pdf" onclick="downloadPaymentPDF()">📄 Download PDF Report</button>
+    </div>
+
+    <div class="filter-wrapper">
+        <div class="filter-group">
+            <label>বছর নির্বাচন করুন (Select Year)</label>
+            <select id="filterYear" class="filter-select">
+                <option value="2025">2025</option>
+                <option value="2026" selected>2026</option>
+                <option value="2027">2027</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label>মাস নির্বাচন করুন (Select Month)</label>
+            <select id="filterMonth" class="filter-select">
+                <option value="01">জানুয়ারি (January)</option>
+                <option value="02">ফেব্রুয়ারি (February)</option>
+                <option value="03">মার্চ (March)</option>
+                <option value="04">এপ্রিল (April)</option>
+                <option value="05" selected>মে (May)</option>
+                <option value="06">জুন (June)</option>
+                <option value="07">জুলাই (July)</option>
+                <option value="08">আগস্ট (August)</option>
+                <option value="09">সেপ্টেম্বর (September)</option>
+                <option value="10">অক্টোবর (October)</option>
+                <option value="11">নভেম্বর (November)</option>
+                <option value="12">ডিসেম্বর (December)</option>
+            </select>
+        </div>
+
+        <button class="btn-action btn-filter" onclick="filterPaymentData()">🔍 Filter Data</button>
+    </div>
+
+    <div id="pdfPrintArea">
+        <h3 id="pdfReportTitle" style="display:none; color:#0b6623; margin-bottom:15px; font-weight:700; font-family:'Poppins', sans-serif;">
+            EverGreen Enterprise - Financial Statement
+        </h3>
+        
+        <div class="payment-summary-cards">
+            <div class="summary-mini-card">
+                <h4>Total Collected (মোট আদায়)</h4>
+                <p id="totalCollectedVal">৳ ০</p>
+            </div>
+            <div class="summary-mini-card dues">
+                <h4>Total Dues (মোট বকেয়া)</h4>
+                <p id="totalDuesVal">৳ ০</p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="admin-payment-table">
+                <thead>
+                    <tr>
+                        <th>Member ID</th>
+                        <th>সদস্যের নাম</th>
+                        <th>পদবী</th>
+                        <th>টাকার পরিমাণ</th>
+                        <th>পেমেন্ট মেথড</th>
+                        <th>স্ট্যাটাস</th>
+                    </tr>
+                </thead>
+                <tbody id="paymentTableBody">
+                    </tbody>
+            </table>
+            
+            <div id="noDataBox" class="no-data-message" style="display: none;">
+                এই মাস এবং বছরের কোনো পেমেন্ট রেকর্ড খুঁজে পাওয়া যায়নি।
+            </div>
+        </div>
+    </div>
+
 </div>
-
-<div class="form-group">
-<label>Member Name</label>
-<input type="text" id="paymentMemberName" readonly>
-</div>
-
-<div class="form-group">
-<label>Month</label>
-<select id="paymentMonth">
-<option>January</option>
-<option>February</option>
-<option>March</option>
-<option>April</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Amount</label>
-<input type="number" id="paymentAmount">
-</div>
-
-<div class="form-group">
-<label>Fine</label>
-<input type="number" id="paymentFine">
-</div>
-
-<div class="form-group">
-<label>Payment Date</label>
-<input type="date" id="paymentDate">
-</div>
-
-<div class="form-group">
-<label>Status</label>
-<select id="paymentStatus">
-<option>Paid</option>
-<option>Due</option>
-</select>
-</div>
-
-<button class="submit-btn" onclick="savePayment()">Save Payment</button>
-
-</div> -->
 
 </div>
 
@@ -1248,6 +1449,106 @@ function logout() {
     // আপনার লগইন ফাইলের নাম যদি login.html না হয়ে অন্য কিছু হয় (যেমন index.html), তবে এখানে সেটি লিখে দিন
     window.location.href = "login.html"; 
 }
+
+
+  // ==========================================================================
+// Admin Payment Panel JavaScript Logic
+// ==========================================================================
+
+// ডেমো মেম্বার পেমেন্ট ডাটাবেজ (ভবিষ্যতে এখানে আপনার গুগল শিটের ডাটা কানেক্ট হবে)
+const rawPaymentDatabase = [
+    { id: "EGE0101", name: "রাহুল আহমেদ", role: "এক্সিকিউティブ", amount: 500, method: "বিকাশ", status: "Paid", month: "05", year: "2026" },
+    { id: "EGE0102", name: "কামরুল হাসান", role: "সাধারণ সদস্য", amount: 500, method: "রকেট", status: "Paid", month: "05", year: "2026" },
+    { id: "EGE0103", name: "আরিফ বিল্লাহ", role: "আজীবন সদস্য", amount: 500, method: "-", status: "Pending", month: "05", year: "2026" },
+    { id: "EGE0101", name: "রাহুল আহমেদ", role: "এক্সিকিউティブ", amount: 500, method: "বিকাশ", status: "Paid", month: "04", year: "2026" },
+    { id: "EGE0104", name: "তৌসিফ করিম", role: "সাধারণ সদস্য", amount: 500, method: "নগদ", status: "Paid", month: "06", year: "2026" }
+];
+
+// ডাটা ফিল্টার করার ফাংশন
+function filterPaymentData() {
+    const selectedYear = document.getElementById('filterYear').value;
+    const selectedMonth = document.getElementById('filterMonth').value;
+    const tbody = document.getElementById('paymentTableBody');
+    const noDataBox = document.getElementById('noDataBox');
+    
+    // মাস এবং বছর অনুযায়ী ডাটা ফিল্টার করা
+    const filteredData = rawPaymentDatabase.filter(item => item.month === selectedMonth && item.year === selectedYear);
+    
+    // আগের টেবিল কন্টেন্ট ক্লিয়ার করা
+    tbody.innerHTML = "";
+    
+    if (filteredData.length === 0) {
+        noDataBox.style.display = "block";
+        document.getElementById('totalCollectedVal').innerText = "৳ ০";
+        document.getElementById('totalDuesVal').innerText = "৳ ০";
+        return;
+    }
+    
+    noDataBox.style.display = "none";
+    let totalCollected = 0;
+    let totalDues = 0;
+    
+    // টেবিলে নতুন ডাটা রো (Row) তৈরি করা
+    filteredData.forEach(item => {
+        if (item.status === "Paid") {
+            totalCollected += item.amount;
+        } else {
+            totalDues += item.amount;
+        }
+        
+        const statusClass = item.status === "Paid" ? "status-paid" : "status-pending";
+        
+        const row = `<tr>
+            <td><strong>${item.id}</strong></td>
+            <td>${item.name}</td>
+            <td>${item.role}</td>
+            <td>৳ ${item.amount}</td>
+            <td>${item.method}</td>
+            <td><span class="status-pill ${statusClass}">${item.status}</span></td>
+        </tr>`;
+        
+        tbody.innerHTML += row;
+    });
+    
+    // ওপরে থাকা মোট আদায় ও বকেয়া কার্ডের ডাটা আপডেট করা
+    document.getElementById('totalCollectedVal').innerText = "৳ " + totalCollected;
+    document.getElementById('totalDuesVal').innerText = "৳ " + totalDues;
+}
+
+// পিডিএফ রিপোর্ট তৈরি ও ডাউনলোড করার ফাংশন
+function downloadPaymentPDF() {
+    const element = document.getElementById('pdfPrintArea');
+    const year = document.getElementById('filterYear').value;
+    const month = document.getElementById('filterMonth').value;
+    const titleText = document.getElementById('pdfReportTitle');
+    
+    // পিডিএফ প্রিন্টআউটে দেখানোর জন্য টাইটেলটি সাময়িক অন করা
+    titleText.style.display = "block";
+    titleText.innerText = `EverGreen Enterprise - Payment Report (${month}/${year})`;
+
+    // পিডিএফ পেজ কনফিগারেশন
+    const opt = {
+        margin:       15,
+        filename:     `Payment_Report_${month}_${year}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // html2pdf লাইব্রেরি কল করে পিডিএফ ডাউনলোড করা
+    html2pdf().set(opt).from(element).save().then(() => {
+        // পিডিএফ তৈরি শেষে স্ক্রিন থেকে টাইটেল আবার হাইড করা
+        titleText.style.display = "none";
+    });
+}
+
+// পেজ ওপেন হওয়ার সাথে সাথে যাতে স্বয়ংক্রিয়ভাবে কারেন্ট ডাটা লোড হয়
+document.addEventListener("DOMContentLoaded", function() {
+    // যদি আপনার অন্যান্য ট্যাবের কোনো লজিক থাকে, তার সাথে এটি রান হবে
+    if(document.getElementById('filterYear')) {
+        filterPaymentData();
+    }
+});
 </script>
               
   <div id="addMemberModal" class="modal">
