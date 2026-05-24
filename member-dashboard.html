@@ -487,7 +487,6 @@ window.onload = function() {
         window.location.href = "login.html";
         return;
     }
-    // হেডারে আইডি বসানো
     document.getElementById("memberIdText").innerText = "ID: " + loggedInId;
     fetchMemberDashboardData(loggedInId);
 };
@@ -499,46 +498,61 @@ async function fetchMemberDashboardData(memberId) {
 
         if (result.success) {
             const m = result.profile;
-            
-            // ১. অটো ডাটা বসানো (আপনার ডিজাইনের সাথে সামঞ্জস্য রেখে)
+            const payments = result.payments;
+
+            // ১. বেসিক তথ্য (নাম, ফোন, ইমেইল, অ্যাড্রেস)
             document.getElementById("memberName").innerText = m.name;
             document.getElementById("memberPhone").innerText = "📞 " + m.phone;
             document.getElementById("memberEmail").innerText = "📧 " + m.email;
+            // ইমেইলের নিচে এড্রেস বসানোর জন্য (নিশ্চিত করুন HTML-এ addressText আইডি আছে)
+            if(document.getElementById("addressText")) document.getElementById("addressText").innerText = "📍 " + m.address;
+            
             document.getElementById("memberPhoto").src = m.photo;
-// বর্তমান কোডটি মুছে এটি দিন:
-const statusEl = document.getElementById("membershipStatus");
-if (statusEl) {
-    statusEl.innerText = m.status; // এখানে শুধু মেইলের ডাটা বসবে, "Status: " লেখাটি থাকবে না।
-    
-    // ডিজাইন সুন্দর করার জন্য আপনি চাইলে এখানে স্টাইল যোগ করতে পারেন:
-    statusEl.style.padding = "5px 15px";
-    statusEl.style.borderRadius = "20px";
-    statusEl.style.display = "inline-block";
-    statusEl.style.fontWeight = "600";
-    
-    if (m.status === "Active") {
-        statusEl.style.backgroundColor = "#d1e7dd"; // হালকা সবুজ
-        statusEl.style.color = "#0f5132";           // গাঢ় সবুজ
-    } else {
-        statusEl.style.backgroundColor = "#f8d7da"; // হালকা লাল
-        statusEl.style.color = "#842029";           // গাঢ় লাল
-    }
-}
-            // ২. ডাউনলোড লিঙ্ক
+
+            // ২. স্ট্যাটাস ব্যাজ
+            const statusEl = document.getElementById("membershipStatus");
+            if (statusEl) {
+                statusEl.innerText = m.status;
+                statusEl.style.padding = "5px 15px";
+                statusEl.style.borderRadius = "20px";
+                statusEl.style.display = "inline-block";
+                statusEl.style.fontWeight = "600";
+                statusEl.style.backgroundColor = (m.status === "Active") ? "#d1e7dd" : "#f8d7da";
+                statusEl.style.color = (m.status === "Active") ? "#0f5132" : "#842029";
+            }
+
+            // ৩. পেমেন্ট হিসাব (Total Payment, Total Receipts, Due Amount)
+            let totalPaid = 0;
+            payments.forEach(p => {
+                if(String(p.status).toLowerCase() === 'paid') {
+                    totalPaid += Number(p.amount) || 0;
+                }
+            });
+
+            document.getElementById("totalPayment").innerText = "৳ " + totalPaid.toLocaleString();
+            document.getElementById("totalReceipts").innerText = payments.length;
+            
+            // Due Amount হিসাব (মাসিক ফি ৫০০ ধরে)
+            let monthlyFee = Number(m.monthlyFee) || 500;
+            let expectedTotal = (payments.length * monthlyFee);
+            let dueAmount = expectedTotal - totalPaid;
+            document.getElementById("dueAmount").innerText = "৳ " + (dueAmount > 0 ? dueAmount.toLocaleString() : "0");
+
+            // ৪. ডাউনলোড লিঙ্ক
             if(document.getElementById("membershipPdf")) document.getElementById("membershipPdf").href = m.pdfUrl;
             if(document.getElementById("idCard")) document.getElementById("idCard").href = m.idCardUrl;
 
-            // ৩. পেমেন্ট টেবিল রেন্ডার
+            // ৫. পেমেন্ট টেবিল রেন্ডার
             let tableHTML = "";
             let runningTotal = 0;
-            result.payments.forEach(p => {
+            payments.forEach(p => {
                 runningTotal += Number(p.amount) + Number(p.fine);
                 tableHTML += `<tr><td>${p.month}</td><td>${p.status}</td><td>৳${p.amount}</td><td>৳${runningTotal}</td></tr>`;
             });
             document.getElementById("paymentTableBody").innerHTML = tableHTML;
 
-            // ৪. নোটিশ বক্স
-            if(result.notice) {
+            // ৬. নোটিশ বক্স
+            if(result.notice && document.getElementById("noticeBox")) {
                 document.getElementById("noticeBox").innerHTML = `📢 <strong>${result.notice.title}</strong><br>${result.notice.content}`;
             }
         }
