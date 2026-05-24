@@ -1456,16 +1456,22 @@ function logout() {
 // Admin Payment Sectoin
 // ==========================================================================
 
-const APPS_SCRIPT_URL = "আপনার_কপি_করা_গুগল_ওয়েব_অ্যাপ_লিঙ্ক_এখানে_দিন";
-let rawPaymentDatabase = [];
+// ==========================================================================
+// Admin Payment Section (Fixed by Gemini)
+// ==========================================================================
+
+// এখানে আপনার আসল লাইভ লিঙ্কটি ফিক্সড করে দেওয়া হলো
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
 
 // গুগল শিট থেকে লাইভ ডাটা আনা
 function fetchLivePaymentData() {
     const tbody = document.getElementById('paymentTableBody');
+    if (!tbody) return;
+    
     tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#0b6623; font-weight:600;">🔄 গুগল শিট থেকে লাইভ ডাটা লোড হচ্ছে...</td></tr>`;
 
-    // ⚠️ এখানে শুধু APPS_SCRIPT_URL দেওয়া হয়েছে, ফলে লিঙ্ক আর ডাবল হবে না
-    fetch(APPS_SCRIPT_URL) 
+    // অ্যাকশন প্যারামিটারসহ সঠিক উপায়ে কল করা হলো যেন লিঙ্ক ডাবল না হয়
+    fetch(`${APPS_SCRIPT_URL}?action=getPayments`) 
         .then(response => response.json())
         .then(data => {
             rawPaymentDatabase = data;
@@ -1484,7 +1490,8 @@ function filterPaymentData() {
     const tbody = document.getElementById('paymentTableBody');
     const noDataBox = document.getElementById('noDataBox');
     
-    // আপনার শিটের 'Month' কলামে যদি '05-2026' বা '05/2026' ফরম্যাট থাকে, তার সাথে ম্যাচ করার লজিক
+    if (!tbody) return;
+    
     const filterQuery = `${selectedMonth}-${selectedYear}`; 
     const filterQueryAlt = `${selectedMonth}/${selectedYear}`; 
 
@@ -1497,18 +1504,17 @@ function filterPaymentData() {
     tbody.innerHTML = "";
     
     if (filteredData.length === 0) {
-        noDataBox.style.display = "block";
+        if(noDataBox) noDataBox.style.display = "block";
         document.getElementById('totalCollectedVal').innerText = "৳ ০";
         document.getElementById('totalDuesVal').innerText = "৳ ০";
         return;
     }
     
-    noDataBox.style.display = "none";
+    if(noDataBox) noDataBox.style.display = "none";
     let totalCollected = 0;
     let totalDues = 0;
     
     filteredData.forEach(item => {
-        // যদি Paid হয়, তবে মূল টাকা + জরিমানা = মোট কালেকশন
         if (item.status.toLowerCase() === "paid") {
             totalCollected += (item.amount + item.fine);
         } else {
@@ -1516,8 +1522,6 @@ function filterPaymentData() {
         }
         
         const statusClass = item.status.toLowerCase() === "paid" ? "status-paid" : "status-pending";
-        
-        // রসিদের অনলাইন লিঙ্ক থাকলে বাটন দেখাবে, না থাকলে '-' দেখাবে
         const receiptAction = item.receiptUrl ? 
             `<a href="${item.receiptUrl}" target="_blank" style="color:#0b6623; text-decoration:none; font-weight:600;">👁️ View</a>` : '-';
         
@@ -1536,8 +1540,8 @@ function filterPaymentData() {
         tbody.innerHTML += row;
     });
     
-    document.getElementById('totalCollectedVal').innerText = "৳ " + totalCollected;
-    document.getElementById('totalDuesVal').innerText = "৳ " + totalDues;
+    document.getElementById('totalCollectedVal').innerText = "৳ " + totalCollected.toLocaleString();
+    document.getElementById('totalDuesVal').innerText = "৳ " + totalDues.toLocaleString();
 }
 
 // পিডিএফ ডাউনলোড করার ফাংশন
@@ -1547,19 +1551,23 @@ function downloadPaymentPDF() {
     const month = document.getElementById('filterMonth').value;
     const titleText = document.getElementById('pdfReportTitle');
     
-    titleText.style.display = "block";
-    titleText.innerText = `EverGreen Enterprise - Financial Payment Report (${month}/${year})`;
+    if(!element) return;
+    
+    if(titleText) {
+        titleText.style.display = "block";
+        titleText.innerText = `EverGreen Enterprise - Financial Payment Report (${month}/${year})`;
+    }
 
     const opt = {
         margin:       10,
         filename:     `Payment_Report_${month}_${year}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' } // কলাম বেশি হওয়ায় ল্যান্ডস্কেপ (Landscape) প্রিন্ট দেওয়া হয়েছে যেন সব ধরে
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
     };
 
     html2pdf().set(opt).from(element).save().then(() => {
-        titleText.style.display = "none";
+        if(titleText) titleText.style.display = "none";
     });
 }
 
