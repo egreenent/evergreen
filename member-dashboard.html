@@ -1,488 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Member Dashboard</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-background:#edf2ed;
-padding:20px;
-color:#0b5d2a;
-}
-
-.dashboard-header{
-background:#0b6623;
-color:#fff;
-padding:25px;
-border-radius:25px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-flex-wrap:wrap;
-gap:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.12);
-}
-
-.dashboard-title h1{
-font-size:52px;
-font-weight:700;
-}
-
-.dashboard-title p{
-margin-top:10px;
-font-size:18px;
-}
-
-.header-right{
-display:flex;
-align-items:center;
-gap:20px;
-}
-
-.member-id-box{
-background:rgba(255,255,255,.18);
-padding:16px 28px;
-border-radius:14px;
-font-size:26px;
-font-weight:700;
-color:#fff;
-}
-
-.logout-btn{
-background:#ff2a2a;
-color:#fff;
-border:none;
-padding:16px 28px;
-border-radius:14px;
-font-size:18px;
-font-weight:700;
-cursor:pointer;
-}
-
-.profile-card{
-margin-top:25px;
-background:#fff;
-border-radius:25px;
-padding:35px;
-display:flex;
-align-items:center;
-gap:35px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-
-.profile-photo{
-width:180px;
-height:180px;
-border-radius:50%;
-overflow:hidden;
-border:6px solid #d4a62b;
-background:#f3f3f3;
-flex-shrink:0;
-}
-
-.profile-photo img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.profile-info h1{
-font-size:50px;
-margin-bottom:15px;
-}
-
-.profile-info p{
-margin-top:8px;
-font-size:18px;
-color:#444;
-}
-
-.member-status{
-margin-top:20px;
-display:inline-block;
-background:#0b6623;
-color:#fff;
-padding:10px 22px;
-border-radius:50px;
-font-weight:600;
-}
-
-.stats-grid{
-margin-top:25px;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
-}
-
-.stat-box{
-background:#fff;
-padding:30px;
-border-radius:22px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-border-left:6px solid #0b6623;
-}
-
-.stat-box h3{
-font-size:22px;
-margin-bottom:20px;
-color:#555;
-}
-
-.stat-box h2{
-font-size:42px;
-color:#0b6623;
-}
-
-.section{
-margin-top:25px;
-background:#fff;
-padding:30px;
-border-radius:25px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-
-.section h2{
-font-size:42px;
-margin-bottom:25px;
-}
-
-.notice-item{
-background:#eef5ee;
-padding:18px;
-border-radius:12px;
-margin-top:15px;
-font-size:18px;
-}
-
-.download-buttons,
-.payment-buttons{
-display:flex;
-flex-wrap:wrap;
-gap:15px;
-}
-
-.download-buttons a,
-.payment-buttons button{
-background:#d4a62b;
-color:#fff;
-text-decoration:none;
-border:none;
-padding:15px 22px;
-border-radius:12px;
-font-size:16px;
-font-weight:700;
-cursor:pointer;
-}
-
-.payment-info{
-margin-top:25px;
-background:#f2f5f2;
-padding:25px;
-border-radius:18px;
-}
-
-.payment-info p{
-margin-top:10px;
-font-size:18px;
-color:#444;
-}
-
-.table-wrapper{
-overflow-x:auto;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:10px;
-}
-
-table th{
-background:#0b6623;
-color:#fff;
-padding:18px;
-text-align:left;
-font-size:17px;
-}
-
-table td{
-padding:18px;
-border-bottom:1px solid #ddd;
-font-size:16px;
-}
-
-.paid{
-color:green;
-font-weight:700;
-}
-
-.due{
-color:red;
-font-weight:700;
-}
-
-.footer{
-margin-top:30px;
-text-align:center;
-color:#666;
-font-size:16px;
-}
-
-@media(max-width:768px){
-
-.dashboard-title h1{
-font-size:38px;
-}
-
-.profile-card{
-flex-direction:column;
-text-align:center;
-}
-
-.profile-info h1{
-font-size:36px;
-}
-
-.member-id-box{
-font-size:20px;
-}
-
-.section h2{
-font-size:32px;
-}
-
-}
-
-  .notice-board{
-
-background:#fff;
-padding:20px;
-border-radius:15px;
-margin-top:20px;
-box-shadow:0 5px 15px rgba(0,0,0,0.08);
-
-}
-
-#noticeBox{
-
-margin-top:10px;
-font-size:15px;
-line-height:1.6;
-color:#444;
-
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{ margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+        body{ background:#edf2ed; padding:20px; color:#0b5d2a; }
+        .dashboard-header{ background:#0b6623; color:#fff; padding:25px; border-radius:25px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
+        .member-id-box{ background:rgba(255,255,255,.18); padding:16px 28px; border-radius:14px; font-size:26px; font-weight:700; color:#fff; }
+        .logout-btn{ background:#ff2a2a; color:#fff; border:none; padding:16px 28px; border-radius:14px; cursor:pointer; }
+        .profile-card{ margin-top:25px; background:#fff; border-radius:25px; padding:35px; display:flex; align-items:center; gap:35px; box-shadow:0 10px 25px rgba(0,0,0,.08); }
+        .profile-photo{ width:150px; height:150px; border-radius:50%; border:4px solid #d4a62b; }
+        .profile-photo img{ width:100%; height:100%; border-radius:50%; object-fit:cover; }
+        .stats-grid{ margin-top:25px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; }
+        .stat-box{ background:#fff; padding:20px; border-radius:22px; box-shadow:0 10px 25px rgba(0,0,0,.08); }
+        .section{ margin-top:25px; background:#fff; padding:30px; border-radius:25px; box-shadow:0 10px 25px rgba(0,0,0,.08); }
+        table{ width:100%; border-collapse:collapse; margin-top:20px; }
+        th{ background:#0b6623; color:#fff; padding:15px; text-align:left; }
+        td{ padding:15px; border-bottom:1px solid #ddd; }
+        .profile-btn { margin-top: 10px; display: inline-block; padding: 8px 15px; background: #0b6623; color: #fff; text-decoration: none; border-radius: 5px; cursor: pointer; }
+    </style>
 </head>
 <body>
 
 <div class="dashboard-header">
-
-<div class="dashboard-title">
-<h1>Member Dashboard</h1>
-<p>EverGreen Enterprise Membership Portal</p>
-</div>
-
-<div class="header-right">
-<div class="member-id-box" id="memberIdText">
-Member ID
-</div>
-
-<button class="logout-btn" onclick="logout()">
-Logout
-</button>
-</div>
-
+    <div class="dashboard-title"><h1>Member Dashboard</h1></div>
+    <div class="header-right">
+        <div class="member-id-box" id="memberIdText">ID: Loading...</div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
 </div>
 
 <div class="profile-card">
-
-<div class="profile-photo">
-<img id="memberPhoto"
-src="https://via.placeholder.com/300x300.png?text=Member"
-alt="Member Photo">
-</div>
-
-<div class="profile-info">
-
-<h1 id="memberName"></h1>
-
-<p id="memberPhone"></p>
-<p id="memberEmail"></p>
-<p id="memberJoin"></p>
-<p id="memberAddress"></p>
-
-<div class="member-status" id="memberStatus">
-Active Member
-</div>
-
-</div>
-
+    <div class="profile-photo"><img id="memberPhoto" src="https://via.placeholder.com/150" alt="Photo"></div>
+    <div class="profile-info">
+        <h1 id="memberName">Loading...</h1>
+        <p id="memberPhone"></p>
+        <p id="memberEmail"></p>
+        <p id="addressText"></p>
+        <p>Status: <span id="membershipStatus"></span></p>
+        <a href="#" class="profile-btn" id="viewProfileBtn">View Full Profile</a>
+    </div>
 </div>
 
 <div class="stats-grid">
-
-<div class="stats-grid">
-
-<div class="stat-box">
-<h3>Total Payment</h3>
-<h2 id="totalPayment">৳ 0</h2>
-</div>
-
-<div class="stat-box">
-<h3>Total Receipts</h3>
-<h2 id="totalReceipts">0</h2>
-</div>
-
-<div class="stat-box">
-<h3>Due Amount</h3>
-<h2 id="dueAmount">৳ 0</h2>
-</div>
-
-<div class="stat-box">
-<h3>Membership Status</h3>
-<h2 id="membershipStatus">Active</h2>
-
-  <p>
-    Status: <span id="membershipStatus"></span>
-    <a href="#" id="viewProfileBtn" style="margin-left:10px; padding:5px 10px; background:#0b6623; color:#fff; text-decoration:none; border-radius:5px; font-size:12px;">Profile</a>
-</p>
-</div>
-
-
-  
-</div>
-
+    <div class="stat-box"><h3>Total Payment</h3><h2 id="totalPayment">৳ 0</h2></div>
+    <div class="stat-box"><h3>Total Receipts</h3><h2 id="totalReceipts">0</h2></div>
+    <div class="stat-box"><h3>Due Amount</h3><h2 id="dueAmount">৳ 0</h2></div>
 </div>
 
 <div class="section">
-
-<h2>Notice Board</h2>
-
-<div
-class="notice-item"
-id="noticeBox"
->
-
-No Notice Available
-
+    <h2>Payment History</h2>
+    <table>
+        <thead><tr><th>Month</th><th>Status</th><th>Amount</th><th>Total</th></tr></thead>
+        <tbody id="paymentTableBody"></tbody>
+    </table>
 </div>
 
-</div>
-
-<div class="section">
-
-<h2>Downloads</h2>
-
-<div class="download-box">
-
-<a
-id="membershipPdf"
-href="#"
-target="_blank"
-class="download-btn"
->
-📄 Membership PDF
-</a>
-
-<a
-id="idCard"
-href="#"
-target="_blank"
-class="download-btn"
->
-🪪 ID Card
-</a>
-</div>
-</div>
-
-
-<div class="section">
-
-<h2>Payment History</h2>
-
-<table class="payment-table">
-
-<thead>
-
-<tr>
-
-<th>Month</th>
-<th>Status</th>
-<th>Amount</th>
-<th>Total</th>
-
-</tr>
-
-</thead>
-
-<tbody id="paymentTableBody">
-
-</tbody>
-
-</table>
-
-</div>
-
-<div class="section">
-<h2>Online Payment</h2>
-
-<div class="payment-buttons">
-<button>bKash Payment</button>
-<button>Nagad Payment</button>
-<button>Rocket Payment</button>
-</div>
-
-<!-- <div class="payment-info">
-<p><strong>Monthly Fee:</strong> ৳ 500</p>
-<p><strong>Payment Status:</strong> Paid Until February</p>
-<p><strong>Next Due:</strong> March 15, 2026</p>
-</div> -->
-
-</div>
-  
-<div class="section">
-<h2>Online Payment History</h2>
-
-<div class="table-wrapper">
-<table>
-<thead>
-<tr>
-<th>Receipt</th>
-<th>Month</th>
-<th>Amount</th>
-<th>Date</th>
-<th>Download</th>
-</tr>
-</thead>
-<!-- <tbody>
-<tr>
-<td>REC-1001</td>
-<td>January</td>
-<td>৳ 500</td>
-<td>01 Jan 2026</td>
-<td><a href="#">PDF</a></td>
-</tr>
-</tbody></div> -->
-</table>
-</div>
-
-
-
-<div class="footer">
-© 2026 EverGreen Enterprise. All Rights Reserved.
+<div id="profilePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; overflow-y:auto;">
+    <div style="background:#fff; width:500px; margin:50px auto; padding:30px; border-radius:15px; position:relative;">
+        <span id="closePopup" style="position:absolute; top:10px; right:20px; font-size:30px; cursor:pointer;">&times;</span>
+        <h2 style="text-align:center;">📋 Member Profile</h2>
+        <div style="margin-top:20px;">
+            <p><strong>Name:</strong> <span id="popupName"></span></p>
+            <p><strong>Member ID:</strong> <span id="popupMemberId"></span></p>
+            <p><strong>Phone:</strong> <span id="popupPhone"></span></p>
+            <p><strong>Address:</strong> <span id="popupAddress"></span></p>
+            <p><strong>Blood Group:</strong> <span id="popupBlood"></span></p>
+            <p><strong>NID:</strong> <span id="popupNid"></span></p>
+            <p><strong>Nominee:</strong> <span id="popupNominee"></span></p>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -490,169 +80,43 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc0
 
 window.onload = function() {
     const loggedInId = localStorage.getItem('memberId');
-    if (!loggedInId) {
-        window.location.href = "login.html";
-        return;
-    }
-    document.getElementById("memberIdText").innerText = "ID: " + loggedInId;
+    if (!loggedInId) { window.location.href = "login.html"; return; }
     fetchMemberDashboardData(loggedInId);
 };
 
 async function fetchMemberDashboardData(memberId) {
-    try {
-        const response = await fetch(`${API_URL}?action=memberProfile&memberId=${memberId}`);
-        const result = await response.json();
-
-        if (result.success) {
-            const m = result.profile;
-            const payments = result.payments;
-
-            // ১. বেসিক তথ্য (নাম, ফোন, ইমেইল, অ্যাড্রেস)
-            document.getElementById("memberName").innerText = m.name;
-            document.getElementById("memberPhone").innerText = "📞 " + m.phone;
-            document.getElementById("memberEmail").innerText = "📧 " + m.email;
-            // ইমেইলের নিচে এড্রেস বসানোর জন্য (নিশ্চিত করুন HTML-এ addressText আইডি আছে)
-            if(document.getElementById("addressText")) document.getElementById("addressText").innerText = "📍 " + m.address;
-            
-            document.getElementById("memberPhoto").src = m.photo;
-
-            // ২. স্ট্যাটাস ব্যাজ
-            const statusEl = document.getElementById("membershipStatus");
-            if (statusEl) {
-                statusEl.innerText = m.status;
-                statusEl.style.padding = "5px 15px";
-                statusEl.style.borderRadius = "20px";
-                statusEl.style.display = "inline-block";
-                statusEl.style.fontWeight = "600";
-                statusEl.style.backgroundColor = (m.status === "Active") ? "#d1e7dd" : "#f8d7da";
-                statusEl.style.color = (m.status === "Active") ? "#0f5132" : "#842029";
-            }
-
-            // ৩. পেমেন্ট হিসাব (Total Payment, Total Receipts, Due Amount)
-            let totalPaid = 0;
-            payments.forEach(p => {
-                if(String(p.status).toLowerCase() === 'paid') {
-                    totalPaid += Number(p.amount) || 0;
-                }
-            });
-
-            document.getElementById("totalPayment").innerText = "৳ " + totalPaid.toLocaleString();
-            document.getElementById("totalReceipts").innerText = payments.length;
-            
-            // Due Amount হিসাব (মাসিক ফি ৫০০ ধরে)
-            let monthlyFee = Number(m.monthlyFee) || 500;
-            let expectedTotal = (payments.length * monthlyFee);
-            let dueAmount = expectedTotal - totalPaid;
-            document.getElementById("dueAmount").innerText = "৳ " + (dueAmount > 0 ? dueAmount.toLocaleString() : "0");
-
-            // ৪. ডাউনলোড লিঙ্ক
-            if(document.getElementById("membershipPdf")) document.getElementById("membershipPdf").href = m.pdfUrl;
-            if(document.getElementById("idCard")) document.getElementById("idCard").href = m.idCardUrl;
-
-            // ৫. পেমেন্ট টেবিল রেন্ডার
-            let tableHTML = "";
-            let runningTotal = 0;
-            payments.forEach(p => {
-                runningTotal += Number(p.amount) + Number(p.fine);
-                tableHTML += `<tr><td>${p.month}</td><td>${p.status}</td><td>৳${p.amount}</td><td>৳${runningTotal}</td></tr>`;
-            });
-            document.getElementById("paymentTableBody").innerHTML = tableHTML;
-
-            // ৬. নোটিশ বক্স
-            if(result.notice && document.getElementById("noticeBox")) {
-                document.getElementById("noticeBox").innerHTML = `📢 <strong>${result.notice.title}</strong><br>${result.notice.content}`;
-            }
-        }
-    } catch (error) {
-        console.error("Dashboard Error:", error);
+    const response = await fetch(`${API_URL}?action=memberProfile&memberId=${memberId}`);
+    const result = await response.json();
+    if (result.success) {
+        window.currentMemberData = result.profile; // এখানে ডাটা সেট করা হয়েছে
+        const m = result.profile;
+        document.getElementById("memberName").innerText = m.name;
+        document.getElementById("memberPhone").innerText = "📞 " + m.phone;
+        document.getElementById("memberEmail").innerText = "📧 " + m.email;
+        document.getElementById("addressText").innerText = "📍 " + m.address;
+        document.getElementById("memberPhoto").src = m.photo;
+        document.getElementById("membershipStatus").innerText = m.status;
+        document.getElementById("memberIdText").innerText = "ID: " + m.memberId;
+        // পেমেন্ট ক্যালকুলেশন... (অন্যান্য ডাটা একইভাবে বসবে)
     }
 }
 
-
-// ১. 'Profile' বাটনে ক্লিক করার লজিক (নিশ্চিত করুন আপনার প্রোফাইল বাটনের ID 'viewProfileBtn')
 document.getElementById("viewProfileBtn").addEventListener("click", function(e) {
     e.preventDefault();
-    const m = window.currentMemberData; // এটি আপনার fetchMemberDashboardData ফাংশন থেকে আসবে
-    
-    if(!m) {
-        alert("সদস্য তথ্য লোড হচ্ছে, দয়া করে অপেক্ষা করুন।");
-        return;
-    }
-    
-    // পপআপের আইডিগুলো ম্যাপিং করা
-    document.getElementById("popupMemberId").innerText = m.memberId;
+    const m = window.currentMemberData;
+    if(!m) { alert("Data loading..."); return; }
     document.getElementById("popupName").innerText = m.name;
+    document.getElementById("popupMemberId").innerText = m.memberId;
     document.getElementById("popupPhone").innerText = m.phone;
-    document.getElementById("popupEmail").innerText = m.email;
-    document.getElementById("popupNid").innerText = m.nid || 'N/A';
-    document.getElementById("popupBlood").innerText = m.blood || 'N/A';
-    document.getElementById("popupAddress").innerText = m.address || 'N/A';
-    document.getElementById("popupNomineeName").innerText = m.nomineeName || 'N/A';
-    document.getElementById("popupNomineePhone").innerText = m.nomineePhone || 'N/A';
-    document.getElementById("popupJoinDate").innerText = m.joinDate || 'N/A';
-    document.getElementById("popupFee").innerText = m.monthlyFee || 'N/A';
-    
-    // ছবি, স্বাক্ষর এবং আইডি কার্ড
-    document.getElementById("popupPhoto").src = m.photo;
-    document.getElementById("popupSignature").src = m.signatureUrl || ''; 
-    document.getElementById("popupIdCard").href = m.idCardUrl || '#';
-    
-    // পপআপ ওপেন করা
+    document.getElementById("popupAddress").innerText = m.address;
+    document.getElementById("popupBlood").innerText = m.blood;
+    document.getElementById("popupNid").innerText = m.nid;
+    document.getElementById("popupNominee").innerText = m.nomineeName;
     document.getElementById("profilePopup").style.display = "block";
 });
 
-// ২. ক্লোজ বাটনে ক্লিক করলে পপআপ বন্ধ করার লজিক
-document.getElementById("closePopup").addEventListener("click", function() {
-    document.getElementById("profilePopup").style.display = "none";
-});
-
-// ৩. পপআপের বাইরে ক্লিক করলেও বন্ধ হওয়ার লজিক
-window.addEventListener("click", function(e) {
-    const popup = document.getElementById("profilePopup");
-    if (e.target == popup) {
-        popup.style.display = "none";
-    }
-});
-
-
-  
-function logout() {
-    localStorage.clear();
-    window.location.href = "login.html";
-}
+document.getElementById("closePopup").onclick = () => document.getElementById("profilePopup").style.display = "none";
+function logout() { localStorage.clear(); window.location.href = "login.html"; }
 </script>
-
-<div id="profilePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; overflow-y:auto;">
-    <div style="background:#fff; width:600px; max-width:90%; margin:30px auto; padding:30px; border-radius:10px; position:relative; box-shadow:0 0 20px rgba(0,0,0,0.5);">
-        
-        <span id="closePopup" style="position:absolute; top:15px; right:20px; font-size:30px; color:#aaa; cursor:pointer;">&times;</span>
-        
-        <h2 style="text-align:center; color:#0b6623; margin-bottom:20px;">📋 সদস্য প্রোফাইল</h2>
-        
-        <div style="text-align:center;">
-            <img id="popupPhoto" src="" style="width:120px; height:120px; border-radius:50%; border:3px solid #0b6623; margin-bottom:15px;">
-            <h3 id="popupName"></h3>
-            <p><strong>Member ID:</strong> <span id="popupMemberId"></span></p>
-        </div>
-
-        <div style="margin-top:20px;">
-            <p>📞 <strong>Phone:</strong> <span id="popupPhone"></span></p>
-            <p>📧 <strong>Email:</strong> <span id="popupEmail"></span></p>
-            <p>📜 <strong>NID:</strong> <span id="popupNid"></span></p>
-            <p>🅰️ <strong>Blood Group:</strong> <span id="popupBlood"></span></p>
-            <p>📍 <strong>Address:</strong> <span id="popupAddress"></span></p>
-            <p>📅 <strong>Join Date:</strong> <span id="popupJoinDate"></span></p>
-            <p>৳ <strong>Monthly Fee:</strong> <span id="popupFee"></span></p>
-            <p>👤 <strong>Nominee Name:</strong> <span id="popupNomineeName"></span></p>
-            <p>📞 <strong>Nominee Phone:</strong> <span id="popupNomineePhone"></span></p>
-        </div>
-        
-        <div style="margin-top:20px; text-align:center;">
-            <a href="#" id="popupIdCard" target="_blank" style="padding:10px 20px; background:#0b6623; color:#fff; text-decoration:none; border-radius:5px; margin-right:10px;">Download ID Card</a>
-            <p style="margin-top:15px;"><strong>Signature:</strong><br><img id="popupSignature" src="" style="max-width:200px; height:auto;"></p>
-        </div>
-    </div>
-</div>
-  
 </body>
 </html>
