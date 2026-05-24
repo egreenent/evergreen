@@ -818,7 +818,8 @@ Save Member
 
 <!-- ================== PAYMENTS Section ================================= -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <! --
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> -->
 
 <div class="page-section" id="paymentsSection">
     
@@ -1421,55 +1422,48 @@ function logout() {
 // Admin Payment Section (Fixed for Live Spreadsheet Mapping)
 // ==========================================================================
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
 // ১. আপনার গ্লোবাল এপিআই ইউআরএল
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
 let rawPaymentDatabase = [];
 
-// ২. নোটিশ বোর্ড ফাংশন (গুগল অ্যাপস স্ক্রিপ্টের getNotices অ্যাকশনের সাথে মিলিয়ে ফিক্সড)
+// ২. নোটিশ বোর্ড ফাংশন (HTML আইডির বানান এবং লজিক ফিক্সড)
 function loadAdminNotices() {
-    // HTML-এর মেইন সেকশনের সঠিক আইডি (noticeSection) ধরা হলো
-    const noticeSection = document.getElementById('noticeSection');
-    
-    // মেইন সেকশনের ভেতরে নোটিশের সুন্দর ডিজাইন ও ইনার কন্টেইনার (adminNoticeList) তৈরি করা হলো
+    const noticeSection = document.getElementById('noticeSection'); // সঠিক আইডি ধরা হলো
     if (noticeSection) {
         noticeSection.innerHTML = `
-            <div class="section" style="background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                <h2 style="color: #0b6b2d; margin-bottom: 15px;">📢 Live Notice Board</h2>
-                <div id="adminNoticeList" style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="section" style="background:#fff; padding:25px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                <h2 style="color:#0b6b2d; margin-bottom:15px;">📢 Live Notice Board</h2>
+                <div id="adminNoticeList" style="display:flex; flex-direction:column; gap:12px;">
                     🔄 গুগল শিট থেকে লাইভ নোটিশ লোড হচ্ছে...
                 </div>
             </div>`;
     }
 
-    // গুগল অ্যাপস স্ক্রিপ্ট থেকে নোটিশ ডাটা ফেচ করা
     fetch(`${APPS_SCRIPT_URL}?action=getNotices`)
         .then(res => res.json())
         .then(data => {
             const list = document.getElementById('adminNoticeList');
             if(!list) return;
-            
-            list.innerHTML = ""; // লোডিং লেখাটি মুছে ফেলা হলো
-            
+            list.innerHTML = "";
             if(data.length === 0) {
-                list.innerHTML = "<p style='color:#888; font-style:italic; text-align:center;'>কোনো নোটিশ খুঁজে পাওয়া যায়নি।</p>";
+                list.innerHTML = "<p style='color:#888; font-style:italic; text-align:center;'>কোনো নোটিশ খুঁজে পাওয়া যায়নি।</p>";
                 return;
             }
-            
-            // code.gs থেকে আসা date এবং text লুপের মাধ্যমে স্ক্রিনে সাজানো হচ্ছে
             data.forEach(item => {
                 list.innerHTML += `
-                    <div style="padding: 15px; background: #f4f7f4; border-left: 5px solid #0b6b2d; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
-                        <small style="color: #666; font-weight: 600; display: block; margin-bottom: 5px;">📅 তারিখ: ${item.date || 'N/A'}</small>
-                        <p style="color: #333; font-size: 14px; line-height: 1.5; margin: 0; white-space: pre-line;">${item.text || 'কোনো লেখা নেই'}</p>
+                    <div style="padding:15px; background:#f4f7f4; border-left:5px solid #0b6b2d; border-radius:6px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+                        <small style="color:#666; font-weight:600; display:block; margin-bottom:5px;">📅 তারিখ: ${item.date || 'N/A'}</small>
+                        <p style="color:#333; font-size:14px; line-height:1.5; margin:0; white-space: pre-line;">${item.text || 'কোনো লেখা নেই'}</p>
                     </div>`;
             });
         })
         .catch(err => {
-            console.error("Notice Fetch Error:", err);
+            console.error("Notice Error:", err);
             const list = document.getElementById('adminNoticeList');
-            if(list) {
-                list.innerHTML = "<p style='color:#ff3b30; text-align:center;'>❌ নোটিশ লোড করতে ব্যর্থ হয়েছে!</p>";
-            }
+            if(list) list.innerHTML = "<p style='color:#ff3b30; text-align:center;'>❌ নোটিশ লোড করতে ব্যর্থ হয়েছে!</p>";
         });
 }
 
@@ -1592,13 +1586,14 @@ function downloadPaymentPDF() {
     });
 }
 
-// ৪. পেজ লোড বা ট্যাব সুইচের সাথে রান হওয়ার গ্লোবাল ট্রিগার
+// পেজ লোড হওয়ার সাথে সাথে দুটি ফাংশনই ব্যাকগ্রাউন্ডে কল হবে
 document.addEventListener("DOMContentLoaded", function() {
-    // পেমেন্ট এবং নোটিশ ডাটা একসাথে লোড করা হলো
     fetchLivePaymentData();
     loadAdminNotices();
 });
-
+</script>
+</body>
+</html>
   
 </script>
               
