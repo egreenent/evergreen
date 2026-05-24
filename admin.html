@@ -876,15 +876,18 @@ Save Member
 
         <div class="table-container">
             <table class="admin-payment-table">
-                <thead>
-                    <tr>
-                        <th>Member ID</th>
-                        <th>সদস্যের নাম</th>
-                        <th>পদবী</th>
-                        <th>টাকার পরিমাণ</th>
-                        <th>পেমেন্ট মেথড</th>
-                        <th>স্ট্যাটাস</th>
-                    </tr>
+              <thead>
+                  <tr>
+                      <th>Receipt No</th>
+                      <th>Member ID</th>
+                      <th>সদস্যের নাম</th>
+                      <th>মাস/বছর</th>
+                      <th>টাকার পরিমাণ</th>
+                      <th>জরিমানা (Fine)</th>
+                      <th>পেমেন্ট তারিখ</th>
+                      <th>স্ট্যাটাস</th>
+                      <th>রসিদ (URL)</th>
+                  </tr>
                 </thead>
                 <tbody id="paymentTableBody">
                     </tbody>
@@ -1450,29 +1453,46 @@ function logout() {
 
 
   // ==========================================================================
-// Admin Payment Panel JavaScript Logic
+// Admin Payment Sectoin
 // ==========================================================================
 
-// ডেমো মেম্বার পেমেন্ট ডাটাবেজ (ভবিষ্যতে এখানে আপনার গুগল শিটের ডাটা কানেক্ট হবে)
-const rawPaymentDatabase = [
-    { id: "EGE0101", name: "রাহুল আহমেদ", role: "এক্সিকিউティブ", amount: 500, method: "বিকাশ", status: "Paid", month: "05", year: "2026" },
-    { id: "EGE0102", name: "কামরুল হাসান", role: "সাধারণ সদস্য", amount: 500, method: "রকেট", status: "Paid", month: "05", year: "2026" },
-    { id: "EGE0103", name: "আরিফ বিল্লাহ", role: "আজীবন সদস্য", amount: 500, method: "-", status: "Pending", month: "05", year: "2026" },
-    { id: "EGE0101", name: "রাহুল আহমেদ", role: "এক্সিকিউティブ", amount: 500, method: "বিকাশ", status: "Paid", month: "04", year: "2026" },
-    { id: "EGE0104", name: "তৌসিফ করিম", role: "সাধারণ সদস্য", amount: 500, method: "নগদ", status: "Paid", month: "06", year: "2026" }
-];
+const APPS_SCRIPT_URL = "আপনার_কপি_করা_গুগল_ওয়েব_অ্যাপ_লিঙ্ক_এখানে_দিন";
+let rawPaymentDatabase = [];
 
-// ডাটা ফিল্টার করার ফাংশন
+// গুগল শিট থেকে লাইভ ডাটা আনা
+function fetchLivePaymentData() {
+    const tbody = document.getElementById('paymentTableBody');
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#0b6623; font-weight:600;">🔄 গুগল শিট থেকে লাইভ ডাটা লোড হচ্ছে...</td></tr>`;
+
+    fetch(`${APPS_SCRIPT_URL}?action=getPayments`)
+        .then(response => response.json())
+        .then(data => {
+            rawPaymentDatabase = data;
+            filterPaymentData();
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#ff3b30;">❌ ডাটা লোড করতে ব্যর্থ হয়েছে!</td></tr>`;
+        });
+}
+
+// ডাটা ফিল্টার ও প্রদর্শনের মূল ফাংশন
 function filterPaymentData() {
     const selectedYear = document.getElementById('filterYear').value;
     const selectedMonth = document.getElementById('filterMonth').value;
     const tbody = document.getElementById('paymentTableBody');
     const noDataBox = document.getElementById('noDataBox');
     
-    // মাস এবং বছর অনুযায়ী ডাটা ফিল্টার করা
-    const filteredData = rawPaymentDatabase.filter(item => item.month === selectedMonth && item.year === selectedYear);
+    // আপনার শিটের 'Month' কলামে যদি '05-2026' বা '05/2026' ফরম্যাট থাকে, তার সাথে ম্যাচ করার লজিক
+    const filterQuery = `${selectedMonth}-${selectedYear}`; 
+    const filterQueryAlt = `${selectedMonth}/${selectedYear}`; 
+
+    const filteredData = rawPaymentDatabase.filter(item => {
+        return item.monthStr.includes(filterQuery) || 
+               item.monthStr.includes(filterQueryAlt) || 
+               (item.monthStr.includes(selectedMonth) && item.monthStr.includes(selectedYear));
+    });
     
-    // আগের টেবিল কন্টেন্ট ক্লিয়ার করা
     tbody.innerHTML = "";
     
     if (filteredData.length === 0) {
@@ -1486,67 +1506,69 @@ function filterPaymentData() {
     let totalCollected = 0;
     let totalDues = 0;
     
-    // টেবিলে নতুন ডাটা রো (Row) তৈরি করা
     filteredData.forEach(item => {
-        if (item.status === "Paid") {
-            totalCollected += item.amount;
+        // যদি Paid হয়, তবে মূল টাকা + জরিমানা = মোট কালেকশন
+        if (item.status.toLowerCase() === "paid") {
+            totalCollected += (item.amount + item.fine);
         } else {
             totalDues += item.amount;
         }
         
-        const statusClass = item.status === "Paid" ? "status-paid" : "status-pending";
+        const statusClass = item.status.toLowerCase() === "paid" ? "status-paid" : "status-pending";
+        
+        // রসিদের অনলাইন লিঙ্ক থাকলে বাটন দেখাবে, না থাকলে '-' দেখাবে
+        const receiptAction = item.receiptUrl ? 
+            `<a href="${item.receiptUrl}" target="_blank" style="color:#0b6623; text-decoration:none; font-weight:600;">👁️ View</a>` : '-';
         
         const row = `<tr>
+            <td>#${item.receiptNo}</td>
             <td><strong>${item.id}</strong></td>
             <td>${item.name}</td>
-            <td>${item.role}</td>
+            <td>${item.monthStr}</td>
             <td>৳ ${item.amount}</td>
-            <td>${item.method}</td>
+            <td style="color: #ff3b30;">৳ ${item.fine}</td>
+            <td>${item.paymentDate}</td>
             <td><span class="status-pill ${statusClass}">${item.status}</span></td>
+            <td>${receiptAction}</td>
         </tr>`;
         
         tbody.innerHTML += row;
     });
     
-    // ওপরে থাকা মোট আদায় ও বকেয়া কার্ডের ডাটা আপডেট করা
     document.getElementById('totalCollectedVal').innerText = "৳ " + totalCollected;
     document.getElementById('totalDuesVal').innerText = "৳ " + totalDues;
 }
 
-// পিডিএফ রিপোর্ট তৈরি ও ডাউনলোড করার ফাংশন
+// পিডিএফ ডাউনলোড করার ফাংশন
 function downloadPaymentPDF() {
     const element = document.getElementById('pdfPrintArea');
     const year = document.getElementById('filterYear').value;
     const month = document.getElementById('filterMonth').value;
     const titleText = document.getElementById('pdfReportTitle');
     
-    // পিডিএফ প্রিন্টআউটে দেখানোর জন্য টাইটেলটি সাময়িক অন করা
     titleText.style.display = "block";
-    titleText.innerText = `EverGreen Enterprise - Payment Report (${month}/${year})`;
+    titleText.innerText = `EverGreen Enterprise - Financial Payment Report (${month}/${year})`;
 
-    // পিডিএফ পেজ কনফিগারেশন
     const opt = {
-        margin:       15,
+        margin:       10,
         filename:     `Payment_Report_${month}_${year}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' } // কলাম বেশি হওয়ায় ল্যান্ডস্কেপ (Landscape) প্রিন্ট দেওয়া হয়েছে যেন সব ধরে
     };
 
-    // html2pdf লাইব্রেরি কল করে পিডিএফ ডাউনলোড করা
     html2pdf().set(opt).from(element).save().then(() => {
-        // পিডিএফ তৈরি শেষে স্ক্রিন থেকে টাইটেল আবার হাইড করা
         titleText.style.display = "none";
     });
 }
 
-// পেজ ওপেন হওয়ার সাথে সাথে যাতে স্বয়ংক্রিয়ভাবে কারেন্ট ডাটা লোড হয়
 document.addEventListener("DOMContentLoaded", function() {
-    // যদি আপনার অন্যান্য ট্যাবের কোনো লজিক থাকে, তার সাথে এটি রান হবে
     if(document.getElementById('filterYear')) {
-        filterPaymentData();
+        fetchLivePaymentData();
     }
 });
+
+  
 </script>
               
   <div id="addMemberModal" class="modal">
