@@ -354,8 +354,15 @@ Active Member
 <div class="stat-box">
 <h3>Membership Status</h3>
 <h2 id="membershipStatus">Active</h2>
+
+  <p>
+    Status: <span id="membershipStatus"></span>
+    <a href="#" id="viewProfileBtn" style="margin-left:10px; padding:5px 10px; background:#0b6623; color:#fff; text-decoration:none; border-radius:5px; font-size:12px;">Profile</a>
+</p>
 </div>
 
+
+  
 </div>
 
 </div>
@@ -561,11 +568,91 @@ async function fetchMemberDashboardData(memberId) {
     }
 }
 
+
+// ১. 'Profile' বাটনে ক্লিক করার লজিক (নিশ্চিত করুন আপনার প্রোফাইল বাটনের ID 'viewProfileBtn')
+document.getElementById("viewProfileBtn").addEventListener("click", function(e) {
+    e.preventDefault();
+    const m = window.currentMemberData; // এটি আপনার fetchMemberDashboardData ফাংশন থেকে আসবে
+    
+    if(!m) {
+        alert("সদস্য তথ্য লোড হচ্ছে, দয়া করে অপেক্ষা করুন।");
+        return;
+    }
+    
+    // পপআপের আইডিগুলো ম্যাপিং করা
+    document.getElementById("popupMemberId").innerText = m.memberId;
+    document.getElementById("popupName").innerText = m.name;
+    document.getElementById("popupPhone").innerText = m.phone;
+    document.getElementById("popupEmail").innerText = m.email;
+    document.getElementById("popupNid").innerText = m.nid || 'N/A';
+    document.getElementById("popupBlood").innerText = m.blood || 'N/A';
+    document.getElementById("popupAddress").innerText = m.address || 'N/A';
+    document.getElementById("popupNomineeName").innerText = m.nomineeName || 'N/A';
+    document.getElementById("popupNomineePhone").innerText = m.nomineePhone || 'N/A';
+    document.getElementById("popupJoinDate").innerText = m.joinDate || 'N/A';
+    document.getElementById("popupFee").innerText = m.monthlyFee || 'N/A';
+    
+    // ছবি, স্বাক্ষর এবং আইডি কার্ড
+    document.getElementById("popupPhoto").src = m.photo;
+    document.getElementById("popupSignature").src = m.signatureUrl || ''; 
+    document.getElementById("popupIdCard").href = m.idCardUrl || '#';
+    
+    // পপআপ ওপেন করা
+    document.getElementById("profilePopup").style.display = "block";
+});
+
+// ২. ক্লোজ বাটনে ক্লিক করলে পপআপ বন্ধ করার লজিক
+document.getElementById("closePopup").addEventListener("click", function() {
+    document.getElementById("profilePopup").style.display = "none";
+});
+
+// ৩. পপআপের বাইরে ক্লিক করলেও বন্ধ হওয়ার লজিক
+window.addEventListener("click", function(e) {
+    const popup = document.getElementById("profilePopup");
+    if (e.target == popup) {
+        popup.style.display = "none";
+    }
+});
+
+
+  
 function logout() {
     localStorage.clear();
     window.location.href = "login.html";
 }
 </script>
 
+<div id="profilePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; overflow-y:auto;">
+    <div style="background:#fff; width:600px; max-width:90%; margin:30px auto; padding:30px; border-radius:10px; position:relative; box-shadow:0 0 20px rgba(0,0,0,0.5);">
+        
+        <span id="closePopup" style="position:absolute; top:15px; right:20px; font-size:30px; color:#aaa; cursor:pointer;">&times;</span>
+        
+        <h2 style="text-align:center; color:#0b6623; margin-bottom:20px;">📋 সদস্য প্রোফাইল</h2>
+        
+        <div style="text-align:center;">
+            <img id="popupPhoto" src="" style="width:120px; height:120px; border-radius:50%; border:3px solid #0b6623; margin-bottom:15px;">
+            <h3 id="popupName"></h3>
+            <p><strong>Member ID:</strong> <span id="popupMemberId"></span></p>
+        </div>
+
+        <div style="margin-top:20px;">
+            <p>📞 <strong>Phone:</strong> <span id="popupPhone"></span></p>
+            <p>📧 <strong>Email:</strong> <span id="popupEmail"></span></p>
+            <p>📜 <strong>NID:</strong> <span id="popupNid"></span></p>
+            <p>🅰️ <strong>Blood Group:</strong> <span id="popupBlood"></span></p>
+            <p>📍 <strong>Address:</strong> <span id="popupAddress"></span></p>
+            <p>📅 <strong>Join Date:</strong> <span id="popupJoinDate"></span></p>
+            <p>৳ <strong>Monthly Fee:</strong> <span id="popupFee"></span></p>
+            <p>👤 <strong>Nominee Name:</strong> <span id="popupNomineeName"></span></p>
+            <p>📞 <strong>Nominee Phone:</strong> <span id="popupNomineePhone"></span></p>
+        </div>
+        
+        <div style="margin-top:20px; text-align:center;">
+            <a href="#" id="popupIdCard" target="_blank" style="padding:10px 20px; background:#0b6623; color:#fff; text-decoration:none; border-radius:5px; margin-right:10px;">Download ID Card</a>
+            <p style="margin-top:15px;"><strong>Signature:</strong><br><img id="popupSignature" src="" style="max-width:200px; height:auto;"></p>
+        </div>
+    </div>
+</div>
+  
 </body>
 </html>
