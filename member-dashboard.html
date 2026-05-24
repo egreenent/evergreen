@@ -120,27 +120,6 @@ border-radius:50px;
 font-weight:600;
 }
 
-/* প্রোফাইল দেখার সুন্দর বাটন */
-.view-profile-btn {
-margin-top:20px;
-margin-left:15px;
-display:inline-block;
-background:#d4a62b;
-color:#fff;
-padding:10px 22px;
-border-radius:50px;
-font-weight:600;
-text-decoration:none;
-border:none;
-cursor:pointer;
-font-size:16px;
-transition: 0.3s;
-}
-
-.view-profile-btn:hover {
-background: #b58d22;
-}
-
 .stats-grid{
 margin-top:25px;
 display:grid;
@@ -188,30 +167,14 @@ margin-top:15px;
 font-size:18px;
 }
 
-.download-box {
-display:flex;
-flex-wrap:wrap;
-gap:15px;
-}
-
-.download-btn {
-background:#d4a62b;
-color:#fff;
-text-decoration:none;
-border:none;
-padding:15px 22px;
-border-radius:12px;
-font-size:16px;
-font-weight:700;
-cursor:pointer;
-}
-
+.download-buttons,
 .payment-buttons{
 display:flex;
 flex-wrap:wrap;
 gap:15px;
 }
 
+.download-buttons a,
 .payment-buttons button{
 background:#d4a62b;
 color:#fff;
@@ -222,6 +185,19 @@ border-radius:12px;
 font-size:16px;
 font-weight:700;
 cursor:pointer;
+}
+
+.payment-info{
+margin-top:25px;
+background:#f2f5f2;
+padding:25px;
+border-radius:18px;
+}
+
+.payment-info p{
+margin-top:10px;
+font-size:18px;
+color:#444;
 }
 
 .table-wrapper{
@@ -248,6 +224,16 @@ border-bottom:1px solid #ddd;
 font-size:16px;
 }
 
+.paid{
+color:green;
+font-weight:700;
+}
+
+.due{
+color:red;
+font-weight:700;
+}
+
 .footer{
 margin-top:30px;
 text-align:center;
@@ -256,163 +242,230 @@ font-size:16px;
 }
 
 @media(max-width:768px){
+
 .dashboard-title h1{
 font-size:38px;
 }
+
 .profile-card{
 flex-direction:column;
 text-align:center;
 }
+
 .profile-info h1{
 font-size:36px;
 }
+
 .member-id-box{
 font-size:20px;
 }
+
 .section h2{
 font-size:32px;
 }
+
 }
 
-/* ফুল পেজ জুড়ে পপআপের সিএসএস স্টাইল */
-.popup-overlay {
-display:none; 
-position:fixed; 
-top:0; 
-left:0; 
-width:100%; 
-height:100%; 
-background:rgba(0,0,0,0.85); 
-z-index:9999; 
-overflow-y:auto; 
+  .notice-board{
+
+background:#fff;
 padding:20px;
+border-radius:15px;
+margin-top:20px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+
 }
 
-.popup-content {
-background:#fff; 
-width:100%; 
-max-width:650px; 
-margin:30px auto; 
-padding:40px; 
-border-radius:25px; 
-position:relative; 
-box-shadow:0 15px 35px rgba(0,0,0,0.5);
-color: #333;
-}
+#noticeBox{
 
-.popup-close-btn {
-position:absolute; 
-top:15px; 
-right:25px; 
-font-size:45px; 
-color:#ff2a2a; 
-cursor:pointer;
-font-weight: bold;
-transition: 0.2s;
+margin-top:10px;
+font-size:15px;
+line-height:1.6;
+color:#444;
 }
-.popup-close-btn:hover {
-color: #b30000;
+.viewProfileBtn{
+  "margin-left:10px;
+  padding:5px 10px;
+  background:#0b6623;
+  color:#fff;
+  text-decoration:none;
+  border-radius:5px;
+  font-size:12px;
 }
-
-.popup-info-row {
-display: flex;
-justify-content: space-between;
-padding: 12px 0;
-border-bottom: 1px solid #eee;
-font-size: 17px;
-}
-.popup-info-row strong {
-color: #0b6623;
-}
+  
 </style>
 </head>
 <body>
 
 <div class="dashboard-header">
+
 <div class="dashboard-title">
 <h1>Member Dashboard</h1>
 <p>EverGreen Enterprise Membership Portal</p>
 </div>
+
 <div class="header-right">
-<div class="member-id-box" id="memberIdText">Member ID</div>
-<button class="logout-btn" onclick="logout()">Logout</button>
+<div class="member-id-box" id="memberIdText">
+Member ID
 </div>
+
+<button class="logout-btn" onclick="logout()">
+Logout
+</button>
+</div>
+
 </div>
 
 <div class="profile-card">
+
 <div class="profile-photo">
-<img id="memberPhoto" src="https://via.placeholder.com/300x300.png?text=Member" alt="Member Photo">
+<img id="memberPhoto"
+src="https://via.placeholder.com/300x300.png?text=Member"
+alt="Member Photo">
 </div>
+
 <div class="profile-info">
+
 <h1 id="memberName"></h1>
+
 <p id="memberPhone"></p>
 <p id="memberEmail"></p>
 <p id="memberJoin"></p>
 <p id="memberAddress"></p>
 
-<div class="member-status" id="memberStatus">Active Member</div>
-<button class="view-profile-btn" id="viewProfileBtn">Profile</button>
+<div class="member-status" id="memberStatus">
+Active Member
 </div>
+ <p>
+   <a href="#" id="viewProfileBtn">Profile</a>
+</p>
+
+  
+</div>
+
 </div>
 
 <div class="stats-grid">
+
+<div class="stats-grid">
+
 <div class="stat-box">
 <h3>Total Payment</h3>
 <h2 id="totalPayment">৳ 0</h2>
 </div>
+
 <div class="stat-box">
 <h3>Total Receipts</h3>
 <h2 id="totalReceipts">0</h2>
 </div>
+
 <div class="stat-box">
 <h3>Due Amount</h3>
 <h2 id="dueAmount">৳ 0</h2>
 </div>
+
 <div class="stat-box">
 <h3>Membership Status</h3>
 <h2 id="membershipStatus">Active</h2>
+
+
 </div>
+
+
+  
+</div>
+
 </div>
 
 <div class="section">
+
 <h2>Notice Board</h2>
-<div class="notice-item" id="noticeBox">No Notice Available</div>
+
+<div
+class="notice-item"
+id="noticeBox"
+>
+
+No Notice Available
+
+</div>
+
 </div>
 
 <div class="section">
+
 <h2>Downloads</h2>
+
 <div class="download-box">
-<a id="membershipPdf" href="#" target="_blank" class="download-btn">📄 Membership PDF</a>
-<a id="idCard" href="#" target="_blank" class="download-btn">🪪 ID Card</a>
+
+<a
+id="membershipPdf"
+href="#"
+target="_blank"
+class="download-btn"
+>
+📄 Membership PDF
+</a>
+
+<a
+id="idCard"
+href="#"
+target="_blank"
+class="download-btn"
+>
+🪪 ID Card
+</a>
 </div>
+</div>
+
+
+<div class="section">
+
+<h2>Payment History</h2>
+
+<table class="payment-table">
+
+<thead>
+
+<tr>
+
+<th>Month</th>
+<th>Status</th>
+<th>Amount</th>
+<th>Total</th>
+
+</tr>
+
+</thead>
+
+<tbody id="paymentTableBody">
+
+</tbody>
+
+</table>
+
 </div>
 
 <div class="section">
 <h2>Online Payment</h2>
+
 <div class="payment-buttons">
 <button>bKash Payment</button>
 <button>Nagad Payment</button>
 <button>Rocket Payment</button>
 </div>
-</div>
 
-<div class="section">
-<h2>Payment History</h2>
-<table class="payment-table">
-<thead>
-<tr>
-<th>Month</th>
-<th>Status</th>
-<th>Amount</th>
-<th>Total</th>
-</tr>
-</thead>
-<tbody id="paymentTableBody"></tbody>
-</table>
-</div>
+<!-- <div class="payment-info">
+<p><strong>Monthly Fee:</strong> ৳ 500</p>
+<p><strong>Payment Status:</strong> Paid Until February</p>
+<p><strong>Next Due:</strong> March 15, 2026</p>
+</div> -->
 
+</div>
+  
 <div class="section">
 <h2>Online Payment History</h2>
+
 <div class="table-wrapper">
 <table>
 <thead>
@@ -424,146 +477,146 @@ color: #0b6623;
 <th>Download</th>
 </tr>
 </thead>
-<tbody id="onlinePaymentTableBody"></tbody>
+<!-- <tbody>
+<tr>
+<td>REC-1001</td>
+<td>January</td>
+<td>৳ 500</td>
+<td>01 Jan 2026</td>
+<td><a href="#">PDF</a></td>
+</tr>
+</tbody></div> -->
 </table>
 </div>
-</div>
+
+
 
 <div class="footer">
 © 2026 EverGreen Enterprise. All Rights Reserved.
 </div>
 
-<div id="profilePopup" class="popup-overlay">
-    <div class="popup-content">
-        <span id="closePopup" class="popup-close-btn">&times;</span>
-        <h2 style="text-align:center; color:#0b6623; font-size:32px; margin-bottom:25px; border-bottom:3px solid #0b6623; padding-bottom:10px;">📋 সদস্য প্রোফাইল বিবরণ</h2>
-        
-        <div style="text-align:center; margin-bottom:25px;">
-            <img id="popupPhoto" src="" style="width:140px; height:140px; border-radius:50%; border:5px solid #d4a62b; object-fit:cover; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-        </div>
-
-        <div>
-            <div class="popup-info-row"><strong>Member ID:</strong> <span id="popupMemberId"></span></div>
-            <div class="popup-info-row"><strong>Name:</strong> <span id="popupName"></span></div>
-            <div class="popup-info-row"><strong>Phone:</strong> <span id="popupPhone"></span></div>
-            <div class="popup-info-row"><strong>Email:</strong> <span id="popupEmail"></span></div>
-            <div class="popup-info-row"><strong>NID:</strong> <span id="popupNid"></span></div>
-            <div class="popup-info-row"><strong>Blood Group:</strong> <span id="popupBlood"></span></div>
-            <div class="popup-info-row"><strong>Address:</strong> <span id="popupAddress"></span></div>
-            <div class="popup-info-row"><strong>Nominee Name:</strong> <span id="popupNomineeName"></span></div>
-            <div class="popup-info-row"><strong>Nominee Phone:</strong> <span id="popupNomineePhone"></span></div>
-            <div class="popup-info-row"><strong>Join Date:</strong> <span id="popupJoinDate"></span></div>
-            <div class="popup-info-row"><strong>Monthly Fee:</strong> <span id="popupFee"></span></div>
-        </div>
-        
-        <div style="margin-top:30px; text-align:center; display: flex; flex-direction: column; align-items: center; gap: 15px;">
-            <div>
-                <strong style="color: #0b6623; font-size: 18px;">Signature:</strong><br>
-                <img id="popupSignature" src="" style="max-width:200px; height:auto; margin-top:10px; border: 1px dashed #ccc; padding: 5px;">
-            </div>
-            <a href="#" id="popupIdCardBtn" target="_blank" class="download-btn" style="margin-top:10px; background:#0b6623;">🪪 Download ID Card</a>
-        </div>
-    </div>
-</div>
-
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
 
-// গ্লোবাল ভ্যারিয়েবল মেম্বার ডাটা সেভ রাখার জন্য
-window.globalMemberData = null;
+window.onload = function() {
+    const loggedInId = localStorage.getItem('memberId');
+    if (!loggedInId) {
+        window.location.href = "login.html";
+        return;
+    }
+    document.getElementById("memberIdText").innerText = "ID: " + loggedInId;
+    fetchMemberDashboardData(loggedInId);
+};
 
-if(localStorage.getItem("memberLoggedIn") !== "true"){
-    window.location.href = "login.html";
-}
-
-async function loadMember(){
+async function fetchMemberDashboardData(memberId) {
     try {
-        const memberId = localStorage.getItem("memberId");
-        const response = await fetch(`${API_URL}?memberId=${memberId}`);
-        const member = await response.json();
+        const response = await fetch(`${API_URL}?action=memberProfile&memberId=${memberId}`);
+        const result = await response.json();
 
-        // ব্যাকএন্ড থেকে আসা ডাটা গ্লোবাল অবজেক্টে সেভ করা হলো পপআপের ব্যবহারের জন্য
-        window.globalMemberData = member;
+        if (result.success) {
+            const m = result.profile;
+            const payments = result.payments;
 
-        document.getElementById("memberIdText").innerText = member.memberId || 'N/A';
-        document.getElementById("membershipPdf").href = member.membershipPdf || '#';
-        document.getElementById("idCard").href = member.idCard || '#';
-        document.getElementById("memberName").innerText = member.name || 'N/A';
-        document.getElementById("memberPhone").innerText = "📞 Phone: " + (member.phone || 'N/A');
-        document.getElementById("memberEmail").innerText = "📧 Email: " + (member.email || 'N/A');
-        
-        if(document.getElementById("memberJoin")) {
-            document.getElementById("memberJoin").innerText = "📅 Join Date: " + (member.joinDate || 'N/A');
-        }
-        if(document.getElementById("memberAddress")) {
-            document.getElementById("memberAddress").innerText = "📍 Address: " + (member.address || 'N/A');
-        }
-        
-        document.getElementById("memberPhoto").src = member.photo || 'https://via.placeholder.com/300x300.png?text=Member';
-        document.getElementById("totalPayment").innerText = "৳ " + (member.totalPayment || 0);
-        document.getElementById("totalReceipts").innerText = member.totalReceipts || 0;
-        document.getElementById("dueAmount").innerText = "৳ " + (member.dueAmount || 0);
-        document.getElementById("membershipStatus").innerText = member.membershipStatus || 'Active';
-        document.getElementById("memberStatus").innerText = (member.membershipStatus || 'Active') + " Member";
+            // ১. বেসিক তথ্য (নাম, ফোন, ইমেইল, অ্যাড্রেস)
+            document.getElementById("memberName").innerText = m.name;
+            document.getElementById("memberPhone").innerText = "📞 " + m.phone;
+            document.getElementById("memberEmail").innerText = "📧 " + m.email;
+            // ইমেইলের নিচে এড্রেস বসানোর জন্য (নিশ্চিত করুন HTML-এ addressText আইডি আছে)
+            if(document.getElementById("addressText")) document.getElementById("addressText").innerText = "📍 " + m.address;
+            
+            document.getElementById("memberPhoto").src = m.photo;
 
-        if(member.noticeTitle){
-            document.getElementById("noticeBox").innerHTML = "📢 <strong>" + member.noticeTitle + "</strong><br><br>" + member.noticeMessage;
-        }
+            // ২. স্ট্যাটাস ব্যাজ
+            const statusEl = document.getElementById("membershipStatus");
+            if (statusEl) {
+                statusEl.innerText = m.status;
+                statusEl.style.padding = "5px 15px";
+                statusEl.style.borderRadius = "20px";
+                statusEl.style.display = "inline-block";
+                statusEl.style.fontWeight = "600";
+                statusEl.style.backgroundColor = (m.status === "Active") ? "#d1e7dd" : "#f8d7da";
+                statusEl.style.color = (m.status === "Active") ? "#0f5132" : "#842029";
+            }
 
-        let runningTotal = 0;
-        let tableHTML = "";
-        if(member.paymentHistory) {
-            member.paymentHistory.forEach(payment => {
-                runningTotal += Number(payment.amount) + Number(payment.fine);
-                tableHTML += `<tr><td>${payment.month}</td><td>${payment.status}</td><td>৳ ${payment.amount}</td><td>৳ ${runningTotal}</td></tr>`;
+            // ৩. পেমেন্ট হিসাব (Total Payment, Total Receipts, Due Amount)
+            let totalPaid = 0;
+            payments.forEach(p => {
+                if(String(p.status).toLowerCase() === 'paid') {
+                    totalPaid += Number(p.amount) || 0;
+                }
             });
+
+            document.getElementById("totalPayment").innerText = "৳ " + totalPaid.toLocaleString();
+            document.getElementById("totalReceipts").innerText = payments.length;
+            
+            // Due Amount হিসাব (মাসিক ফি ৫০০ ধরে)
+            let monthlyFee = Number(m.monthlyFee) || 500;
+            let expectedTotal = (payments.length * monthlyFee);
+            let dueAmount = expectedTotal - totalPaid;
+            document.getElementById("dueAmount").innerText = "৳ " + (dueAmount > 0 ? dueAmount.toLocaleString() : "0");
+
+            // ৪. ডাউনলোড লিঙ্ক
+            if(document.getElementById("membershipPdf")) document.getElementById("membershipPdf").href = m.pdfUrl;
+            if(document.getElementById("idCard")) document.getElementById("idCard").href = m.idCardUrl;
+
+            // ৫. পেমেন্ট টেবিল রেন্ডার
+            let tableHTML = "";
+            let runningTotal = 0;
+            payments.forEach(p => {
+                runningTotal += Number(p.amount) + Number(p.fine);
+                tableHTML += `<tr><td>${p.month}</td><td>${p.status}</td><td>৳${p.amount}</td><td>৳${runningTotal}</td></tr>`;
+            });
+            document.getElementById("paymentTableBody").innerHTML = tableHTML;
+
+            // ৬. নোটিশ বক্স
+            if(result.notice && document.getElementById("noticeBox")) {
+                document.getElementById("noticeBox").innerHTML = `📢 <strong>${result.notice.title}</strong><br>${result.notice.content}`;
+            }
         }
-        document.getElementById("paymentTableBody").innerHTML = tableHTML;
     } catch (error) {
-        console.error("Error loading dashboard data:", error);
+        console.error("Dashboard Error:", error);
     }
 }
 
-// পেজ লোড হলে ফাংশন কল হবে
-loadMember();
 
-// প্রোফাইল পপআপ ওপেন করার লজিক
+// ১. 'Profile' বাটনে ক্লিক করার লজিক (নিশ্চিত করুন আপনার প্রোফাইল বাটনের ID 'viewProfileBtn')
 document.getElementById("viewProfileBtn").addEventListener("click", function(e) {
     e.preventDefault();
-    const m = window.globalMemberData;
+    const m = window.currentMemberData; // এটি আপনার fetchMemberDashboardData ফাংশন থেকে আসবে
     
     if(!m) {
-        alert("সদস্য তথ্য লোড হচ্ছে, দয়া করে কিছু ক্ষণ অপেক্ষা করুন।");
+        alert("সদস্য তথ্য লোড হচ্ছে, দয়া করে অপেক্ষা করুন।");
         return;
     }
     
-    // পপআপ এলিমেন্টে ডাটা পুশ করা
-    document.getElementById("popupMemberId").innerText = m.memberId || 'N/A';
-    document.getElementById("popupName").innerText = m.name || 'N/A';
-    document.getElementById("popupPhone").innerText = m.phone || 'N/A';
-    document.getElementById("popupEmail").innerText = m.email || 'N/A';
+    // পপআপের আইডিগুলো ম্যাপিং করা
+    document.getElementById("popupMemberId").innerText = m.memberId;
+    document.getElementById("popupName").innerText = m.name;
+    document.getElementById("popupPhone").innerText = m.phone;
+    document.getElementById("popupEmail").innerText = m.email;
     document.getElementById("popupNid").innerText = m.nid || 'N/A';
     document.getElementById("popupBlood").innerText = m.blood || 'N/A';
     document.getElementById("popupAddress").innerText = m.address || 'N/A';
     document.getElementById("popupNomineeName").innerText = m.nomineeName || 'N/A';
     document.getElementById("popupNomineePhone").innerText = m.nomineePhone || 'N/A';
     document.getElementById("popupJoinDate").innerText = m.joinDate || 'N/A';
-    document.getElementById("popupFee").innerText = "৳ " + (m.monthlyFee || '500');
+    document.getElementById("popupFee").innerText = m.monthlyFee || 'N/A';
     
-    document.getElementById("popupPhoto").src = m.photo || 'https://via.placeholder.com/300x300.png?text=Member';
-    document.getElementById("popupSignature").src = m.signature || 'https://via.placeholder.com/150x50.png?text=No+Signature'; 
-    document.getElementById("popupIdCardBtn").href = m.idCard || '#';
+    // ছবি, স্বাক্ষর এবং আইডি কার্ড
+    document.getElementById("popupPhoto").src = m.photo;
+    document.getElementById("popupSignature").src = m.signatureUrl || ''; 
+    document.getElementById("popupIdCard").href = m.idCardUrl || '#';
     
-    // পপআপটি প্রদর্শন করা
+    // পপআপ ওপেন করা
     document.getElementById("profilePopup").style.display = "block";
 });
 
-// ক্লোজ বাটনে চাপ দিলে পপআপ বন্ধ করা
+// ২. ক্লোজ বাটনে ক্লিক করলে পপআপ বন্ধ করার লজিক
 document.getElementById("closePopup").addEventListener("click", function() {
     document.getElementById("profilePopup").style.display = "none";
 });
 
-// পপআপ বক্সের বাইরে ক্লিক করলেও পপআপ বন্ধ হওয়া
+// ৩. পপআপের বাইরে ক্লিক করলেও বন্ধ হওয়ার লজিক
 window.addEventListener("click", function(e) {
     const popup = document.getElementById("profilePopup");
     if (e.target == popup) {
@@ -571,11 +624,45 @@ window.addEventListener("click", function(e) {
     }
 });
 
-function logout(){
-    localStorage.removeItem("memberLoggedIn");
-    localStorage.removeItem("memberId");
+
+  
+function logout() {
+    localStorage.clear();
     window.location.href = "login.html";
 }
 </script>
+
+<div id="profilePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; overflow-y:auto;">
+    <div style="background:#fff; width:600px; max-width:90%; margin:30px auto; padding:30px; border-radius:10px; position:relative; box-shadow:0 0 20px rgba(0,0,0,0.5);">
+        
+        <span id="closePopup" style="position:absolute; top:15px; right:20px; font-size:30px; color:#aaa; cursor:pointer;">&times;</span>
+        
+        <h2 style="text-align:center; color:#0b6623; margin-bottom:20px;">📋 সদস্য প্রোফাইল</h2>
+        
+        <div style="text-align:center;">
+            <img id="popupPhoto" src="" style="width:120px; height:120px; border-radius:50%; border:3px solid #0b6623; margin-bottom:15px;">
+            <h3 id="popupName"></h3>
+            <p><strong>Member ID:</strong> <span id="popupMemberId"></span></p>
+        </div>
+
+        <div style="margin-top:20px;">
+            <p>📞 <strong>Phone:</strong> <span id="popupPhone"></span></p>
+            <p>📧 <strong>Email:</strong> <span id="popupEmail"></span></p>
+            <p>📜 <strong>NID:</strong> <span id="popupNid"></span></p>
+            <p>🅰️ <strong>Blood Group:</strong> <span id="popupBlood"></span></p>
+            <p>📍 <strong>Address:</strong> <span id="popupAddress"></span></p>
+            <p>📅 <strong>Join Date:</strong> <span id="popupJoinDate"></span></p>
+            <p>৳ <strong>Monthly Fee:</strong> <span id="popupFee"></span></p>
+            <p>👤 <strong>Nominee Name:</strong> <span id="popupNomineeName"></span></p>
+            <p>📞 <strong>Nominee Phone:</strong> <span id="popupNomineePhone"></span></p>
+        </div>
+        
+        <div style="margin-top:20px; text-align:center;">
+            <a href="#" id="popupIdCard" target="_blank" style="padding:10px 20px; background:#0b6623; color:#fff; text-decoration:none; border-radius:5px; margin-right:10px;">Download ID Card</a>
+            <p style="margin-top:15px;"><strong>Signature:</strong><br><img id="popupSignature" src="" style="max-width:200px; height:auto;"></p>
+        </div>
+    </div>
+</div>
+  
 </body>
 </html>
