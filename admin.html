@@ -1483,22 +1483,37 @@ function fetchLivePaymentData() {
         });
 }
 
-// ডাটা ফিল্টার ও প্রদর্শনের মূল ফাংশন
+// ডাটা ফিল্টার ও প্রদর্শনের মূল ফাংশন (আপডেটেড লজিক)
 function filterPaymentData() {
-    const selectedYear = document.getElementById('filterYear').value;
-    const selectedMonth = document.getElementById('filterMonth').value;
+    const selectedYear = document.getElementById('filterYear').value; // যেমন: "2026"
+    const selectedMonth = document.getElementById('filterMonth').value; // যেমন: "05"
     const tbody = document.getElementById('paymentTableBody');
     const noDataBox = document.getElementById('noDataBox');
     
     if (!tbody) return;
     
-    const filterQuery = `${selectedMonth}-${selectedYear}`; 
-    const filterQueryAlt = `${selectedMonth}/${selectedYear}`; 
+    // মাসের নাম কনভার্ট করার একটি রেডিমেড ম্যাপ (যদি শিটে বাংলায় বা ইংরেজিতে নাম থাকে)
+    const monthNamesEng = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const monthNamesBng = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+    
+    const monthIndex = parseInt(selectedMonth) - 1;
+    const currentMonthLongEng = monthNamesEng[monthIndex]; // "May"
+    const currentMonthLongBng = monthNamesBng[monthIndex]; // "মে"
+    const singleDigitMonth = parseInt(selectedMonth).toString(); // "5" (যদি শিটে শুধু 5 থাকে)
 
+    // গুগল শিটের ডাটার সাথে মেলানোর জন্য অল-ইন-ওয়ান লজিক
     const filteredData = rawPaymentDatabase.filter(item => {
-        return item.monthStr.includes(filterQuery) || 
-               item.monthStr.includes(filterQueryAlt) || 
-               (item.monthStr.includes(selectedMonth) && item.monthStr.includes(selectedYear));
+        const itemMonth = String(item.monthStr).toLowerCase();
+        const itemYear = String(item.year || item.monthStr); // যদি বছর আলাদা কলামে বা একই সাথে থাকে
+
+        // বছর মিলতে হবে এবং মাস যেকোনো একভাবে মিললেই হবে
+        const isYearMatch = itemYear.includes(selectedYear);
+        const isMonthMatch = itemMonth.includes(selectedMonth) || 
+                             itemMonth.includes(singleDigitMonth) || 
+                             itemMonth.includes(currentMonthLongEng.toLowerCase()) || 
+                             itemMonth.includes(currentMonthLongBng);
+                             
+        return isYearMatch && isMonthMatch;
     });
     
     tbody.innerHTML = "";
