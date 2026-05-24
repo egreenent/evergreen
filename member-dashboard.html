@@ -498,6 +498,19 @@ class="download-btn"
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
 
+// সার্ভিস ওয়ার্কার ব্রাউজারে রেজিস্টার করার স্ক্রিপ্ট
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+            .then((registration) => {
+                console.log('ServiceWorker successfully registered with scope: ', registration.scope);
+            })
+            .catch((error) => {
+                console.log('ServiceWorker registration failed: ', error);
+            });
+    });
+}
+  
 window.onload = function() {
     const loggedInId = localStorage.getItem('memberId');
     if (!loggedInId) {
