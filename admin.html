@@ -1425,16 +1425,16 @@ function logout() {
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
 let rawPaymentDatabase = [];
 
-// ২. নোটিশ বোর্ড ফাংশন (নোটিশ শো করানোর জন্য HTML এরিয়া ডাইনামিকালি তৈরি করা হয়েছে)
+// ২. নোটিশ বোর্ড ফাংশন (HTML আইডির সাথে মিল রেখে ফিক্সড করা হলো)
 function loadAdminNotices() {
-    // স্ক্রিনে নোটিশ দেখানোর জন্য একটি বক্স বা কন্টেইনার তৈরি করা হলো
-    const noticeSection = document.getElementById('noticesSection');
+    // ⚠️ এখানে noticesSection এর বদলে noticeSection করা হলো (HTML আইডির সাথে মিল রেখে)
+    const noticeSection = document.getElementById('noticeSection');
     if (noticeSection) {
         noticeSection.innerHTML = `
             <div style="background:#fff; padding:25px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
                 <h3 style="color:#0b6b2d; margin-bottom:15px;">📢 লাইভ নোটিশ বোর্ড (Admin View)</h3>
                 <div id="adminNoticeList" style="display:flex; flex-direction:column; gap:10px;">
-                    🔄 নোটিশ লোড হচ্ছে...
+                    🔄 গুগল শিট থেকে লাইভ নোটিশ লোড হচ্ছে...
                 </div>
             </div>`;
     }
@@ -1446,7 +1446,7 @@ function loadAdminNotices() {
             if(!list) return;
             list.innerHTML = "";
             if(data.length === 0) {
-                list.innerHTML = "<p style='color:#888; font-style:italic;'>কোনো নোটিশ খুঁজে পাওয়া যায়নি।</p>";
+                list.innerHTML = "<p style='color:#888; font-style:italic;'>কোনো নোটিশ খুঁজে পাওয়া যায়নি।</p>";
                 return;
             }
             data.forEach(item => {
