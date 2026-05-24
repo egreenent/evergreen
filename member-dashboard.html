@@ -505,8 +505,25 @@ async function fetchMemberDashboardData(memberId) {
             document.getElementById("memberPhone").innerText = "📞 " + m.phone;
             document.getElementById("memberEmail").innerText = "📧 " + m.email;
             document.getElementById("memberPhoto").src = m.photo;
-            document.getElementById("membershipStatus").innerText = "Status: " + m.status;
-
+// বর্তমান কোডটি মুছে এটি দিন:
+const statusEl = document.getElementById("membershipStatus");
+if (statusEl) {
+    statusEl.innerText = m.status; // এখানে শুধু মেইলের ডাটা বসবে, "Status: " লেখাটি থাকবে না।
+    
+    // ডিজাইন সুন্দর করার জন্য আপনি চাইলে এখানে স্টাইল যোগ করতে পারেন:
+    statusEl.style.padding = "5px 15px";
+    statusEl.style.borderRadius = "20px";
+    statusEl.style.display = "inline-block";
+    statusEl.style.fontWeight = "600";
+    
+    if (m.status === "Active") {
+        statusEl.style.backgroundColor = "#d1e7dd"; // হালকা সবুজ
+        statusEl.style.color = "#0f5132";           // গাঢ় সবুজ
+    } else {
+        statusEl.style.backgroundColor = "#f8d7da"; // হালকা লাল
+        statusEl.style.color = "#842029";           // গাঢ় লাল
+    }
+}
             // ২. ডাউনলোড লিঙ্ক
             if(document.getElementById("membershipPdf")) document.getElementById("membershipPdf").href = m.pdfUrl;
             if(document.getElementById("idCard")) document.getElementById("idCard").href = m.idCardUrl;
