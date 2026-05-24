@@ -655,7 +655,12 @@ function logout() {
 
 function renderMemberPaymentHistory(paymentsArray) {
     const tbody = document.getElementById('paymentTableBody'); 
-    if (!tbody) return;
+    
+    // যদি কোনো কারণে পেজে এই আইডিটি খুঁজে না পাওয়া যায়, তবে এরর না দেখিয়ে এখানেই কোড থামিয়ে দাও
+    if (tbody === null || !tbody) {
+        console.warn("পেমেন্ট টেবিলের আইডি (paymentTableBody) এইচটিএমএল-এ খুঁজে পাওয়া যায়নি।");
+        return; 
+    }
 
     tbody.innerHTML = ""; // আগের ডামি ডাটা ক্লিয়ার করা
 
