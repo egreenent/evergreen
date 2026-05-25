@@ -241,6 +241,7 @@ margin-top:30px;
 text-align:center;
 color:#666;
 font-size:16px;
+margin-bottom: 30px;
 }
 
 @media(max-width:768px){
@@ -262,21 +263,6 @@ font-size:32px;
 }
 }
 
-.notice-board{
-background:#fff;
-padding:20px;
-border-radius:15px;
-margin-top:20px;
-box-shadow:0 5px 15px rgba(0,0,0,0.08);
-}
-
-#noticeBox{
-margin-top:10px;
-font-size:15px;
-line-height:1.6;
-color:#444;
-}
-
 .viewProfileBtn{
   margin-top: 15px;
   display: inline-block;
@@ -287,6 +273,24 @@ color:#444;
   border-radius:8px;
   font-size:14px;
   font-weight: 500;
+}
+
+/* 🎯 লাইভ প্রিভিউ কার্ডের জন্য সুন্দর বক্স স্টাইল */
+.receipt-preview-container {
+    margin-top: 30px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.08);
+    display: none; /* শুরুতে কোনো ডাউনলোড বাটন না চাপলে এটা হাইড থাকবে */
+}
+.receipt-preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px dashed #0b6623;
+    padding-bottom: 15px;
 }
 </style>
 </head>
@@ -384,80 +388,87 @@ color:#444;
 </div>
 
 
-<div style="position: absolute; left: -9999px; top: -9999px; width: 595px; overflow: hidden;">
-    <div id="receiptTemplate" style="width: 595px; padding: 45px; background: #ffffff; color: #1e293b; font-family: 'Poppins', sans-serif; position: relative; border: 1px solid #e2e8f0; box-sizing: border-box;">
+<div id="receiptPreviewWrapper" class="receipt-preview-container">
+    <div class="receipt-preview-header">
+        <h3 style="color: #0b6623; margin: 0; font-size: 20px;">📄 Money Receipt Preview</h3>
+        <span style="background: #eef5ee; color: #0b6623; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;">Generating...</span>
+    </div>
+    
+    <div style="display: flex; justify-content: center; background: #f8fafc; padding: 20px; border-radius: 12px; overflow-x: auto;">
         
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0b6623; padding-bottom: 20px; margin-bottom: 30px;">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div style="width: 45px; height: 45px; background: #0b6623; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; border-radius: 8px; font-size: 20px;">E</div>
-                <div>
-                    <h2 style="color: #0b6623; margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px;">EverGreen Enterprise</h2>
-                    <p style="margin: 4px 0 0 0; font-size: 10px; color: #556b2f; text-transform: uppercase; letter-spacing: 2px; font-weight: 500;">Secure Digital Money Receipt</p>
+        <div id="receiptTemplate" style="width: 595px; min-width: 595px; padding: 45px; background: #ffffff; color: #1e293b; font-family: 'Poppins', sans-serif; position: relative; border: 1px solid #e2e8f0; box-sizing: border-box; text-align: left;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0b6623; padding-bottom: 20px; margin-bottom: 30px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 45px; height: 45px; background: #0b6623; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; border-radius: 8px; font-size: 20px;">E</div>
+                    <div>
+                        <h2 style="color: #0b6623; margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px;">EverGreen Enterprise</h2>
+                        <p style="margin: 4px 0 0 0; font-size: 10px; color: #556b2f; text-transform: uppercase; letter-spacing: 2px; font-weight: 500;">Secure Digital Money Receipt</p>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 11px; color: #64748b; margin-bottom: 4px;">Statement Date</div>
+                    <div id="rCurrentDate" style="color: #0f172a; font-weight: 600; font-size: 13px;">-</div>
                 </div>
             </div>
-            <div style="text-align: right;">
-                <div style="font-size: 11px; color: #64748b; margin-bottom: 4px;">Statement Date</div>
-                <div id="rCurrentDate" style="color: #0f172a; font-weight: 600; font-size: 13px;">-</div>
-            </div>
-        </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; background: #f4f9f4; padding: 22px; border-radius: 12px; margin-bottom: 35px; border-top: 4px solid #0b6623; position: relative;">
-            <div>
-                <p style="margin: 0 0 6px 0; font-size: 10px; color: #556b2f; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Account Holder</p>
-                <h4 id="rMemberName" style="margin: 0 0 4px 0; font-size: 16px; color: #0f172a; font-weight: 600;">-</h4>
-                <p style="margin: 0; font-size: 12px; color: #334155;">ID: <span id="rMemberId" style="font-weight: 600; color: #0b6623;">-</span></p>
-                <p id="rMemberPhone" style="margin: 2px 0 0 0; font-size: 12px; color: #475569;">-</p>
-            </div>
-            
-            <div style="text-align: right; margin-right: 100px;">
-                <p style="margin: 0 0 4px 0; font-size: 12px; color: #334155;">Billing Month: <strong id="rMonth" style="color: #0f172a;">-</strong></p>
-                <p style="margin: 0; font-size: 12px; color: #334155;">Status: <span style="font-weight: 600; color: #0b6623;">PAID</span></p>
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #f4f9f4; padding: 22px; border-radius: 12px; margin-bottom: 35px; border-top: 4px solid #0b6623; position: relative;">
+                <div>
+                    <p style="margin: 0 0 6px 0; font-size: 10px; color: #556b2f; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Account Holder</p>
+                    <h4 id="rMemberName" style="margin: 0 0 4px 0; font-size: 16px; color: #0f172a; font-weight: 600;">-</h4>
+                    <p style="margin: 0; font-size: 12px; color: #334155;">ID: <span id="rMemberId" style="font-weight: 600; color: #0b6623;">-</span></p>
+                    <p id="rMemberPhone" style="margin: 2px 0 0 0; font-size: 12px; color: #475569;">-</p>
+                </div>
+                
+                <div style="text-align: right; margin-right: 100px;">
+                    <p style="margin: 0 0 4px 0; font-size: 12px; color: #334155;">Billing Month: <strong id="rMonth" style="color: #0f172a;">-</strong></p>
+                    <p style="margin: 0; font-size: 12px; color: #334155;">Status: <span style="font-weight: 600; color: #0b6623;">PAID</span></p>
+                </div>
+
+                <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%) rotate(-10deg); width: 85px; height: 85px; border: 3px dashed #6d28d9; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(109, 40, 217, 0.03); box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px rgba(109, 40, 217, 0.15); user-select: none;">
+                    <span style="font-size: 9px; color: #7c3aed; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">OFFICIAL</span>
+                    <span style="font-size: 18px; color: #5b21b6; font-weight: 800; letter-spacing: 1px; margin: -2px 0;">PAID</span>
+                    <span style="font-size: 8px; color: #7c3aed; font-weight: 500;">VERIFIED</span>
+                </div>
             </div>
 
-            <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%) rotate(-10deg); width: 85px; height: 85px; border: 3px dashed #6d28d9; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(109, 40, 217, 0.03); box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px rgba(109, 40, 217, 0.15); user-select: none;">
-                <span style="font-size: 9px; color: #7c3aed; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">OFFICIAL</span>
-                <span style="font-size: 18px; color: #5b21b6; font-weight: 800; letter-spacing: 1px; margin: -2px 0;">PAID</span>
-                <span style="font-size: 8px; color: #7c3aed; font-weight: 500;">VERIFIED</span>
-            </div>
-        </div>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 45px; font-size: 13px;">
+                <thead>
+                    <tr style="background: #0b6623; color: #ffffff; text-align: left;">
+                        <th style="padding: 12px 16px; font-weight: 500; border-top-left-radius: 6px; border-bottom-left-radius: 6px; color: #fff;">Transaction Item Description</th>
+                        <th style="padding: 12px 16px; font-weight: 500; text-align: right; border-top-right-radius: 6px; border-bottom-right-radius: 6px; color: #fff;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 16px; color: #334155;">Monthly Membership Subscription Fee</td>
+                        <td style="padding: 16px; text-align: right; font-weight: 500; color: #0f172a;" id="rMainAmount">৳ 0</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 16px; color: #64748b; font-style: italic;">Late Fine / System Penalty Charges</td>
+                        <td style="padding: 16px; text-align: right; color: #b91c1c;" id="rFineAmount">৳ 0</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 20px 16px 0 16px; text-align: right; font-weight: 600; color: #0f172a; font-size: 14px;">Total Paid Amount:</td>
+                        <td style="padding: 20px 0 0 0; text-align: right;">
+                            <span style="font-size: 16px; font-weight: 700; color: #ffffff; background: #0b6623; padding: 10px 20px; border-radius: 6px; display: inline-block; min-width: 110px; box-shadow: 0 4px 10px rgba(11, 102, 35, 0.2);" id="rTotalAmount">৳ 0</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 45px; font-size: 13px;">
-            <thead>
-                <tr style="background: #0b6623; color: #ffffff; text-align: left;">
-                    <th style="padding: 12px 16px; font-weight: 500; border-top-left-radius: 6px; border-bottom-left-radius: 6px;">Transaction Item Description</th>
-                    <th style="padding: 12px 16px; font-weight: 500; text-align: right; border-top-right-radius: 6px; border-bottom-right-radius: 6px;">Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                    <td style="padding: 16px; color: #334155;">Monthly Membership Subscription Fee</td>
-                    <td style="padding: 16px; text-align: right; font-weight: 500; color: #0f172a;" id="rMainAmount">৳ 0</td>
-                </tr>
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                    <td style="padding: 16px; color: #64748b; font-style: italic;">Late Fine / System Penalty Charges</td>
-                    <td style="padding: 16px; text-align: right; color: #b91c1c;" id="rFineAmount">৳ 0</td>
-                </tr>
-                <tr>
-                    <td style="padding: 20px 16px 0 16px; text-align: right; font-weight: 600; color: #0f172a; font-size: 14px;">Total Paid Amount:</td>
-                    <td style="padding: 20px 0 0 0; text-align: right;">
-                        <span style="font-size: 16px; font-weight: 700; color: #ffffff; background: #0b6623; padding: 10px 20px; border-radius: 6px; display: inline-block; min-width: 110px; box-shadow: 0 4px 10px rgba(11, 102, 35, 0.2);" id="rTotalAmount">৳ 0</span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 50px;">
-            <div style="max-width: 65%;">
-                <p style="margin: 0; font-size: 10px; color: #94a3b8; line-height: 1.5;">* This is a secure, automated digital invoice generated by the billing engine. No physical ink signature is required for authentication.</p>
-            </div>
-            <div style="text-align: center; width: 130px;">
-                <div style="border-bottom: 1px dashed #cbd5e1; margin-bottom: 6px; height: 25px;"></div>
-                <p style="margin: 0; font-size: 11px; color: #475569; font-weight: 500;">Billing Manager</p>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 50px;">
+                <div style="max-width: 65%;">
+                    <p style="margin: 0; font-size: 10px; color: #94a3b8; line-height: 1.5;">* This is a secure, automated digital invoice generated by the billing engine. No physical ink signature is required for authentication.</p>
+                </div>
+                <div style="text-align: center; width: 130px;">
+                    <div style="border-bottom: 1px dashed #cbd5e1; margin-bottom: 6px; height: 25px;"></div>
+                    <p style="margin: 0; font-size: 11px; color: #475569; font-weight: 500;">Billing Manager</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
-  
 
 
 <div id="profilePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; overflow-y:auto;">
@@ -490,7 +501,7 @@ color:#444;
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
-window.currentMemberData = null; // গ্লোবাল ভেরিয়েবল ডাটা স্টোর করার জন্য
+window.currentMemberData = null; 
 
 window.onload = function() {
     const loggedInId = localStorage.getItem('memberId');
@@ -512,16 +523,14 @@ async function fetchMemberDashboardData(memberId) {
             const m = result.profile;
             const payments = result.payments || [];
             
-            window.currentMemberData = m; // ডাটা সেভ করা হলো যেন প্রোফাইল ও পিডিএফ লজিক এটি পায়
+            window.currentMemberData = m; 
 
-            // ১. বেসিক তথ্য রেন্ডার
             document.getElementById("memberName").innerText = m.name;
             document.getElementById("memberPhone").innerText = "📞 " + m.phone;
             document.getElementById("memberEmail").innerText = "📧 " + m.email;
             if(document.getElementById("memberAddress")) document.getElementById("memberAddress").innerText = "📍 " + m.address;
             if(m.photo) document.getElementById("memberPhoto").src = m.photo;
 
-            // ২. স্ট্যাটাস ব্যাজ
             const statusEl = document.getElementById("membershipStatus");
             if (statusEl) {
                 statusEl.innerText = m.status || "Active";
@@ -533,7 +542,6 @@ async function fetchMemberDashboardData(memberId) {
                 statusEl.style.color = (m.status === "Active") ? "#0f5132" : "#842029";
             }
 
-            // ৩. পেমেন্ট হিসাব
             let totalPaid = 0;
             payments.forEach(p => {
                 if(String(p.status).toLowerCase() === 'paid') {
@@ -549,14 +557,11 @@ async function fetchMemberDashboardData(memberId) {
             let dueAmount = expectedTotal - totalPaid;
             document.getElementById("dueAmount").innerText = "৳ " + (dueAmount > 0 ? dueAmount.toLocaleString() : "0");
 
-            // ৪. ডাউনলোড লিঙ্ক
             if(document.getElementById("membershipPdf")) document.getElementById("membershipPdf").href = m.pdfUrl || "#";
             if(document.getElementById("idCard")) document.getElementById("idCard").href = m.idCardUrl || "#";
 
-            // ৫. পেমেন্ট টেবিল রেন্ডার এবং ডাউনলোড বাটন তৈরি
             renderPaymentTable(payments);
 
-            // ৬. নোটিশ বক্স
             if(result.notice && document.getElementById("noticeBox")) {
                 document.getElementById("noticeBox").innerHTML = `📢 <strong>${result.notice.title || 'Notice'}</strong><br>${result.notice.content || ''}`;
             }
@@ -566,7 +571,6 @@ async function fetchMemberDashboardData(memberId) {
     }
 }
 
-// টেবিল রেন্ডার এবং পিডিএফ বাটন জেনারেট করার ফাংশন
 function renderPaymentTable(payments) {
     let tableHTML = "";
     let runningTotal = 0;
@@ -579,7 +583,6 @@ function renderPaymentTable(payments) {
         const currentStatus = String(p.status || 'Pending').trim();
         const statusClass = currentStatus.toLowerCase() === 'paid' ? 'paid' : 'due';
         
-        // PAID হলে ডাউনলোড বাটন দেখাবে
         let actionButton = "-";
         if(currentStatus.toLowerCase() === 'paid') {
             actionButton = `<button onclick="generateReceiptPDF('${p.month}', ${amount}, ${fine})" style="background: #0b6623; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">📄 Download</button>`;
@@ -598,52 +601,52 @@ function renderPaymentTable(payments) {
     document.getElementById("paymentTableBody").innerHTML = tableHTML;
 }
 
-// 🎯 মেইন পিডিএফ জেনারেশন ম্যাজিক ফাংশন
+// 🎯 ১০০% কার্যকারী পিডিএফ ডাউনলোড ফাংশন (লাইভ ভিউ মেথড)
 function generateReceiptPDF(month, amount, fine) {
-    // ড্যাশবোর্ডে প্রদর্শিত টেক্সট থেকে সরাসরি ডাটা নেওয়ার ব্যাকআপ প্ল্যান
-    const memberName = document.getElementById("memberName") ? document.getElementById("memberName").innerText : "Member";
+    // প্রিভিউ বক্সটি স্ক্রিনে চালু করা
+    document.getElementById("receiptPreviewWrapper").style.display = "block";
+
+    const m = window.currentMemberData;
+    const memberName = (m && m.name) ? m.name : document.getElementById("memberName").innerText;
     const memberId = localStorage.getItem('memberId') || "N/A";
-    const memberPhone = document.getElementById("memberPhone") ? document.getElementById("memberPhone").innerText.replace("📞 ", "") : "";
+    const memberPhone = document.getElementById("memberPhone") ? document.getElementById("memberPhone").innerText : "";
 
     const today = new Date().toLocaleDateString('en-GB'); 
 
-    // রিসিট কার্ডে ডাটা নিখুঁতভাবে ইনজেক্ট করা
+    // লাইভ দৃশ্যমান বক্সে ডাটা সেট করা
     document.getElementById("rCurrentDate").innerText = today;
     document.getElementById("rMemberName").innerText = memberName;
     document.getElementById("rMemberId").innerText = memberId;
-    document.getElementById("rMemberPhone").innerText = memberPhone ? "📞 " + memberPhone : "";
+    document.getElementById("rMemberPhone").innerText = memberPhone;
     document.getElementById("rMonth").innerText = month;
     document.getElementById("rMainAmount").innerText = "৳ " + amount.toLocaleString();
     document.getElementById("rFineAmount").innerText = "৳ " + fine.toLocaleString();
     document.getElementById("rTotalAmount").innerText = "৳ " + (amount + fine).toLocaleString();
 
-    // পিডিএফ কনফিগারেশন (সাদা পেজ আসার সমস্যা দূর করার জন্য বিশেষ মোড)
-    const element = document.getElementById("receiptTemplate");
-    
-    // রেন্ডারিং করার ঠিক আগে এলিমেন্টটিকে সক্রিয় করা
-    element.style.display = "block";
+    // স্ক্রিনের একদম নিচে রিসিট প্রিভিউ বক্সে ফোকাস নিয়ে যাওয়া যেন ইউজার দেখতে পায়
+    document.getElementById("receiptPreviewWrapper").scrollIntoView({ behavior: 'smooth' });
 
-    const opt = {
-        margin:       [15, 15, 15, 15], 
-        filename:     `Receipt_${month}_ID_${memberId}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { 
-            scale: 2, 
-            useCORS: true, 
-            logging: false,
-            scrollX: 0,
-            scrollY: 0
-        }, 
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+    // ক্যানভাস ইমেজ তুলতে ব্রাউজারকে ১০মিলি-সেকেন্ড সময় দেওয়া যেন ডাটা রেন্ডার হয়ে যায়
+    setTimeout(() => {
+        const element = document.getElementById("receiptTemplate");
+        const opt = {
+            margin:       12, 
+            filename:     `Receipt_${month}_ID_${memberId}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff' // ব্যাকগ্রাউন্ড সাদা ফিক্সড করা হলো
+            }, 
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
 
-    // পিডিএফ জেনারেট এবং ডাউনলোড স্টার্ট
-    html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-        // ডাউনলোড শেষ হলে কোনো অতিরিক্ত কাজ থাকলে করতে পারেন
-    }).save();
+        // পিডিএফ জেনারেশন এবং অটো সেভ
+        html2pdf().set(opt).from(element).save();
+    }, 150);
 }
 
-// প্রোফাইল পপআপ ইভেন্ট হ্যান্ডলার
 function setupProfilePopupEvents() {
     const viewBtn = document.getElementById("viewProfileBtn");
     if(viewBtn) {
