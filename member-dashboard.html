@@ -283,9 +283,8 @@ font-size:15px;
 line-height:1.6;
 color:#444;
 }
-  
 .viewProfileBtn{
-  margin-left:10px;
+  "margin-left:10px;
   padding:5px 10px;
   background:#0b6623;
   color:#fff;
@@ -320,7 +319,9 @@ Logout
 <div class="profile-card">
 
 <div class="profile-photo">
-<img id="memberPhoto" src="https://i.imgur.com/6VBx3io.png" alt="Member Photo">
+<img id="memberPhoto"
+src="https://via.placeholder.com/300x300.png?text=Member"
+alt="Member Photo">
 </div>
 
 <div class="profile-info">
@@ -335,13 +336,16 @@ Logout
 <div class="member-status" id="memberStatus">
 Active Member
 </div>
-  
-<p><a href="#" id="viewProfileBtn">Profile</a></p>
+<!--  <p>
+   <a href="#" id="viewProfileBtn">Profile</a>
+</p> -->
 
   
 </div>
 
 </div>
+
+<div class="stats-grid">
 
 <div class="stats-grid">
 
@@ -416,19 +420,30 @@ class="download-btn"
 
 
 <div class="section">
+
+<h2>Payment History</h2>
+
 <table class="payment-table">
+
 <thead>
+
 <tr>
+
 <th>Month</th>
 <th>Status</th>
 <th>Amount</th>
 <th>Total</th>
-<th>Receipt</th>
+
 </tr>
+
 </thead>
+
 <tbody id="paymentTableBody">
+
 </tbody>
+
 </table>
+
 </div>
 
 <div class="section">
@@ -494,267 +509,70 @@ window.onload = function() {
 };
 
 async function fetchMemberDashboardData(memberId) {
-
     try {
-
-        const response =
-        await fetch(
-        `${API_URL}?action=memberProfile&memberId=${memberId}`
-        );
-
-        const result =
-        await response.json();
-
+        const response = await fetch(`${API_URL}?action=memberProfile&memberId=${memberId}`);
+        const result = await response.json();
 
         if (result.success) {
-
             const m = result.profile;
-window.currentMemberData = m;
             const payments = result.payments;
 
+            // ১. বেসিক তথ্য (নাম, ফোন, ইমেইল, অ্যাড্রেস)
+            document.getElementById("memberName").innerText = m.name;
+            document.getElementById("memberPhone").innerText = "📞 " + m.phone;
+            document.getElementById("memberEmail").innerText = "📧 " + m.email;
+            // ইমেইলের নিচে এড্রেস বসানোর জন্য (নিশ্চিত করুন HTML-এ addressText আইডি আছে)
+            if(document.getElementById("addressText")) document.getElementById("addressText").innerText = "📍 " + m.address;
+            
+            document.getElementById("memberPhoto").src = m.photo;
 
-            /* =========================
-            BASIC INFO
-            ========================= */
-
-            document.getElementById(
-            "memberName"
-            ).innerText = m.name;
-
-
-            document.getElementById(
-            "memberPhone"
-            ).innerText = "📞 " + m.phone;
-
-
-            document.getElementById(
-            "memberEmail"
-            ).innerText = "📧 " + m.email;
-
-
-if(document.getElementById("addressText")){
-
-document.getElementById(
-"memberAddress"
-).innerText =
-"📍 " + m.address;
-}
-
-
-            document.getElementById(
-            "memberPhoto"
-            ).src =
-            m.photo ||
-            "https://i.imgur.com/6VBx3io.png";
-
-
-            /* =========================
-            STATUS
-            ========================= */
-
-            const statusEl =
-            document.getElementById(
-            "membershipStatus"
-            );
-
-            if(statusEl){
-
-                statusEl.innerText =
-                m.status;
-
-                statusEl.style.padding =
-                "5px 15px";
-
-                statusEl.style.borderRadius =
-                "20px";
-
-                statusEl.style.display =
-                "inline-block";
-
-                statusEl.style.fontWeight =
-                "600";
-
-                statusEl.style.backgroundColor =
-                (m.status === "Active")
-                ? "#d1e7dd"
-                : "#f8d7da";
-
-
-                statusEl.style.color =
-                (m.status === "Active")
-                ? "#0f5132"
-                : "#842029";
-
+            // ২. স্ট্যাটাস ব্যাজ
+            const statusEl = document.getElementById("membershipStatus");
+            if (statusEl) {
+                statusEl.innerText = m.status;
+                statusEl.style.padding = "5px 15px";
+                statusEl.style.borderRadius = "20px";
+                statusEl.style.display = "inline-block";
+                statusEl.style.fontWeight = "600";
+                statusEl.style.backgroundColor = (m.status === "Active") ? "#d1e7dd" : "#f8d7da";
+                statusEl.style.color = (m.status === "Active") ? "#0f5132" : "#842029";
             }
 
-
-            /* =========================
-            PAYMENT SUMMARY
-            ========================= */
-
+            // ৩. পেমেন্ট হিসাব (Total Payment, Total Receipts, Due Amount)
             let totalPaid = 0;
-
             payments.forEach(p => {
-
-                if(
-                String(p.status)
-                .toLowerCase() === 'paid'
-                ){
-
-                    totalPaid +=
-                    Number(p.amount) || 0;
-
+                if(String(p.status).toLowerCase() === 'paid') {
+                    totalPaid += Number(p.amount) || 0;
                 }
-
             });
 
+            document.getElementById("totalPayment").innerText = "৳ " + totalPaid.toLocaleString();
+            document.getElementById("totalReceipts").innerText = payments.length;
+            
+            // Due Amount হিসাব (মাসিক ফি ৫০০ ধরে)
+            let monthlyFee = Number(m.monthlyFee) || 500;
+            let expectedTotal = (payments.length * monthlyFee);
+            let dueAmount = expectedTotal - totalPaid;
+            document.getElementById("dueAmount").innerText = "৳ " + (dueAmount > 0 ? dueAmount.toLocaleString() : "0");
 
-            document.getElementById(
-            "totalPayment"
-            ).innerText =
-            "৳ " +
-            totalPaid.toLocaleString();
+            // ৪. ডাউনলোড লিঙ্ক
+            if(document.getElementById("membershipPdf")) document.getElementById("membershipPdf").href = m.pdfUrl;
+            if(document.getElementById("idCard")) document.getElementById("idCard").href = m.idCardUrl;
 
-
-            document.getElementById(
-            "totalReceipts"
-            ).innerText =
-            payments.length;
-
-
-            let monthlyFee =
-            Number(m.monthlyFee) || 500;
-
-
-            let expectedTotal =
-            payments.length * monthlyFee;
-
-
-            let dueAmount =
-            expectedTotal - totalPaid;
-
-
-            document.getElementById(
-            "dueAmount"
-            ).innerText =
-            "৳ " +
-            (dueAmount > 0
-            ? dueAmount.toLocaleString()
-            : "0");
-
-
-            /* =========================
-            DOWNLOAD LINKS
-            ========================= */
-
-            if(document.getElementById("membershipPdf")){
-
-                document.getElementById(
-                "membershipPdf"
-                ).href =
-                m.pdfUrl;
-
-            }
-
-
-            if(document.getElementById("idCard")){
-
-                document.getElementById(
-                "idCard"
-                ).href =
-                m.idCardUrl;
-
-            }
-
-
-            /* =========================
-            PAYMENT TABLE
-            ========================= */
-
-            let tableHTML = '';
-
+            // ৫. পেমেন্ট টেবিল রেন্ডার
+            let tableHTML = "";
             let runningTotal = 0;
-
-
             payments.forEach(p => {
-
-                runningTotal +=
-                (Number(p.amount) || 0) +
-                (Number(p.fine) || 0);
-
-
-                tableHTML += `
-
-                <tr>
-
-                <td>${p.month}</td>
-
-                <td>
-
-                <span class="${
-                String(p.status)
-                .toLowerCase() === 'paid'
-                ? 'paid'
-                : 'due'
-                }">
-
-                ${p.status}
-
-                </span>
-
-                </td>
-
-                <td>
-                ৳ ${p.amount}
-                </td>
-
-                <td>
-                ৳ ${runningTotal}
-                </td>
-
-                <td>
-
-                <a
-                href="${p.receiptUrl || '#'}"
-                target="_blank"
-                class="download-btn"
-                >
-
-                Download
-
-                </a>
-
-                </td>
-
-                </tr>
-
-                `;
-
+                runningTotal += Number(p.amount) + Number(p.fine);
+                tableHTML += `<tr><td>${p.month}</td><td>${p.status}</td><td>৳${p.amount}</td><td>৳${runningTotal}</td></tr>`;
             });
+            document.getElementById("paymentTableBody").innerHTML = tableHTML;
 
-
-            document.getElementById(
-            'paymentTableBody'
-            ).innerHTML =
-            tableHTML;
-
-        }
-
-    } catch(error) {
-
-        console.log(error);
-
-    }
-
-}
-
-          
             // ৬. নোটিশ বক্স
-document.getElementById(
-'paymentTableBody'
-).innerHTML =
-tableHTML;
-  
+            if(result.notice && document.getElementById("noticeBox")) {
+                document.getElementById("noticeBox").innerHTML = `📢 <strong>${result.notice.title}</strong><br>${result.notice.content}`;
+            }
+        }
     } catch (error) {
         console.error("Dashboard Error:", error);
     }
@@ -762,7 +580,36 @@ tableHTML;
 
 
 // ১. 'Profile' বাটনে ক্লিক করার লজিক (নিশ্চিত করুন আপনার প্রোফাইল বাটনের ID 'viewProfileBtn')
-
+document.getElementById("viewProfileBtn").addEventListener("click", function(e) {
+    e.preventDefault();
+    const m = window.currentMemberData; // এটি আপনার fetchMemberDashboardData ফাংশন থেকে আসবে
+    
+    if(!m) {
+        alert("সদস্য তথ্য লোড হচ্ছে, দয়া করে অপেক্ষা করুন।");
+        return;
+    }
+    
+    // পপআপের আইডিগুলো ম্যাপিং করা
+    document.getElementById("popupMemberId").innerText = m.memberId;
+    document.getElementById("popupName").innerText = m.name;
+    document.getElementById("popupPhone").innerText = m.phone;
+    document.getElementById("popupEmail").innerText = m.email;
+    document.getElementById("popupNid").innerText = m.nid || 'N/A';
+    document.getElementById("popupBlood").innerText = m.blood || 'N/A';
+    document.getElementById("popupAddress").innerText = m.address || 'N/A';
+    document.getElementById("popupNomineeName").innerText = m.nomineeName || 'N/A';
+    document.getElementById("popupNomineePhone").innerText = m.nomineePhone || 'N/A';
+    document.getElementById("popupJoinDate").innerText = m.joinDate || 'N/A';
+    document.getElementById("popupFee").innerText = m.monthlyFee || 'N/A';
+    
+    // ছবি, স্বাক্ষর এবং আইডি কার্ড
+    document.getElementById("popupPhoto").src = m.photo;
+    document.getElementById("popupSignature").src = m.signatureUrl || ''; 
+    document.getElementById("popupIdCard").href = m.idCardUrl || '#';
+    
+    // পপআপ ওপেন করা
+    document.getElementById("profilePopup").style.display = "block";
+});
 
 // ২. ক্লোজ বাটনে ক্লিক করলে পপআপ বন্ধ করার লজিক
 document.getElementById("closePopup").addEventListener("click", function() {
