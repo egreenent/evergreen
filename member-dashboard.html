@@ -320,7 +320,7 @@ Logout
 
 <div class="profile-photo">
 <img id="memberPhoto"
-src="https://via.placeholder.com/300x300.png?text=Member"
+src="member.photo ||'https://i.imgur.com/6VBx3io.png'"
 alt="Member Photo">
 </div>
 
@@ -420,18 +420,14 @@ class="download-btn"
 
 
 <div class="section">
-<h2>Payment History</h2>
-<div class="table-wrapper">
 <table class="payment-table">
 <thead>
 <tr>
-
 <th>Month</th>
 <th>Status</th>
 <th>Amount</th>
 <th>Total</th>
 <th>Receipt</th>
-
 </tr>
 </thead>
 <tbody id="paymentTableBody">
