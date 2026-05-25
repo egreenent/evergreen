@@ -499,105 +499,260 @@ window.onload = function() {
 };
 
 async function fetchMemberDashboardData(memberId) {
+
     try {
-        const response = await fetch(`${API_URL}?action=memberProfile&memberId=${memberId}`);
-        const result = await response.json();
+
+        const response =
+        await fetch(
+        `${API_URL}?action=memberProfile&memberId=${memberId}`
+        );
+
+        const result =
+        await response.json();
+
 
         if (result.success) {
+
             const m = result.profile;
+
             const payments = result.payments;
 
-            // ১. বেসিক তথ্য (নাম, ফোন, ইমেইল, অ্যাড্রেস)
-            document.getElementById("memberName").innerText = m.name;
-            document.getElementById("memberPhone").innerText = "📞 " + m.phone;
-            document.getElementById("memberEmail").innerText = "📧 " + m.email;
-            // ইমেইলের নিচে এড্রেস বসানোর জন্য (নিশ্চিত করুন HTML-এ addressText আইডি আছে)
-            if(document.getElementById("addressText")) document.getElementById("addressText").innerText = "📍 " + m.address;
-            
-            document.getElementById("memberPhoto").src = m.photo;
 
-            // ২. স্ট্যাটাস ব্যাজ
-            const statusEl = document.getElementById("membershipStatus");
-            if (statusEl) {
-                statusEl.innerText = m.status;
-                statusEl.style.padding = "5px 15px";
-                statusEl.style.borderRadius = "20px";
-                statusEl.style.display = "inline-block";
-                statusEl.style.fontWeight = "600";
-                statusEl.style.backgroundColor = (m.status === "Active") ? "#d1e7dd" : "#f8d7da";
-                statusEl.style.color = (m.status === "Active") ? "#0f5132" : "#842029";
+            /* =========================
+            BASIC INFO
+            ========================= */
+
+            document.getElementById(
+            "memberName"
+            ).innerText = m.name;
+
+
+            document.getElementById(
+            "memberPhone"
+            ).innerText = "📞 " + m.phone;
+
+
+            document.getElementById(
+            "memberEmail"
+            ).innerText = "📧 " + m.email;
+
+
+            if(document.getElementById("addressText")){
+
+                document.getElementById(
+                "addressText"
+                ).innerText =
+                "📍 " + m.address;
+
             }
 
-            // ৩. পেমেন্ট হিসাব (Total Payment, Total Receipts, Due Amount)
+
+            document.getElementById(
+            "memberPhoto"
+            ).src =
+            m.photo ||
+            "https://i.imgur.com/6VBx3io.png";
+
+
+            /* =========================
+            STATUS
+            ========================= */
+
+            const statusEl =
+            document.getElementById(
+            "membershipStatus"
+            );
+
+            if(statusEl){
+
+                statusEl.innerText =
+                m.status;
+
+                statusEl.style.padding =
+                "5px 15px";
+
+                statusEl.style.borderRadius =
+                "20px";
+
+                statusEl.style.display =
+                "inline-block";
+
+                statusEl.style.fontWeight =
+                "600";
+
+                statusEl.style.backgroundColor =
+                (m.status === "Active")
+                ? "#d1e7dd"
+                : "#f8d7da";
+
+
+                statusEl.style.color =
+                (m.status === "Active")
+                ? "#0f5132"
+                : "#842029";
+
+            }
+
+
+            /* =========================
+            PAYMENT SUMMARY
+            ========================= */
+
             let totalPaid = 0;
+
             payments.forEach(p => {
-                if(String(p.status).toLowerCase() === 'paid') {
-                    totalPaid += Number(p.amount) || 0;
+
+                if(
+                String(p.status)
+                .toLowerCase() === 'paid'
+                ){
+
+                    totalPaid +=
+                    Number(p.amount) || 0;
+
                 }
+
             });
 
-            document.getElementById("totalPayment").innerText = "৳ " + totalPaid.toLocaleString();
-            document.getElementById("totalReceipts").innerText = payments.length;
-            
-            // Due Amount হিসাব (মাসিক ফি ৫০০ ধরে)
-            let monthlyFee = Number(m.monthlyFee) || 500;
-            let expectedTotal = (payments.length * monthlyFee);
-            let dueAmount = expectedTotal - totalPaid;
-            document.getElementById("dueAmount").innerText = "৳ " + (dueAmount > 0 ? dueAmount.toLocaleString() : "0");
 
-            // ৪. ডাউনলোড লিঙ্ক
-            if(document.getElementById("membershipPdf")) document.getElementById("membershipPdf").href = m.pdfUrl;
-            if(document.getElementById("idCard")) document.getElementById("idCard").href = m.idCardUrl;
-
-            // ৫. পেমেন্ট টেবিল রেন্ডার
-const response =
-await fetch(
-
-API_URL +
-'?action=memberPayments&memberId=' +
-memberId
-);
-
-const payments =
-await response.json();
-          
-let tableHTML = '';
-let runningTotal = 0;
-payments.forEach(p => {
-
-runningTotal +=
-(Number(p.amount) || 0) +
-(Number(p.fine) || 0);
+            document.getElementById(
+            "totalPayment"
+            ).innerText =
+            "৳ " +
+            totalPaid.toLocaleString();
 
 
-tableHTML += `
-<tr>
-<td>${p.month}</td>
-<td>${p.status}</td>
-
-<td>
-৳ ${p.amount}
-</td>
-
-<td>
-৳ ${runningTotal}
-</td>
-
-<td>
-<a
-href="${p.receiptUrl}"
-target="_blank"
-class="download-btn"
->Download</a>
-</td>
-</tr>
-`;
-});
+            document.getElementById(
+            "totalReceipts"
+            ).innerText =
+            payments.length;
 
 
-document.getElementById(
-'paymentTableBody'
-).innerHTML = tableHTML;
+            let monthlyFee =
+            Number(m.monthlyFee) || 500;
+
+
+            let expectedTotal =
+            payments.length * monthlyFee;
+
+
+            let dueAmount =
+            expectedTotal - totalPaid;
+
+
+            document.getElementById(
+            "dueAmount"
+            ).innerText =
+            "৳ " +
+            (dueAmount > 0
+            ? dueAmount.toLocaleString()
+            : "0");
+
+
+            /* =========================
+            DOWNLOAD LINKS
+            ========================= */
+
+            if(document.getElementById("membershipPdf")){
+
+                document.getElementById(
+                "membershipPdf"
+                ).href =
+                m.pdfUrl;
+
+            }
+
+
+            if(document.getElementById("idCard")){
+
+                document.getElementById(
+                "idCard"
+                ).href =
+                m.idCardUrl;
+
+            }
+
+
+            /* =========================
+            PAYMENT TABLE
+            ========================= */
+
+            let tableHTML = '';
+
+            let runningTotal = 0;
+
+
+            payments.forEach(p => {
+
+                runningTotal +=
+                (Number(p.amount) || 0) +
+                (Number(p.fine) || 0);
+
+
+                tableHTML += `
+
+                <tr>
+
+                <td>${p.month}</td>
+
+                <td>
+
+                <span class="${
+                String(p.status)
+                .toLowerCase() === 'paid'
+                ? 'paid'
+                : 'due'
+                }">
+
+                ${p.status}
+
+                </span>
+
+                </td>
+
+                <td>
+                ৳ ${p.amount}
+                </td>
+
+                <td>
+                ৳ ${runningTotal}
+                </td>
+
+                <td>
+
+                <a
+                href="${p.receiptUrl || '#'}"
+                target="_blank"
+                class="download-btn"
+                >
+
+                Download
+
+                </a>
+
+                </td>
+
+                </tr>
+
+                `;
+
+            });
+
+
+            document.getElementById(
+            'paymentTableBody'
+            ).innerHTML =
+            tableHTML;
+
+        }
+
+    } catch(error) {
+
+        console.log(error);
+
+    }
+
+}
 
           
             // ৬. নোটিশ বক্স
