@@ -362,12 +362,6 @@ font-size:32px;
     </div>
 </div>
 
-<div id="id-card-trigger" onclick="openModal()" style="cursor: pointer; display: inline-block;">
-    <div style="width: 220px; height: 130px; background: #0b6623; color: white; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-        📥 View & Download ID Card
-    </div>
-</div>
-
 <div id="idCardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; overflow-y:auto; padding: 20px;">
     
     <div style="background:#f4f4f4; padding:30px; border-radius:25px; position:relative; text-align:center; max-width: 800px; width: 100%;">
@@ -375,52 +369,46 @@ font-size:32px;
         
         <div id="full-card-area" style="display:flex; gap:25px; justify-content:center; flex-wrap:wrap; margin-top: 20px; padding: 10px;">
             
-            <div style="width: 350px; height: 550px; background: white; border-radius: 20px; border: 1px solid #ddd; display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+            <div style="width: 350px; height: 550px; background: white; border-radius: 20px; border: 1px solid #ddd; display: flex; flex-direction: column; overflow: hidden; position: relative;">
                 <div style="height: 200px; background: linear-gradient(135deg, #0b6623, #15803d); clip-path: ellipse(150% 100% at 50% 0%); display: flex; flex-direction: column; align-items: center; padding-top: 20px; color: white;">
-                    <div style="font-size: 50px; margin-bottom: 5px;">🌳</div> <div style="font-weight: 900; font-size: 18px; letter-spacing: 1px; text-transform: uppercase;">EVERGREEN ENTERPRISE</div>
+                    <div style="font-size: 50px; margin-bottom: 5px;">🌳</div> 
+                    <div style="font-weight: 900; font-size: 18px; letter-spacing: 1px; text-transform: uppercase;">EVERGREEN ENTERPRISE</div>
                 </div>
 
-                <div style="width: 150px; height: 150px; border-radius: 50%; border: 6px solid white; background: #fff; margin: -75px auto 10px; overflow: hidden; z-index: 10; box-shadow: 0 5px 10px rgba(0,0,0,0.1);">
-                    <img id="userImg" src="https://via.placeholder.com/150" style="width:100%; height:100%; object-fit:cover;">
+                <div style="width: 150px; height: 150px; border-radius: 50%; border: 6px solid white; background: #fff; margin: -75px auto 10px; overflow: hidden; z-index: 10;">
+                    <img id="userImg" src="" style="width:100%; height:100%; object-fit:cover;">
                 </div>
                 
                 <div style="text-align: center; padding: 5px 20px;">
-                    <h2 id="userName" style="margin: 0; font-size: 26px; color: #1e293b; font-weight: 800;">Arif Rahman</h2> 
-                    <p id="userDesignation" style="color: #0b6623; font-weight: 700; margin: 2px 0; font-size: 15px; text-transform: uppercase;">MARKETING MANAGER</p> 
+                    <h2 id="userName" style="margin: 0; font-size: 26px; color: #1e293b; font-weight: 800;"></h2> 
+                    <p id="userDesignation" style="color: #0b6623; font-weight: 700; margin: 2px 0; font-size: 15px; text-transform: uppercase;"></p> 
                 </div>
 
                 <div style="padding: 15px 35px; font-size: 14px; text-align: left; line-height: 1.9; color: #444; flex-grow: 1;">
-                    <div>📱 <b>Mobile:</b> <span id="userPhone">01712-345678</span></div> 
-                    <div>🆔 <b>NID:</b> <span id="userNid">1234 5678 9012</span></div> 
-                    <div>🩸 <b>Blood:</b> <span id="userBlood">B+ (Positive)</span></div> 
-                    <div style="display: flex;">📍 <b>Address:</b> <span id="userAddress" style="margin-left:5px; line-height: 1.4;">House 12, Road 5, Dhanmondi, Dhaka</span></div> 
+                    <div>📱 <b>Mobile:</b> <span id="userPhone"></span></div> 
+                    <div>🆔 <b>NID:</b> <span id="userNid"></span></div> 
+                    <div>🩸 <b>Blood:</b> <span id="userBlood"></span></div> 
+                    <div style="display: flex;">📍 <b>Address:</b> <span id="userAddress" style="margin-left:5px;"></span></div> 
                 </div>
 
-                <div id="userId" style="background: #0b6623; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 24px; letter-spacing: 2px;">ID: S-45920</div>
+                <div id="userId" style="background: #0b6623; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 24px; letter-spacing: 2px;"></div>
             </div>
 
-            <div style="width: 350px; height: 550px; background: #1e293b; border-radius: 20px; color: white; padding: 40px 30px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+            <div style="width: 350px; height: 550px; background: #1e293b; border-radius: 20px; color: white; padding: 40px 30px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center;">
                 <div>
                     <div style="font-size: 60px; background: white; border-radius: 15px; width: 85px; height: 85px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">🌳</div>
                     <h2 style="color:white; letter-spacing: 3px; font-weight: 900;">EVERGREEN</h2>
                 </div>
-                
                 <div style="background: white; padding: 15px; border-radius: 15px;">
-                    <img id="qrCode" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=S-45920" style="width: 150px; display: block;">
+                    <img id="qrCode" src="" style="width: 150px; display: block;">
                 </div>
-                
-                <div style="font-size: 12px; opacity: 0.8; line-height: 1.5;">
-                    This card is non-transferable and property of Evergreen Enterprise.<br>
-                    <b>Helpline: +880 1700-111222</b>
-                </div>
+                <div style="font-size: 12px; opacity: 0.8;">Helpline: +880 1700-111222</div>
             </div>
         </div>
 
-        <button onclick="generatePDF()" style="margin-top:25px; background:#0b6623; color:white; padding:18px 40px; border:none; border-radius:12px; font-size:18px; cursor:pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(11, 102, 35, 0.3);">📥 Download Full ID Card (PDF)</button>
+        <button onclick="generatePDF()" style="margin-top:25px; background:#0b6623; color:white; padding:15px 40px; border:none; border-radius:12px; cursor:pointer;">📥 Download PDF</button>
     </div>
 </div>
-
-
 
   
 </div>
@@ -787,26 +775,24 @@ function logout() {
         html2pdf().set(opt).from(element).save();
     }
 
-    // ডাইনামিক ডেটা লোড করার ফাংশন
+    // এই ফাংশনটি ডেটা সার্ভার থেকে নিয়ে এসে কার্ডের ভেতর বসাবে
     function loadMemberData() {
         if (typeof google !== 'undefined' && google.script) {
             google.script.run.withSuccessHandler(function(member) {
-                if(member) {
-                    if(document.getElementById('userName')) document.getElementById('userName').innerText = member.name;
-                    if(document.getElementById('userDesignation')) document.getElementById('userDesignation').innerText = member.designation;
-                    if(document.getElementById('userPhone')) document.getElementById('userPhone').innerText = member.phone;
-                    if(document.getElementById('userNid')) document.getElementById('userNid').innerText = member.nid;
-                    if(document.getElementById('userBlood')) document.getElementById('userBlood').innerText = member.blood;
-                    if(document.getElementById('userAddress')) document.getElementById('userAddress').innerText = member.address;
-                    if(document.getElementById('userId')) document.getElementById('userId').innerText = "ID: " + member.id;
-                    if(document.getElementById('qrCode')) document.getElementById('qrCode').src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + member.id;
-                    if(member.photoUrl && document.getElementById('userImg')) document.getElementById('userImg').src = member.photoUrl;
-                }
-            }).getMemberData(); // Code.gs-এ এই ফাংশনটি থাকতে হবে
+                // এখানে member অবজেক্ট থেকে ডেটা নিয়ে আইডিগুলোর ভেতর বসানো হচ্ছে
+                if(document.getElementById('userName')) document.getElementById('userName').innerText = member.name;
+                if(document.getElementById('userDesignation')) document.getElementById('userDesignation').innerText = member.designation;
+                if(document.getElementById('userPhone')) document.getElementById('userPhone').innerText = member.phone;
+                if(document.getElementById('userNid')) document.getElementById('userNid').innerText = member.nid;
+                if(document.getElementById('userBlood')) document.getElementById('userBlood').innerText = member.blood;
+                if(document.getElementById('userAddress')) document.getElementById('userAddress').innerText = member.address;
+            }).getMemberData();
+        } else {
+            console.log("Apps Script এনভায়রনমেন্ট পাওয়া যায়নি। সরাসরি টেস্ট মোডে চলছে।");
         }
     }
 
-    // পেজ লোড হলে ডেটা কল করবে
+    // পেজ পুরোপুরি লোড হওয়ার পর ডেটা লোড ফাংশনটি কল করবে
     document.addEventListener("DOMContentLoaded", loadMemberData);
 </script>
 </body>
