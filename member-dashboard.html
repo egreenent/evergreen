@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
@@ -168,14 +169,13 @@ margin-top:15px;
 font-size:18px;
 }
 
-.download-buttons,
-.payment-buttons{
+.download-box {
 display:flex;
 flex-wrap:wrap;
 gap:15px;
 }
 
-.download-buttons a,
+.download-box a,
 .payment-buttons button{
 background:#d4a62b;
 color:#fff;
@@ -186,6 +186,7 @@ border-radius:12px;
 font-size:16px;
 font-weight:700;
 cursor:pointer;
+display: inline-block;
 }
 
 .payment-info{
@@ -243,258 +244,154 @@ font-size:16px;
 }
 
 @media(max-width:768px){
-
 .dashboard-title h1{
 font-size:38px;
 }
-
 .profile-card{
 flex-direction:column;
 text-align:center;
 }
-
 .profile-info h1{
 font-size:36px;
 }
-
 .member-id-box{
 font-size:20px;
 }
-
 .section h2{
 font-size:32px;
 }
-
 }
 
-  .notice-board{
-
+.notice-board{
 background:#fff;
 padding:20px;
 border-radius:15px;
 margin-top:20px;
 box-shadow:0 5px 15px rgba(0,0,0,0.08);
-
 }
 
 #noticeBox{
-
 margin-top:10px;
 font-size:15px;
 line-height:1.6;
 color:#444;
 }
+
 .viewProfileBtn{
-  "margin-left:10px;
-  padding:5px 10px;
+  margin-top: 15px;
+  display: inline-block;
+  padding:8px 18px;
   background:#0b6623;
   color:#fff;
   text-decoration:none;
-  border-radius:5px;
-  font-size:12px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight: 500;
 }
-  
 </style>
 </head>
 <body>
 
 <div class="dashboard-header">
-
 <div class="dashboard-title">
 <h1>Member Dashboard</h1>
 <p>EverGreen Enterprise Membership Portal</p>
 </div>
-
 <div class="header-right">
-<div class="member-id-box" id="memberIdText">
-Member ID
+<div class="member-id-box" id="memberIdText">Member ID</div>
+<button class="logout-btn" onclick="logout()">Logout</button>
 </div>
-
-<button class="logout-btn" onclick="logout()">
-Logout
-</button>
-</div>
-
 </div>
 
 <div class="profile-card">
-
 <div class="profile-photo">
-<img id="memberPhoto"
-src="https://via.placeholder.com/300x300.png?text=Member"
-alt="Member Photo">
+<img id="memberPhoto" src="" alt="Member Photo">
 </div>
-
 <div class="profile-info">
-
-<h1 id="memberName"></h1>
-
+<h1 id="memberName">Loading...</h1>
 <p id="memberPhone"></p>
 <p id="memberEmail"></p>
-<p id="memberJoin"></p>
 <p id="memberAddress"></p>
-
-<div class="member-status" id="memberStatus">
-Active Member
+<div class="member-status" id="memberStatus">Active Member</div>
+<div>
+   <a href="#" id="viewProfileBtn" class="viewProfileBtn">📋 View Profile</a>
 </div>
-<!--  <p>
-   <a href="#" id="viewProfileBtn">Profile</a>
-</p> -->
-
-  
 </div>
-
 </div>
 
 <div class="stats-grid">
-
-<div class="stats-grid">
-
 <div class="stat-box">
 <h3>Total Payment</h3>
 <h2 id="totalPayment">৳ 0</h2>
 </div>
-
 <div class="stat-box">
 <h3>Total Receipts</h3>
 <h2 id="totalReceipts">0</h2>
 </div>
-
 <div class="stat-box">
 <h3>Due Amount</h3>
 <h2 id="dueAmount">৳ 0</h2>
 </div>
-
 <div class="stat-box">
 <h3>Membership Status</h3>
 <h2 id="membershipStatus">Active</h2>
-
-
 </div>
-
-
-  
-</div>
-
 </div>
 
 <div class="section">
-
 <h2>Notice Board</h2>
-
-<div
-class="notice-item"
-id="noticeBox"
->
-
-No Notice Available
-
-</div>
-
+<div class="notice-item" id="noticeBox">No Notice Available</div>
 </div>
 
 <div class="section">
-
 <h2>Downloads</h2>
-
 <div class="download-box">
-
-<a
-id="membershipPdf"
-href="#"
-target="_blank"
-class="download-btn"
->
-📄 Membership PDF
-</a>
-
-<a
-id="idCard"
-href="#"
-target="_blank"
-class="download-btn"
->
-🪪 ID Card
-</a>
+<a id="membershipPdf" href="#" target="_blank" class="download-btn">📄 Membership PDF</a>
+<a id="idCard" href="#" target="_blank" class="download-btn">🪪 ID Card</a>
 </div>
 </div>
-
 
 <div class="section">
-    <h2>Payment History</h2>
-    <table class="payment-table">
-        <thead>
-            <tr>
-                <th>Month</th>
-                <th>Status</th>
-                <th>Amount</th>
-                <th>Total</th>
-                <th>Receipt</th> </tr>
-        </thead>
-        <tbody id="paymentTableBody">
-            </tbody>
-    </table>
+<h2>Payment History</h2>
+<div class="table-wrapper">
+<table class="payment-table">
+<thead>
+<tr>
+<th>Month</th>
+<th>Status</th>
+<th>Amount</th>
+<th>Total</th>
+<th>Download</th>
+</tr>
+</thead>
+<tbody id="paymentTableBody">
+</tbody>
+</table>
 </div>
 </div>
 
 <div class="section">
 <h2>Online Payment</h2>
-
 <div class="payment-buttons">
 <button>bKash Payment</button>
 <button>Nagad Payment</button>
 <button>Rocket Payment</button>
 </div>
-
-<!-- <div class="payment-info">
-<p><strong>Monthly Fee:</strong> ৳ 500</p>
-<p><strong>Payment Status:</strong> Paid Until February</p>
-<p><strong>Next Due:</strong> March 15, 2026</p>
-</div> -->
-
 </div>
-  
-<div class="section">
-<h2>Online Payment History</h2>
-
-<div class="table-wrapper">
-<table>
-<thead>
-<tr>
-<th>Receipt</th>
-<th>Month</th>
-<th>Amount</th>
-<th>Date</th>
-<th>Download</th>
-</tr>
-</thead>
-<!-- <tbody>
-<tr>
-<td>REC-1001</td>
-<td>January</td>
-<td>৳ 500</td>
-<td>01 Jan 2026</td>
-<td><a href="#">PDF</a></td>
-</tr>
-</tbody></div> -->
-</table>
-</div>
-
-
 
 <div class="footer">
 © 2026 EverGreen Enterprise. All Rights Reserved.
 </div>
 
-<!-- ========================================  Money Receipt =============================================== -->
-  <div style="display: none;">
+
+<div style="display: none;">
     <div id="receiptTemplate" style="width: 595px; padding: 45px; background: #ffffff; color: #1e293b; font-family: 'Poppins', sans-serif; position: relative; border: 1px solid #e2e8f0; box-sizing: border-box;">
         
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0b6623; padding-bottom: 20px; margin-bottom: 30px;">
             <div style="display: flex; align-items: center; gap: 15px;">
-                <img id="rLogo" src="https://via.placeholder.com/50x50.png?text=Logo" alt="Logo" style="width: 50px; height: 50px; object-fit: contain; border-radius: 6px;">
+                <div style="width: 45px; height: 45px; background: #0b6623; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; border-radius: 8px; font-size: 20px;">E</div>
                 <div>
-                    <h2 style="color: #0b6623; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px;">SOCIETY CLUB</h2>
+                    <h2 style="color: #0b6623; margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px;">EverGreen Enterprise</h2>
                     <p style="margin: 4px 0 0 0; font-size: 10px; color: #556b2f; text-transform: uppercase; letter-spacing: 2px; font-weight: 500;">Secure Digital Money Receipt</p>
                 </div>
             </div>
@@ -514,7 +411,7 @@ class="download-btn"
             
             <div style="text-align: right; margin-right: 100px;">
                 <p style="margin: 0 0 4px 0; font-size: 12px; color: #334155;">Billing Month: <strong id="rMonth" style="color: #0f172a;">-</strong></p>
-                <p style="margin: 0; font-size: 12px; color: #334155;">Status: <span id="rStatus" style="font-weight: 600; color: #0b6623;">PAID</span></p>
+                <p style="margin: 0; font-size: 12px; color: #334155;">Status: <span style="font-weight: 600; color: #0b6623;">PAID</span></p>
             </div>
 
             <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%) rotate(-10deg); width: 85px; height: 85px; border: 3px dashed #6d28d9; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(109, 40, 217, 0.03); box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px rgba(109, 40, 217, 0.15); user-select: none;">
@@ -551,7 +448,7 @@ class="download-btn"
 
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 50px;">
             <div style="max-width: 65%;">
-                <p style="margin: 0; font-size: 10px; color: #94a3b8; line-height: 1.5;">* This is a secure, automated digital invoice generated by the club billing engine. No physical ink signature is required for authentication.</p>
+                <p style="margin: 0; font-size: 10px; color: #94a3b8; line-height: 1.5;">* This is a secure, automated digital invoice generated by the billing engine. No physical ink signature is required for authentication.</p>
             </div>
             <div style="text-align: center; width: 130px;">
                 <div style="border-bottom: 1px dashed #cbd5e1; margin-bottom: 6px; height: 25px;"></div>
@@ -559,31 +456,52 @@ class="download-btn"
             </div>
         </div>
     </div>
-  
-  
-<script>
-// ১. কনস্ট্যান্ট এবং গ্লোবাল ভেরিয়েবলসমূহ
-const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
-window.currentMemberData = null; 
+</div>
 
-// ২. পেজ লোড হওয়ার পর প্রারম্ভিক কাজ
+
+<div id="profilePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; overflow-y:auto;">
+    <div style="background:#fff; width:600px; max-width:90%; margin:30px auto; padding:30px; border-radius:10px; position:relative; box-shadow:0 0 20px rgba(0,0,0,0.5);">
+        <span id="closePopup" style="position:absolute; top:15px; right:20px; font-size:30px; color:#aaa; cursor:pointer;">&times;</span>
+        <h2 style="text-align:center; color:#0b6623; margin-bottom:20px;">📋 সদস্য প্রোফাইল</h2>
+        <div style="text-align:center;">
+            <img id="popupPhoto" src="" style="width:120px; height:120px; border-radius:50%; border:3px solid #0b6623; margin-bottom:15px; object-fit: cover;">
+            <h3 id="popupName"></h3>
+            <p><strong>Member ID:</strong> <span id="popupMemberId"></span></p>
+        </div>
+        <div style="margin-top:20px; color: #333;">
+            <p>📞 <strong>Phone:</strong> <span id="popupPhone"></span></p>
+            <p>📧 <strong>Email:</strong> <span id="popupEmail"></span></p>
+            <p>📜 <strong>NID:</strong> <span id="popupNid"></span></p>
+            <p>🅰️ <strong>Blood Group:</strong> <span id="popupBlood"></span></p>
+            <p>📍 <strong>Address:</strong> <span id="popupAddress"></span></p>
+            <p>📅 <strong>Join Date:</strong> <span id="popupJoinDate"></span></p>
+            <p>৳ <strong>Monthly Fee:</strong> <span id="popupFee"></span></p>
+            <p>👤 <strong>Nominee Name:</strong> <span id="popupNomineeName"></span></p>
+            <p>📞 <strong>Nominee Phone:</strong> <span id="popupNomineePhone"></span></p>
+        </div>
+        <div style="margin-top:20px; text-align:center;">
+            <a href="#" id="popupIdCard" target="_blank" style="padding:10px 20px; background:#0b6623; color:#fff; text-decoration:none; border-radius:5px; margin-right:10px;">Download ID Card</a>
+            <p style="margin-top:15px;"><strong>Signature:</strong><br><img id="popupSignature" src="" style="max-width:200px; height:auto;"></p>
+        </div>
+    </div>
+</div>
+
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
+window.currentMemberData = null; // গ্লোবাল ভেরিয়েবল ডাটা স্টোর করার জন্য
+
 window.onload = function() {
     const loggedInId = localStorage.getItem('memberId');
     if (!loggedInId) {
         window.location.href = "login.html";
         return;
     }
-    
-    const memberIdTextEl = document.getElementById("memberIdText");
-    if (memberIdTextEl) {
-        memberIdTextEl.innerText = "ID: " + loggedInId;
-    }
-    
+    document.getElementById("memberIdText").innerText = "ID: " + loggedInId;
     fetchMemberDashboardData(loggedInId);
     setupProfilePopupEvents();
 };
 
-// ৩. গুগল শিট থেকে ডাটা ফেচ করার ফাংশন
 async function fetchMemberDashboardData(memberId) {
     try {
         const response = await fetch(`${API_URL}?action=memberProfile&memberId=${memberId}`);
@@ -593,16 +511,16 @@ async function fetchMemberDashboardData(memberId) {
             const m = result.profile;
             const payments = result.payments || [];
             
-            window.currentMemberData = m;
+            window.currentMemberData = m; // ডাটা সেভ করা হলো যেন প্রোফাইল ও পিডিএফ লজিক এটি পায়
 
-            // প্রোফাইলের বেসিক তথ্য রেন্ডার
-            if(document.getElementById("memberName")) document.getElementById("memberName").innerText = m.name;
-            if(document.getElementById("memberPhone")) document.getElementById("memberPhone").innerText = "📞 " + m.phone;
-            if(document.getElementById("memberEmail")) document.getElementById("memberEmail").innerText = "📧 " + m.email;
+            // ১. বেসিক তথ্য রেন্ডার
+            document.getElementById("memberName").innerText = m.name;
+            document.getElementById("memberPhone").innerText = "📞 " + m.phone;
+            document.getElementById("memberEmail").innerText = "📧 " + m.email;
             if(document.getElementById("memberAddress")) document.getElementById("memberAddress").innerText = "📍 " + m.address;
-            if(document.getElementById("memberPhoto")) document.getElementById("memberPhoto").src = m.photo;
+            if(m.photo) document.getElementById("memberPhoto").src = m.photo;
 
-            // মেম্বারশিপ স্ট্যাটাস ব্যাজ
+            // ২. স্ট্যাটাস ব্যাজ
             const statusEl = document.getElementById("membershipStatus");
             if (statusEl) {
                 statusEl.innerText = m.status || "Active";
@@ -614,7 +532,7 @@ async function fetchMemberDashboardData(memberId) {
                 statusEl.style.color = (m.status === "Active") ? "#0f5132" : "#842029";
             }
 
-            // পেমেন্ট হিসাব ও উইজেট আপডেট
+            // ৩. পেমেন্ট হিসাব
             let totalPaid = 0;
             payments.forEach(p => {
                 if(String(p.status).toLowerCase() === 'paid') {
@@ -622,22 +540,22 @@ async function fetchMemberDashboardData(memberId) {
                 }
             });
 
-            if(document.getElementById("totalPayment")) document.getElementById("totalPayment").innerText = "৳ " + totalPaid.toLocaleString();
-            if(document.getElementById("totalReceipts")) document.getElementById("totalReceipts").innerText = payments.length;
+            document.getElementById("totalPayment").innerText = "৳ " + totalPaid.toLocaleString();
+            document.getElementById("totalReceipts").innerText = payments.length;
             
             let monthlyFee = Number(m.monthlyFee) || 500;
             let expectedTotal = (payments.length * monthlyFee);
             let dueAmount = expectedTotal - totalPaid;
-            if(document.getElementById("dueAmount")) {
-                document.getElementById("dueAmount").innerText = "৳ " + (dueAmount > 0 ? dueAmount.toLocaleString() : "0");
-            }
+            document.getElementById("dueAmount").innerText = "৳ " + (dueAmount > 0 ? dueAmount.toLocaleString() : "0");
 
+            // ৪. ডাউনলোড লিঙ্ক
             if(document.getElementById("membershipPdf")) document.getElementById("membershipPdf").href = m.pdfUrl || "#";
             if(document.getElementById("idCard")) document.getElementById("idCard").href = m.idCardUrl || "#";
 
-            // পেমেন্ট হিস্ট্রি টেবিল রেন্ডার
-            renderPaymentHistoryTable(payments);
+            // ৫. পেমেন্ট টেবিল রেন্ডার এবং ডাউনলোড বাটন তৈরি
+            renderPaymentTable(payments);
 
+            // ৬. নোটিশ বক্স
             if(result.notice && document.getElementById("noticeBox")) {
                 document.getElementById("noticeBox").innerHTML = `📢 <strong>${result.notice.title || 'Notice'}</strong><br>${result.notice.content || ''}`;
             }
@@ -647,183 +565,121 @@ async function fetchMemberDashboardData(memberId) {
     }
 }
 
-// ৪. পেমেন্ট টেবিল রেন্ডারিং
-function renderPaymentHistoryTable(paymentsArray) {
-    const tbody = document.getElementById("paymentTableBody");
-    if (!tbody) return;
-
-    tbody.innerHTML = ""; 
-
-    if (paymentsArray.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#7f8c8d; padding:20px;">কোনো পেমেন্ট রেকর্ড খুঁজে পাওয়া যায়নি।</td></tr>`;
-        return;
-    }
-
-    let runningTotal = 0;
+// টেবিল রেন্ডার এবং পিডিএফ বাটন জেনারেট করার ফাংশন
+function renderPaymentTable(payments) {
     let tableHTML = "";
-
-    paymentsArray.forEach((p, index) => {
-        const amount = Number(p.amount || 0);
-        const fine = Number(p.fine || 0);
+    let runningTotal = 0;
+    
+    payments.forEach(p => {
+        const amount = Number(p.amount) || 0;
+        const fine = Number(p.fine) || 0;
         runningTotal += (amount + fine);
         
         const currentStatus = String(p.status || 'Pending').trim();
         const statusClass = currentStatus.toLowerCase() === 'paid' ? 'paid' : 'due';
-        const monthName = p.month || p.monthStr || '-';
-
-        let actionHTML = "-";
-        if (currentStatus.toLowerCase() === 'paid') {
-            actionHTML = `<button onclick="generateReceiptPDF('${monthName}', ${amount}, ${fine})" style="background: #0b6623; color: #fff; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500; transition: 0.2s;">📄 Download</button>`;
+        
+        // PAID হলে ডাউনলোড বাটন দেখাবে
+        let actionButton = "-";
+        if(currentStatus.toLowerCase() === 'paid') {
+            actionButton = `<button onclick="generateReceiptPDF('${p.month}', ${amount}, ${fine})" style="background: #0b6623; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">📄 Download</button>`;
         } else {
-            actionHTML = `<span style="color: #c0392b; font-size: 12px; font-weight:500;">Unpaid</span>`;
+            actionButton = `<span style="color: #b91c1c; font-size: 13px; font-weight: 600;">Unpaid</span>`;
         }
 
-        tableHTML += `
-            <tr>
-                <td>${monthName}</td>
-                <td><span class="${statusClass}">${currentStatus}</span></td>
-                <td>৳ ${amount.toLocaleString()}</td>
-                <td><strong>৳ ${runningTotal.toLocaleString()}</strong></td>
-                <td>${actionHTML}</td>
-            </tr>`;
+        tableHTML += `<tr>
+            <td>${p.month}</td>
+            <td><span class="${statusClass}">${p.status}</span></td>
+            <td>৳ ${amount.toLocaleString()}</td>
+            <td>৳ ${runningTotal.toLocaleString()}</td>
+            <td>${actionButton}</td>
+        </tr>`;
     });
-
-    tbody.innerHTML = tableHTML;
+    document.getElementById("paymentTableBody").innerHTML = tableHTML;
 }
 
-// 🎯 ৫. মেইন ফাংশন: ক্লিক করলে ডেটা রিসিটে বসবে এবং সুন্দরভাবে পিডিএফ ডাউনলোড হবে
+// 🎯 মেইন পিডিএফ জেনারেশন ম্যাজিক ফাংশন
 function generateReceiptPDF(month, amount, fine) {
     const m = window.currentMemberData;
     if (!m) {
-        alert("ডাটা এখনো সম্পূর্ণ লোড হয়নি, দয়া করে আবার চেষ্টা করুন।");
+        alert("ডাটা এখনো লোড হচ্ছে, কিছুক্ষণ পর চেষ্টা করুন।");
         return;
     }
 
-    // আজকের তারিখ বের করা
     const today = new Date().toLocaleDateString('en-GB'); 
 
-    // রিসিটের ভেতরে লাইভ ডাটা পুশ করা
+    // ডাটা সেট করা রিসিট কার্ডে
     document.getElementById("rCurrentDate").innerText = today;
     document.getElementById("rMemberName").innerText = m.name || "N/A";
-    document.getElementById("rMemberId").innerText = m.memberId || "N/A";
+    document.getElementById("rMemberId").innerText = m.memberId || localStorage.getItem('memberId');
     document.getElementById("rMemberPhone").innerText = m.phone ? "📞 " + m.phone : "";
     document.getElementById("rMonth").innerText = month;
-    document.getElementById("rStatus").innerText = "PAID";
     document.getElementById("rMainAmount").innerText = "৳ " + amount.toLocaleString();
     document.getElementById("rFineAmount").innerText = "৳ " + fine.toLocaleString();
     document.getElementById("rTotalAmount").innerText = "৳ " + (amount + fine).toLocaleString();
 
-    // 💡 ঐচ্ছিক: রিসিটে যদি ক্লাবের নির্দিষ্ট লোগো ডাইনামিকালি বসাতে চান
-    if(m.photo && document.getElementById("rLogo")) {
-        // আপনি চাইলে এখানে m.photo এর বদলে সরাসরি আপনার স্থায়ী লোগো ইউআরএল বসিয়ে দিতে পারেন
-        // document.getElementById("rLogo").src = "আপনার_স্থায়ী_লোগো_লিঙ্ক";
-    }
-
-    // html2pdf.js এর কনফিগারেশন সেটআপ
+    // পিডিএফ কনফিগারেশন
     const element = document.getElementById("receiptTemplate");
     const opt = {
         margin:       10,
         filename:     `Receipt_${month}_ID_${m.memberId || 'Member'}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true }, 
+        html2canvas:  { scale: 2, useCORS: true, allowTaint: true }, 
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // পিডিএফ জেনারেট এবং ডাউনলোড স্টার্ট
+    // তৈরি এবং সেভ
     html2pdf().set(opt).from(element).save();
 }
 
-// ৬. প্রোফাইল পপআপ মোডালের কোড
+// প্রোফাইল পপআপ ইভেন্ট হ্যান্ডলার
 function setupProfilePopupEvents() {
-    const viewProfileBtn = document.getElementById("viewProfileBtn");
-    const closePopup = document.getElementById("closePopup");
-    const profilePopup = document.getElementById("profilePopup");
-
-    if (viewProfileBtn) {
-        viewProfileBtn.addEventListener("click", function(e) {
+    const viewBtn = document.getElementById("viewProfileBtn");
+    if(viewBtn) {
+        viewBtn.addEventListener("click", function(e) {
             e.preventDefault();
             const m = window.currentMemberData;
             
             if(!m) {
-                alert("সදস্য তথ্য লোড হচ্ছে, দয়া করে অপেক্ষা করুন।");
+                alert("সদস্য তথ্য লোড হচ্ছে, দয়া করে অপেক্ষা করুন।");
                 return;
             }
             
-            if(document.getElementById("popupMemberId")) document.getElementById("popupMemberId").innerText = m.memberId || '';
-            if(document.getElementById("popupName")) document.getElementById("popupName").innerText = m.name || '';
-            if(document.getElementById("popupPhone")) document.getElementById("popupPhone").innerText = m.phone || '';
-            if(document.getElementById("popupEmail")) document.getElementById("popupEmail").innerText = m.email || '';
-            if(document.getElementById("popupNid")) document.getElementById("popupNid").innerText = m.nid || 'N/A';
-            if(document.getElementById("popupBlood")) document.getElementById("popupBlood").innerText = m.blood || 'N/A';
-            if(document.getElementById("popupAddress")) document.getElementById("popupAddress").innerText = m.address || 'N/A';
-            if(document.getElementById("popupNomineeName")) document.getElementById("popupNomineeName").innerText = m.nomineeName || 'N/A';
-            if(document.getElementById("popupNomineePhone")) document.getElementById("popupNomineePhone").innerText = m.nomineePhone || 'N/A';
-            if(document.getElementById("popupJoinDate")) document.getElementById("popupJoinDate").innerText = m.joinDate || 'N/A';
-            if(document.getElementById("popupFee")) document.getElementById("popupFee").innerText = m.monthlyFee || 'N/A';
+            document.getElementById("popupMemberId").innerText = m.memberId || localStorage.getItem('memberId');
+            document.getElementById("popupName").innerText = m.name || '';
+            document.getElementById("popupPhone").innerText = m.phone || '';
+            document.getElementById("popupEmail").innerText = m.email || '';
+            document.getElementById("popupNid").innerText = m.nid || 'N/A';
+            document.getElementById("popupBlood").innerText = m.blood || 'N/A';
+            document.getElementById("popupAddress").innerText = m.address || 'N/A';
+            document.getElementById("popupNomineeName").innerText = m.nomineeName || 'N/A';
+            document.getElementById("popupNomineePhone").innerText = m.nomineePhone || 'N/A';
+            document.getElementById("popupJoinDate").innerText = m.joinDate || 'N/A';
+            document.getElementById("popupFee").innerText = m.monthlyFee || 'N/A';
             
-            if(document.getElementById("popupPhoto")) document.getElementById("popupPhoto").src = m.photo || '';
-            if(document.getElementById("popupSignature")) document.getElementById("popupSignature").src = m.signatureUrl || ''; 
+            if(m.photo) document.getElementById("popupPhoto").src = m.photo;
+            if(m.signatureUrl) document.getElementById("popupSignature").src = m.signatureUrl; 
             if(document.getElementById("popupIdCard")) document.getElementById("popupIdCard").href = m.idCardUrl || '#';
             
-            if (profilePopup) profilePopup.style.display = "block";
+            document.getElementById("profilePopup").style.display = "block";
         });
     }
 
-    if (closePopup) {
-        closePopup.addEventListener("click", function() {
-            if (profilePopup) profilePopup.style.display = "none";
-        });
-    }
+    document.getElementById("closePopup").addEventListener("click", function() {
+        document.getElementById("profilePopup").style.display = "none";
+    });
 
     window.addEventListener("click", function(e) {
-        if (profilePopup && e.target === profilePopup) {
-            profilePopup.style.display = "none";
+        const popup = document.getElementById("profilePopup");
+        if (e.target == popup) {
+            popup.style.display = "none";
         }
     });
 }
 
-// ৭. লগআউট ফাংশন
 function logout() {
     localStorage.clear();
     window.location.href = "login.html";
 }
-</script>>
-  
-<div id="profilePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; overflow-y:auto;">
-    <div style="background:#fff; width:600px; max-width:90%; margin:30px auto; padding:30px; border-radius:10px; position:relative; box-shadow:0 0 20px rgba(0,0,0,0.5);">
-        
-        <span id="closePopup" style="position:absolute; top:15px; right:20px; font-size:30px; color:#aaa; cursor:pointer;">&times;</span>
-        
-        <h2 style="text-align:center; color:#0b6623; margin-bottom:20px;">📋 সদস্য প্রোফাইল</h2>
-        
-        <div style="text-align:center;">
-            <img id="popupPhoto" src="" style="width:120px; height:120px; border-radius:50%; border:3px solid #0b6623; margin-bottom:15px;">
-            <h3 id="popupName"></h3>
-            <p><strong>Member ID:</strong> <span id="popupMemberId"></span></p>
-        </div>
-
-        <div style="margin-top:20px;">
-            <p>📞 <strong>Phone:</strong> <span id="popupPhone"></span></p>
-            <p>📧 <strong>Email:</strong> <span id="popupEmail"></span></p>
-            <p>📜 <strong>NID:</strong> <span id="popupNid"></span></p>
-            <p>🅰️ <strong>Blood Group:</strong> <span id="popupBlood"></span></p>
-            <p>📍 <strong>Address:</strong> <span id="popupAddress"></span></p>
-            <p>📅 <strong>Join Date:</strong> <span id="popupJoinDate"></span></p>
-            <p>৳ <strong>Monthly Fee:</strong> <span id="popupFee"></span></p>
-            <p>👤 <strong>Nominee Name:</strong> <span id="popupNomineeName"></span></p>
-            <p>📞 <strong>Nominee Phone:</strong> <span id="popupNomineePhone"></span></p>
-        </div>
-        
-        <div style="margin-top:20px; text-align:center;">
-            <a href="#" id="popupIdCard" target="_blank" style="padding:10px 20px; background:#0b6623; color:#fff; text-decoration:none; border-radius:5px; margin-right:10px;">Download ID Card</a>
-            <p style="margin-top:15px;"><strong>Signature:</strong><br><img id="popupSignature" src="" style="max-width:200px; height:auto;"></p>
-        </div>
-    </div>
-</div>
-
-
-
-
-</div>
+</script>
 </body>
 </html>
