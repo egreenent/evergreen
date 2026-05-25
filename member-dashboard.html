@@ -578,7 +578,7 @@ async function fetchMemberDashboardData(memberId) {
     }
 }
 
-// ৪. পেমেন্ট হিস্ট্রি টেবিল ডায়নামিকালি সাজানোর ফাংশন (রিসিট কলামসহ)
+// ৪. পেমেন্ট হিস্ট্রি টেবিল ডায়নামিকালি সাজানোর ফাংশন (Receipt URL কলামসহ)
 function renderPaymentHistoryTable(paymentsArray) {
     const tbody = document.getElementById("paymentTableBody");
     if (!tbody) return;
@@ -601,11 +601,12 @@ function renderPaymentHistoryTable(paymentsArray) {
         const currentStatus = String(p.status || 'Pending').trim();
         const statusClass = currentStatus.toLowerCase() === 'paid' ? 'paid' : 'due';
 
-        // গুগল শিট থেকে আসা পিডিএফ রিসিট লিঙ্ক চেক করা (যেমন: p.receiptUrl)
-        // যদি লিঙ্ক না থাকে, তবে 'Not Available' বা ড্যাশ (-) দেখাবে
+        // 🎯 আপনার গুগল শিটের 'Receipt URL' কলামের ডাটা এখানে চেক করা হচ্ছে
+        let receiptUrlData = p["Receipt URL"] || p.receiptUrl || "";
         let receiptLinkHTML = "-";
-        if (p.receiptUrl && p.receiptUrl !== "#") {
-            receiptLinkHTML = `<a href="${p.receiptUrl}" target="_blank" style="color: #0b6623; text-decoration: underline; font-weight: 600;">📄 Download</a>`;
+        
+        if (receiptUrlData && receiptUrlData.trim() !== "" && receiptUrlData !== "#") {
+            receiptLinkHTML = `<a href="${receiptUrlData}" target="_blank" style="color: #0b6623; text-decoration: underline; font-weight: 600;">📄 Download</a>`;
         } else if (currentStatus.toLowerCase() === 'paid') {
             receiptLinkHTML = `<span style="color: #999; font-size: 13px;">Processing</span>`;
         }
@@ -678,7 +679,7 @@ function logout() {
     window.location.href = "login.html";
 }
 </script>
-
+  
 <div id="profilePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; overflow-y:auto;">
     <div style="background:#fff; width:600px; max-width:90%; margin:30px auto; padding:30px; border-radius:10px; position:relative; box-shadow:0 0 20px rgba(0,0,0,0.5);">
         
