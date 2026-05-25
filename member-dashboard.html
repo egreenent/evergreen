@@ -439,7 +439,6 @@ class="download-btn"
 </thead>
 
 <tbody id="paymentTableBody">
-
 </tbody>
 
 </table>
@@ -496,18 +495,31 @@ class="download-btn"
 </div>
 
 <script>
+// ১. কনস্ট্যান্ট এবং গ্লোবাল ভেরিয়েবলসমূহ
 const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
+window.currentMemberData = null; // প্রোফাইল পপআপে ডাটা শেয়ার করার জন্য
 
+// ২. পেজ লোড হওয়ার পর প্রারম্ভিক কাজ
 window.onload = function() {
     const loggedInId = localStorage.getItem('memberId');
     if (!loggedInId) {
         window.location.href = "login.html";
         return;
     }
-    document.getElementById("memberIdText").innerText = "ID: " + loggedInId;
+    
+    const memberIdTextEl = document.getElementById("memberIdText");
+    if (memberIdTextEl) {
+        memberIdTextEl.innerText = "ID: " + loggedInId;
+    }
+    
+    // গুগল শিট থেকে ড্যাশবোর্ডের লাইভ ডাটা আনা শুরু করা
     fetchMemberDashboardData(loggedInId);
+    
+    // ইভেন্ট লিসেনারগুলো চালু করা
+    setupProfilePopupEvents();
 };
 
+// ৩. গুগল শিট থেকে ডাটা ফেচ এবং ড্যাশবোর্ড আপডেট করার মূল ফাংশন
 async function fetchMemberDashboardData(memberId) {
     try {
         const response = await fetch(`${API_URL}?action=memberProfile&memberId=${memberId}`);
@@ -515,21 +527,22 @@ async function fetchMemberDashboardData(memberId) {
 
         if (result.success) {
             const m = result.profile;
-            const payments = result.payments;
-
-            // ১. বেসিক তথ্য (নাম, ফোন, ইমেইল, অ্যাড্রেস)
-            document.getElementById("memberName").innerText = m.name;
-            document.getElementById("memberPhone").innerText = "📞 " + m.phone;
-            document.getElementById("memberEmail").innerText = "📧 " + m.email;
-            // ইমেইলের নিচে এড্রেস বসানোর জন্য (নিশ্চিত করুন HTML-এ addressText আইডি আছে)
-            if(document.getElementById("addressText")) document.getElementById("addressText").innerText = "📍 " + m.address;
+            const payments = result.payments || [];
             
-            document.getElementById("memberPhoto").src = m.photo;
+            // ভবিষ্যৎ ব্যবহারের জন্য ডাটা গ্লোবাল অবজেক্টে সেভ রাখা
+            window.currentMemberData = m;
 
-            // ২. স্ট্যাটাস ব্যাজ
+            // ক. প্রোফাইলের বেসিক তথ্য রেন্ডার
+            if(document.getElementById("memberName")) document.getElementById("memberName").innerText = m.name;
+            if(document.getElementById("memberPhone")) document.getElementById("memberPhone").innerText = "📞 " + m.phone;
+            if(document.getElementById("memberEmail")) document.getElementById("memberEmail").innerText = "📧 " + m.email;
+            if(document.getElementById("memberAddress")) document.getElementById("memberAddress").innerText = "📍 " + m.address;
+            if(document.getElementById("memberPhoto")) document.getElementById("memberPhoto").src = m.photo;
+
+            // খ. মেম্বারশিপ স্ট্যাটাস ব্যাজ আপডেট
             const statusEl = document.getElementById("membershipStatus");
             if (statusEl) {
-                statusEl.innerText = m.status;
+                statusEl.innerText = m.status || "Active";
                 statusEl.style.padding = "5px 15px";
                 statusEl.style.borderRadius = "20px";
                 statusEl.style.display = "inline-block";
@@ -538,7 +551,7 @@ async function fetchMemberDashboardData(memberId) {
                 statusEl.style.color = (m.status === "Active") ? "#0f5132" : "#842029";
             }
 
-            // ৩. পেমেন্ট হিসাব (Total Payment, Total Receipts, Due Amount)
+            // গ. উইজেট কাউন্টার ও পেমেন্ট হিসাব
             let totalPaid = 0;
             payments.forEach(p => {
                 if(String(p.status).toLowerCase() === 'paid') {
@@ -546,31 +559,27 @@ async function fetchMemberDashboardData(memberId) {
                 }
             });
 
-            document.getElementById("totalPayment").innerText = "৳ " + totalPaid.toLocaleString();
-            document.getElementById("totalReceipts").innerText = payments.length;
+            if(document.getElementById("totalPayment")) document.getElementById("totalPayment").innerText = "৳ " + totalPaid.toLocaleString();
+            if(document.getElementById("totalReceipts")) document.getElementById("totalReceipts").innerText = payments.length;
             
-            // Due Amount হিসাব (মাসিক ফি ৫০০ ধরে)
+            // Due Amount হিসাব (ডিফল্ট মাসিক ফি ৫০০ ধরে)
             let monthlyFee = Number(m.monthlyFee) || 500;
             let expectedTotal = (payments.length * monthlyFee);
             let dueAmount = expectedTotal - totalPaid;
-            document.getElementById("dueAmount").innerText = "৳ " + (dueAmount > 0 ? dueAmount.toLocaleString() : "0");
+            if(document.getElementById("dueAmount")) {
+                document.getElementById("dueAmount").innerText = "৳ " + (dueAmount > 0 ? dueAmount.toLocaleString() : "0");
+            }
 
-            // ৪. ডাউনলোড লিঙ্ক
-            if(document.getElementById("membershipPdf")) document.getElementById("membershipPdf").href = m.pdfUrl;
-            if(document.getElementById("idCard")) document.getElementById("idCard").href = m.idCardUrl;
+            // ঘ. পিডিএফ ও আইডি কার্ডের ডাউনলোড লিঙ্ক আপডেট
+            if(document.getElementById("membershipPdf")) document.getElementById("membershipPdf").href = m.pdfUrl || "#";
+            if(document.getElementById("idCard")) document.getElementById("idCard").href = m.idCardUrl || "#";
 
-            // ৫. পেমেন্ট টেবিল রেন্ডার
-            let tableHTML = "";
-            let runningTotal = 0;
-            payments.forEach(p => {
-                runningTotal += Number(p.amount) + Number(p.fine);
-                tableHTML += `<tr><td>${p.month}</td><td>${p.status}</td><td>৳${p.amount}</td><td>৳${runningTotal}</td></tr>`;
-            });
-            document.getElementById("paymentTableBody").innerHTML = tableHTML;
+            // ঙ. পেমেন্ট হিস্ট্রি টেবিল রেন্ডার (Payment History Table)
+            renderPaymentHistoryTable(payments);
 
-            // ৬. নোটিশ বক্স
+            // চ. নোটিশ বোর্ড আপডেট
             if(result.notice && document.getElementById("noticeBox")) {
-                document.getElementById("noticeBox").innerHTML = `📢 <strong>${result.notice.title}</strong><br>${result.notice.content}`;
+                document.getElementById("noticeBox").innerHTML = `📢 <strong>${result.notice.title || 'Notice'}</strong><br>${result.notice.content || ''}`;
             }
         }
     } catch (error) {
@@ -578,54 +587,97 @@ async function fetchMemberDashboardData(memberId) {
     }
 }
 
+// ৪. পেমেন্ট হিস্ট্রি টেবিল ডায়নামিকালি সাজানোর ফাংশន
+function renderPaymentHistoryTable(paymentsArray) {
+    const tbody = document.getElementById("paymentTableBody");
+    if (!tbody) return;
 
-// ১. 'Profile' বাটনে ক্লিক করার লজিক (নিশ্চিত করুন আপনার প্রোফাইল বাটনের ID 'viewProfileBtn')
-document.getElementById("viewProfileBtn").addEventListener("click", function(e) {
-    e.preventDefault();
-    const m = window.currentMemberData; // এটি আপনার fetchMemberDashboardData ফাংশন থেকে আসবে
-    
-    if(!m) {
-        alert("সদস্য তথ্য লোড হচ্ছে, দয়া করে অপেক্ষা করুন।");
+    tbody.innerHTML = ""; // ডামি ডাটা পরিষ্কার করা
+
+    if (paymentsArray.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#7f8c8d; padding:20px;">কোনো পেমেন্ট রেকর্ড খুঁজে পাওয়া যায়নি।</td></tr>`;
         return;
     }
-    
-    // পপআপের আইডিগুলো ম্যাপিং করা
-    document.getElementById("popupMemberId").innerText = m.memberId;
-    document.getElementById("popupName").innerText = m.name;
-    document.getElementById("popupPhone").innerText = m.phone;
-    document.getElementById("popupEmail").innerText = m.email;
-    document.getElementById("popupNid").innerText = m.nid || 'N/A';
-    document.getElementById("popupBlood").innerText = m.blood || 'N/A';
-    document.getElementById("popupAddress").innerText = m.address || 'N/A';
-    document.getElementById("popupNomineeName").innerText = m.nomineeName || 'N/A';
-    document.getElementById("popupNomineePhone").innerText = m.nomineePhone || 'N/A';
-    document.getElementById("popupJoinDate").innerText = m.joinDate || 'N/A';
-    document.getElementById("popupFee").innerText = m.monthlyFee || 'N/A';
-    
-    // ছবি, স্বাক্ষর এবং আইডি কার্ড
-    document.getElementById("popupPhoto").src = m.photo;
-    document.getElementById("popupSignature").src = m.signatureUrl || ''; 
-    document.getElementById("popupIdCard").href = m.idCardUrl || '#';
-    
-    // পপআপ ওপেন করা
-    document.getElementById("profilePopup").style.display = "block";
-});
 
-// ২. ক্লোজ বাটনে ক্লিক করলে পপআপ বন্ধ করার লজিক
-document.getElementById("closePopup").addEventListener("click", function() {
-    document.getElementById("profilePopup").style.display = "none";
-});
+    let runningTotal = 0;
+    let tableHTML = "";
 
-// ৩. পপআপের বাইরে ক্লিক করলেও বন্ধ হওয়ার লজিক
-window.addEventListener("click", function(e) {
-    const popup = document.getElementById("profilePopup");
-    if (e.target == popup) {
-        popup.style.display = "none";
+    paymentsArray.forEach(p => {
+        const amount = Number(p.amount || 0);
+        const fine = Number(p.fine || 0);
+        runningTotal += (amount + fine);
+        
+        const currentStatus = String(p.status || 'Pending').trim();
+        const statusClass = currentStatus.toLowerCase() === 'paid' ? 'paid' : 'due';
+
+        tableHTML += `
+            <tr>
+                <td>${p.month || p.monthStr || '-'}</td>
+                <td><span class="${statusClass}">${currentStatus}</span></td>
+                <td>৳ ${amount.toLocaleString()}</td>
+                <td><strong>৳ ${runningTotal.toLocaleString()}</strong></td>
+            </tr>`;
+    });
+
+    tbody.innerHTML = tableHTML;
+}
+
+// ৫. প্রোফাইল পপআপ মোডালের ইভেন্ট লিসেনার ও হ্যান্ডলিং
+function setupProfilePopupEvents() {
+    const viewProfileBtn = document.getElementById("viewProfileBtn");
+    const closePopup = document.getElementById("closePopup");
+    const profilePopup = document.getElementById("profilePopup");
+
+    // যদি আপনার HTML-এ 'viewProfileBtn' বাটনটি সচল থাকে তবেই এই লজিক কাজ করবে
+    if (viewProfileBtn) {
+        viewProfileBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+            const m = window.currentMemberData;
+            
+            if(!m) {
+                alert("সদস্য তথ্য লোড হচ্ছে, দয়া করে অপেক্ষা করুন।");
+                return;
+            }
+            
+            // পপআপের ভেতরের ডাটাগুলো ম্যাপিং করা
+            if(document.getElementById("popupMemberId")) document.getElementById("popupMemberId").innerText = m.memberId || '';
+            if(document.getElementById("popupName")) document.getElementById("popupName").innerText = m.name || '';
+            if(document.getElementById("popupPhone")) document.getElementById("popupPhone").innerText = m.phone || '';
+            if(document.getElementById("popupEmail")) document.getElementById("popupEmail").innerText = m.email || '';
+            if(document.getElementById("popupNid")) document.getElementById("popupNid").innerText = m.nid || 'N/A';
+            if(document.getElementById("popupBlood")) document.getElementById("popupBlood").innerText = m.blood || 'N/A';
+            if(document.getElementById("popupAddress")) document.getElementById("popupAddress").innerText = m.address || 'N/A';
+            if(document.getElementById("popupNomineeName")) document.getElementById("popupNomineeName").innerText = m.nomineeName || 'N/A';
+            if(document.getElementById("popupNomineePhone")) document.getElementById("popupNomineePhone").innerText = m.nomineePhone || 'N/A';
+            if(document.getElementById("popupJoinDate")) document.getElementById("popupJoinDate").innerText = m.joinDate || 'N/A';
+            if(document.getElementById("popupFee")) document.getElementById("popupFee").innerText = m.monthlyFee || 'N/A';
+            
+            // মিডিয়া ফাইল এবং লিঙ্কসমূহ
+            if(document.getElementById("popupPhoto")) document.getElementById("popupPhoto").src = m.photo || '';
+            if(document.getElementById("popupSignature")) document.getElementById("popupSignature").src = m.signatureUrl || ''; 
+            if(document.getElementById("popupIdCard")) document.getElementById("popupIdCard").href = m.idCardUrl || '#';
+            
+            // মোডাল প্রদর্শন করা
+            if (profilePopup) profilePopup.style.display = "block";
+        });
     }
-});
 
+    // ক্লোজ বাটনে ক্লিক করলে মোডাল বন্ধ করা
+    if (closePopup) {
+        closePopup.addEventListener("click", function() {
+            if (profilePopup) profilePopup.style.display = "none";
+        });
+    }
 
-  
+    // মোডালের বাইরে ব্যাকড্রপে ক্লিক করলে বন্ধ হওয়া
+    window.addEventListener("click", function(e) {
+        if (profilePopup && e.target === profilePopup) {
+            profilePopup.style.display = "none";
+        }
+    });
+}
+
+// ৬. লগআউট ফাংশন
 function logout() {
     localStorage.clear();
     window.location.href = "login.html";
