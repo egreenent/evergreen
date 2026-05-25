@@ -352,6 +352,60 @@ font-size:32px;
 <div class="download-box">
 <a id="membershipPdf" href="#" target="_blank" class="download-btn">📄 Membership PDF</a>
 <a id="idCard" href="#" target="_blank" class="download-btn">🪪 ID Card</a>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* আপনার আগের সব স্টাইল এখানে থাকবে... */
+        .card-header { height: 200px; background: linear-gradient(135deg, #0b6623, #15803d); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
+<button class="btn-download" onclick="generatePDF()">📥 Download PDF</button>
+
+<div id="id-card-area" style="display: flex; gap: 30px; justify-content: center; padding: 40px;">
+    
+    <div class="id-card">
+        <div class="card-header">
+            <img src="YOUR_LOGO_URL_HERE" style="width: 60px; height: 60px; margin-bottom: 5px;">
+            <div style="color: white; font-weight: 900; font-size: 18px;">EVERGREEN ENTERPRISE</div>
+        </div>
+
+        <div class="profile-img">
+            <img src="MEMBER_PHOTO_URL_HERE" alt="Member Photo">
+        </div>
+        
+        <div class="member-info">
+            <h2>Arif Rahman</h2>
+            <span class="designation">Marketing Manager</span>
+            
+            <div class="data-list">
+                <div>📱 <b>01712-345678</b></div>
+                <div>🆔 <b>1234 5678 9012</b></div>
+                <div>🩸 <b>B+ (Positive)</b></div>
+                <div style="margin-top: 5px; font-size: 12px;">📍 <b>House 12, Road 5, Dhanmondi, Dhaka</b></div>
+            </div>
+        </div>
+        <div class="id-footer">ID: S-45920</div>
+    </div>
+
+    </div>
+
+<script>
+    function generatePDF() {
+        const element = document.getElementById('id-card-area');
+        html2pdf().from(element).save();
+    }
+</script>
+
+</body>
+</html>
+  
+  
 </div>
 </div>
 
