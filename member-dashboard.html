@@ -485,10 +485,12 @@ class="download-btn"
 © 2026 EverGreen Enterprise. All Rights Reserved.
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
 <script>
 // ১. কনস্ট্যান্ট এবং গ্লোবাল ভেরিয়েবলসমূহ
 const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
-window.currentMemberData = null; // প্রোফাইল পপআপে ডাটা শেয়ার করার জন্য
+window.currentMemberData = null; 
 
 // ২. পেজ লোড হওয়ার পর প্রারম্ভিক কাজ
 window.onload = function() {
@@ -503,14 +505,11 @@ window.onload = function() {
         memberIdTextEl.innerText = "ID: " + loggedInId;
     }
     
-    // গুগল শিট থেকে ড্যাশবোর্ডের লাইভ ডাটা আনা শুরু করা
     fetchMemberDashboardData(loggedInId);
-    
-    // ইভেন্ট লিসেনারগুলো চালু করা
     setupProfilePopupEvents();
 };
 
-// ৩. গুগল শিট থেকে ডাটা ফেচ এবং ড্যাশবোর্ড আপডেট করার মূল ফাংশন
+// ৩. গুগল শিট থেকে ডাটা ফেচ করার ফাংশন
 async function fetchMemberDashboardData(memberId) {
     try {
         const response = await fetch(`${API_URL}?action=memberProfile&memberId=${memberId}`);
@@ -520,17 +519,16 @@ async function fetchMemberDashboardData(memberId) {
             const m = result.profile;
             const payments = result.payments || [];
             
-            // ভবিষ্যৎ ব্যবহারের জন্য ডাটা গ্লোবাল অবজেক্টে সেভ রাখা
             window.currentMemberData = m;
 
-            // ক. প্রোফাইলের বেসিক তথ্য রেন্ডার
+            // প্রোফাইলের বেসিক তথ্য রেন্ডার
             if(document.getElementById("memberName")) document.getElementById("memberName").innerText = m.name;
             if(document.getElementById("memberPhone")) document.getElementById("memberPhone").innerText = "📞 " + m.phone;
             if(document.getElementById("memberEmail")) document.getElementById("memberEmail").innerText = "📧 " + m.email;
             if(document.getElementById("memberAddress")) document.getElementById("memberAddress").innerText = "📍 " + m.address;
             if(document.getElementById("memberPhoto")) document.getElementById("memberPhoto").src = m.photo;
 
-            // খ. মেম্বারশিপ স্ট্যাটাস ব্যাজ আপডেট
+            // মেম্বারশিপ স্ট্যাটাস ব্যাজ
             const statusEl = document.getElementById("membershipStatus");
             if (statusEl) {
                 statusEl.innerText = m.status || "Active";
@@ -542,7 +540,7 @@ async function fetchMemberDashboardData(memberId) {
                 statusEl.style.color = (m.status === "Active") ? "#0f5132" : "#842029";
             }
 
-            // গ. উইজেট কাউন্টার ও পেমেন্ট হিসাব
+            // পেমেন্ট হিসাব ও উইজেট আপডেট
             let totalPaid = 0;
             payments.forEach(p => {
                 if(String(p.status).toLowerCase() === 'paid') {
@@ -553,7 +551,6 @@ async function fetchMemberDashboardData(memberId) {
             if(document.getElementById("totalPayment")) document.getElementById("totalPayment").innerText = "৳ " + totalPaid.toLocaleString();
             if(document.getElementById("totalReceipts")) document.getElementById("totalReceipts").innerText = payments.length;
             
-            // Due Amount হিসাব (ডিফল্ট মাসিক ফি ৫০০ ধরে)
             let monthlyFee = Number(m.monthlyFee) || 500;
             let expectedTotal = (payments.length * monthlyFee);
             let dueAmount = expectedTotal - totalPaid;
@@ -561,14 +558,12 @@ async function fetchMemberDashboardData(memberId) {
                 document.getElementById("dueAmount").innerText = "৳ " + (dueAmount > 0 ? dueAmount.toLocaleString() : "0");
             }
 
-            // ঘ. পিডিএফ ও আইডি কার্ডের ডাউনলোড লিঙ্ক আপডেট
             if(document.getElementById("membershipPdf")) document.getElementById("membershipPdf").href = m.pdfUrl || "#";
             if(document.getElementById("idCard")) document.getElementById("idCard").href = m.idCardUrl || "#";
 
-            // ঙ. পেমেন্ট হিস্ট্রি টেবিল রেন্ডার (Payment History Table)
+            // পেমেন্ট হিস্ট্রি টেবিল রেন্ডার
             renderPaymentHistoryTable(payments);
 
-            // চ. নোটিশ বোর্ড আপডেট
             if(result.notice && document.getElementById("noticeBox")) {
                 document.getElementById("noticeBox").innerHTML = `📢 <strong>${result.notice.title || 'Notice'}</strong><br>${result.notice.content || ''}`;
             }
@@ -578,12 +573,12 @@ async function fetchMemberDashboardData(memberId) {
     }
 }
 
-// ৪. পেমেন্ট হিস্ট্রি টেবিল ডায়নামিকালি সাজানোর ফাংশন (Receipt URL কলামসহ)
+// ৪. পেমেন্ট টেবিল রেন্ডারিং
 function renderPaymentHistoryTable(paymentsArray) {
     const tbody = document.getElementById("paymentTableBody");
     if (!tbody) return;
 
-    tbody.innerHTML = ""; // ডামি ডাটা পরিষ্কার করা
+    tbody.innerHTML = ""; 
 
     if (paymentsArray.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#7f8c8d; padding:20px;">কোনো পেমেন্ট রেকর্ড খুঁজে পাওয়া যায়নি।</td></tr>`;
@@ -593,38 +588,78 @@ function renderPaymentHistoryTable(paymentsArray) {
     let runningTotal = 0;
     let tableHTML = "";
 
-    paymentsArray.forEach(p => {
+    paymentsArray.forEach((p, index) => {
         const amount = Number(p.amount || 0);
         const fine = Number(p.fine || 0);
         runningTotal += (amount + fine);
         
         const currentStatus = String(p.status || 'Pending').trim();
         const statusClass = currentStatus.toLowerCase() === 'paid' ? 'paid' : 'due';
+        const monthName = p.month || p.monthStr || '-';
 
-        // 🎯 আপনার গুগল শিটের 'Receipt URL' কলামের ডাটা এখানে চেক করা হচ্ছে
-        let receiptUrlData = p["Receipt URL"] || p.receiptUrl || "";
-        let receiptLinkHTML = "-";
-        
-        if (receiptUrlData && receiptUrlData.trim() !== "" && receiptUrlData !== "#") {
-            receiptLinkHTML = `<a href="${receiptUrlData}" target="_blank" style="color: #0b6623; text-decoration: underline; font-weight: 600;">📄 Download</a>`;
-        } else if (currentStatus.toLowerCase() === 'paid') {
-            receiptLinkHTML = `<span style="color: #999; font-size: 13px;">Processing</span>`;
+        let actionHTML = "-";
+        if (currentStatus.toLowerCase() === 'paid') {
+            actionHTML = `<button onclick="generateReceiptPDF('${monthName}', ${amount}, ${fine})" style="background: #0b6623; color: #fff; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500; transition: 0.2s;">📄 Download</button>`;
+        } else {
+            actionHTML = `<span style="color: #c0392b; font-size: 12px; font-weight:500;">Unpaid</span>`;
         }
 
         tableHTML += `
             <tr>
-                <td>${p.month || p.monthStr || '-'}</td>
+                <td>${monthName}</td>
                 <td><span class="${statusClass}">${currentStatus}</span></td>
                 <td>৳ ${amount.toLocaleString()}</td>
                 <td><strong>৳ ${runningTotal.toLocaleString()}</strong></td>
-                <td>${receiptLinkHTML}</td>
+                <td>${actionHTML}</td>
             </tr>`;
     });
 
     tbody.innerHTML = tableHTML;
 }
 
-// ৫. প্রোফাইল পপআপ মোডালের ইভেন্ট লিসেনার ও হ্যান্ডলিং
+// 🎯 ৫. মেইন ফাংশন: ক্লিক করলে ডেটা রিসিটে বসবে এবং সুন্দরভাবে পিডিএফ ডাউনলোড হবে
+function generateReceiptPDF(month, amount, fine) {
+    const m = window.currentMemberData;
+    if (!m) {
+        alert("ডাটা এখনো সম্পূর্ণ লোড হয়নি, দয়া করে আবার চেষ্টা করুন।");
+        return;
+    }
+
+    // আজকের তারিখ বের করা
+    const today = new Date().toLocaleDateString('en-GB'); 
+
+    // রিসিটের ভেতরে লাইভ ডাটা পুশ করা
+    document.getElementById("rCurrentDate").innerText = today;
+    document.getElementById("rMemberName").innerText = m.name || "N/A";
+    document.getElementById("rMemberId").innerText = m.memberId || "N/A";
+    document.getElementById("rMemberPhone").innerText = m.phone ? "📞 " + m.phone : "";
+    document.getElementById("rMonth").innerText = month;
+    document.getElementById("rStatus").innerText = "PAID";
+    document.getElementById("rMainAmount").innerText = "৳ " + amount.toLocaleString();
+    document.getElementById("rFineAmount").innerText = "৳ " + fine.toLocaleString();
+    document.getElementById("rTotalAmount").innerText = "৳ " + (amount + fine).toLocaleString();
+
+    // 💡 ঐচ্ছিক: রিসিটে যদি ক্লাবের নির্দিষ্ট লোগো ডাইনামিকালি বসাতে চান
+    if(m.photo && document.getElementById("rLogo")) {
+        // আপনি চাইলে এখানে m.photo এর বদলে সরাসরি আপনার স্থায়ী লোগো ইউআরএল বসিয়ে দিতে পারেন
+        // document.getElementById("rLogo").src = "আপনার_স্থায়ী_লোগো_লিঙ্ক";
+    }
+
+    // html2pdf.js এর কনফিগারেশন সেটআপ
+    const element = document.getElementById("receiptTemplate");
+    const opt = {
+        margin:       10,
+        filename:     `Receipt_${month}_ID_${m.memberId || 'Member'}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true }, 
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // পিডিএফ জেনারেট এবং ডাউনলোড স্টার্ট
+    html2pdf().set(opt).from(element).save();
+}
+
+// ৬. প্রোফাইল পপআপ মোডালের কোড
 function setupProfilePopupEvents() {
     const viewProfileBtn = document.getElementById("viewProfileBtn");
     const closePopup = document.getElementById("closePopup");
@@ -636,7 +671,7 @@ function setupProfilePopupEvents() {
             const m = window.currentMemberData;
             
             if(!m) {
-                alert("সদস্য তথ্য লোড হচ্ছে, দয়া করে অপেক্ষা করুন।");
+                alert("সදস্য তথ্য লোড হচ্ছে, দয়া করে অপেক্ষা করুন।");
                 return;
             }
             
@@ -673,12 +708,12 @@ function setupProfilePopupEvents() {
     });
 }
 
-// ৬. লগআউট ফাংশন
+// ৭. লগআউট ফাংশন
 function logout() {
     localStorage.clear();
     window.location.href = "login.html";
 }
-</script>
+</script>>
   
 <div id="profilePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; overflow-y:auto;">
     <div style="background:#fff; width:600px; max-width:90%; margin:30px auto; padding:30px; border-radius:10px; position:relative; box-shadow:0 0 20px rgba(0,0,0,0.5);">
@@ -711,6 +746,82 @@ function logout() {
         </div>
     </div>
 </div>
-  
+
+
+
+<!-- ========================================  Money Receipt =============================================== -->
+  <div style="display: none;">
+    <div id="receiptTemplate" style="width: 595px; padding: 45px; background: #ffffff; color: #1e293b; font-family: 'Poppins', sans-serif; position: relative; border: 1px solid #e2e8f0; box-sizing: border-box;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0b6623; padding-bottom: 20px; margin-bottom: 30px;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <img id="rLogo" src="https://via.placeholder.com/50x50.png?text=Logo" alt="Logo" style="width: 50px; height: 50px; object-fit: contain; border-radius: 6px;">
+                <div>
+                    <h2 style="color: #0b6623; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px;">SOCIETY CLUB</h2>
+                    <p style="margin: 4px 0 0 0; font-size: 10px; color: #556b2f; text-transform: uppercase; letter-spacing: 2px; font-weight: 500;">Secure Digital Money Receipt</p>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 11px; color: #64748b; margin-bottom: 4px;">Statement Date</div>
+                <div id="rCurrentDate" style="color: #0f172a; font-weight: 600; font-size: 13px;">-</div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #f4f9f4; padding: 22px; border-radius: 12px; margin-bottom: 35px; border-top: 4px solid #0b6623; position: relative;">
+            <div>
+                <p style="margin: 0 0 6px 0; font-size: 10px; color: #556b2f; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Account Holder</p>
+                <h4 id="rMemberName" style="margin: 0 0 4px 0; font-size: 16px; color: #0f172a; font-weight: 600;">-</h4>
+                <p style="margin: 0; font-size: 12px; color: #334155;">ID: <span id="rMemberId" style="font-weight: 600; color: #0b6623;">-</span></p>
+                <p id="rMemberPhone" style="margin: 2px 0 0 0; font-size: 12px; color: #475569;">-</p>
+            </div>
+            
+            <div style="text-align: right; margin-right: 100px;">
+                <p style="margin: 0 0 4px 0; font-size: 12px; color: #334155;">Billing Month: <strong id="rMonth" style="color: #0f172a;">-</strong></p>
+                <p style="margin: 0; font-size: 12px; color: #334155;">Status: <span id="rStatus" style="font-weight: 600; color: #0b6623;">PAID</span></p>
+            </div>
+
+            <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%) rotate(-10deg); width: 85px; height: 85px; border: 3px dashed #6d28d9; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(109, 40, 217, 0.03); box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px rgba(109, 40, 217, 0.15); user-select: none;">
+                <span style="font-size: 9px; color: #7c3aed; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">OFFICIAL</span>
+                <span style="font-size: 18px; color: #5b21b6; font-weight: 800; letter-spacing: 1px; margin: -2px 0;">PAID</span>
+                <span style="font-size: 8px; color: #7c3aed; font-weight: 500;">VERIFIED</span>
+            </div>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 45px; font-size: 13px;">
+            <thead>
+                <tr style="background: #0b6623; color: #ffffff; text-align: left;">
+                    <th style="padding: 12px 16px; font-weight: 500; border-top-left-radius: 6px; border-bottom-left-radius: 6px;">Transaction Item Description</th>
+                    <th style="padding: 12px 16px; font-weight: 500; text-align: right; border-top-right-radius: 6px; border-bottom-right-radius: 6px;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 16px; color: #334155;">Monthly Membership Subscription Fee</td>
+                    <td style="padding: 16px; text-align: right; font-weight: 500; color: #0f172a;" id="rMainAmount">৳ 0</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 16px; color: #64748b; font-style: italic;">Late Fine / System Penalty Charges</td>
+                    <td style="padding: 16px; text-align: right; color: #b91c1c;" id="rFineAmount">৳ 0</td>
+                </tr>
+                <tr>
+                    <td style="padding: 20px 16px 0 16px; text-align: right; font-weight: 600; color: #0f172a; font-size: 14px;">Total Paid Amount:</td>
+                    <td style="padding: 20px 0 0 0; text-align: right;">
+                        <span style="font-size: 16px; font-weight: 700; color: #ffffff; background: #0b6623; padding: 10px 20px; border-radius: 6px; display: inline-block; min-width: 110px; box-shadow: 0 4px 10px rgba(11, 102, 35, 0.2);" id="rTotalAmount">৳ 0</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 50px;">
+            <div style="max-width: 65%;">
+                <p style="margin: 0; font-size: 10px; color: #94a3b8; line-height: 1.5;">* This is a secure, automated digital invoice generated by the club billing engine. No physical ink signature is required for authentication.</p>
+            </div>
+            <div style="text-align: center; width: 130px;">
+                <div style="border-bottom: 1px dashed #cbd5e1; margin-bottom: 6px; height: 25px;"></div>
+                <p style="margin: 0; font-size: 11px; color: #475569; font-weight: 500;">Billing Manager</p>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
