@@ -384,7 +384,7 @@ color:#444;
 </div>
 
 
-<div style="position: absolute; left: -9999px; top: -9999px; overflow: hidden; height: 0;">
+<div style="position: absolute; left: -9999px; top: -9999px; width: 595px; overflow: hidden;">
     <div id="receiptTemplate" style="width: 595px; padding: 45px; background: #ffffff; color: #1e293b; font-family: 'Poppins', sans-serif; position: relative; border: 1px solid #e2e8f0; box-sizing: border-box;">
         
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0b6623; padding-bottom: 20px; margin-bottom: 30px;">
@@ -457,6 +457,7 @@ color:#444;
         </div>
     </div>
 </div>
+  
 
 
 <div id="profilePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; overflow-y:auto;">
@@ -599,42 +600,47 @@ function renderPaymentTable(payments) {
 
 // 🎯 মেইন পিডিএফ জেনারেশন ম্যাজিক ফাংশন
 function generateReceiptPDF(month, amount, fine) {
-    const m = window.currentMemberData;
-    
-    // ফলব্যাক: যদি কোনো কারণে গ্লোবাল ডাটা মিস হয়, তবে লোকাল স্টোরেজ ও ড্যাশবোর্ড থেকে নাম নেবে
-    const memberName = (m && m.name) ? m.name : (document.getElementById("memberName") ? document.getElementById("memberName").innerText : "Member");
-    const memberId = (m && m.memberId) ? m.memberId : localStorage.getItem('memberId');
-    const memberPhone = (m && m.phone) ? m.phone : (document.getElementById("memberPhone") ? document.getElementById("memberPhone").innerText : "");
+    // ড্যাশবোর্ডে প্রদর্শিত টেক্সট থেকে সরাসরি ডাটা নেওয়ার ব্যাকআপ প্ল্যান
+    const memberName = document.getElementById("memberName") ? document.getElementById("memberName").innerText : "Member";
+    const memberId = localStorage.getItem('memberId') || "N/A";
+    const memberPhone = document.getElementById("memberPhone") ? document.getElementById("memberPhone").innerText.replace("📞 ", "") : "";
 
     const today = new Date().toLocaleDateString('en-GB'); 
 
-    // রিসিট কার্ডের এলিমেন্টগুলোতে ডাটা সেট করা
+    // রিসিট কার্ডে ডাটা নিখুঁতভাবে ইনজেক্ট করা
     document.getElementById("rCurrentDate").innerText = today;
     document.getElementById("rMemberName").innerText = memberName;
-    document.getElementById("rMemberId").innerText = memberId || "N/A";
-    document.getElementById("rMemberPhone").innerText = memberPhone;
+    document.getElementById("rMemberId").innerText = memberId;
+    document.getElementById("rMemberPhone").innerText = memberPhone ? "📞 " + memberPhone : "";
     document.getElementById("rMonth").innerText = month;
     document.getElementById("rMainAmount").innerText = "৳ " + amount.toLocaleString();
     document.getElementById("rFineAmount").innerText = "৳ " + fine.toLocaleString();
     document.getElementById("rTotalAmount").innerText = "৳ " + (amount + fine).toLocaleString();
 
-    // পিডিএফ কনফিগারেশন (সাদা পেজ ফিক্স করার জন্য ইমপ্রুভড মোড)
+    // পিডিএফ কনফিগারেশন (সাদা পেজ আসার সমস্যা দূর করার জন্য বিশেষ মোড)
     const element = document.getElementById("receiptTemplate");
+    
+    // রেন্ডারিং করার ঠিক আগে এলিমেন্টটিকে সক্রিয় করা
+    element.style.display = "block";
+
     const opt = {
-        margin:       [10, 10, 10, 10], // চারপাশের মার্জিন ফিক্সড করা হলো
+        margin:       [15, 15, 15, 15], 
         filename:     `Receipt_${month}_ID_${memberId}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { 
             scale: 2, 
             useCORS: true, 
-            logging: false, // ফালতু কনসোল লগ বন্ধ করবে
-            letterRendering: true
+            logging: false,
+            scrollX: 0,
+            scrollY: 0
         }, 
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // তৈরি এবং সেভ
-    html2pdf().set(opt).from(element).save();
+    // পিডিএফ জেনারেট এবং ডাউনলোড স্টার্ট
+    html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+        // ডাউনলোড শেষ হলে কোনো অতিরিক্ত কাজ থাকলে করতে পারেন
+    }).save();
 }
 
 // প্রোফাইল পপআপ ইভেন্ট হ্যান্ডলার
