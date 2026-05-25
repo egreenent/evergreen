@@ -364,51 +364,48 @@ font-size:32px;
 
 <div id="idCardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; overflow-y:auto; padding: 20px;">
     
-    <div style="background:#f4f4f4; padding:30px; border-radius:25px; position:relative; text-align:center; max-width: 800px; width: 100%;">
-        <button onclick="closeModal()" style="position:absolute; top:10px; right:15px; border:none; background:#ff4d4d; color:white; font-size:22px; border-radius:50%; width:45px; height:45px; cursor:pointer; font-weight:bold;">&times;</button>
+    <div style="background:#f4f4f4; padding:30px; border-radius:25px; position:relative; text-align:center; max-width: 850px; width: 100%;">
+        <button onclick="closeModal()" style="position:absolute; top:10px; right:15px; border:none; background:#ff4d4d; color:white; font-size:22px; border-radius:50%; width:45px; height:45px; cursor:pointer;">&times;</button>
         
-        <div id="full-card-area" style="display:flex; gap:25px; justify-content:center; flex-wrap:wrap; margin-top: 20px; padding: 10px;">
+        <div id="full-card-area" style="display:flex; gap:30px; justify-content:center; flex-wrap:wrap; margin-top: 20px;">
             
-            <div style="width: 350px; height: 550px; background: white; border-radius: 20px; border: 1px solid #ddd; display: flex; flex-direction: column; overflow: hidden; position: relative;">
+            <div style="width: 350px; height: 550px; background: white; border-radius: 20px; border: 1px solid #ddd; display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
                 <div style="height: 200px; background: linear-gradient(135deg, #0b6623, #15803d); clip-path: ellipse(150% 100% at 50% 0%); display: flex; flex-direction: column; align-items: center; padding-top: 20px; color: white;">
-                    <div style="font-size: 50px; margin-bottom: 5px;">🌳</div> 
-                    <div style="font-weight: 900; font-size: 18px; letter-spacing: 1px; text-transform: uppercase;">EVERGREEN ENTERPRISE</div>
+                    <div style="font-size: 45px;">🌳</div> 
+                    <div style="font-weight: 900; font-size: 18px; text-transform: uppercase;">EVERGREEN ENTERPRISE</div>
                 </div>
-
-                <div style="width: 150px; height: 150px; border-radius: 50%; border: 6px solid white; background: #fff; margin: -75px auto 10px; overflow: hidden; z-index: 10;">
-                    <img id="userImg" src="" style="width:100%; height:100%; object-fit:cover;">
+                <div style="width: 160px; height: 160px; border-radius: 50%; border: 6px solid white; background: #eee; margin: -80px auto 10px; overflow: hidden; z-index: 10;">
+                    <img id="userImg" src="https://via.placeholder.com/160" style="width:100%; height:100%; object-fit:cover;">
                 </div>
-                
                 <div style="text-align: center; padding: 5px 20px;">
-                    <h2 id="userName" style="margin: 0; font-size: 26px; color: #1e293b; font-weight: 800;"></h2> 
+                    <h2 id="userName" style="margin: 0; font-size: 26px; color: #1e293b; font-weight: 800;">Loading...</h2> 
                     <p id="userDesignation" style="color: #0b6623; font-weight: 700; margin: 2px 0; font-size: 15px; text-transform: uppercase;"></p> 
                 </div>
-
                 <div style="padding: 15px 35px; font-size: 14px; text-align: left; line-height: 1.9; color: #444; flex-grow: 1;">
                     <div>📱 <b>Mobile:</b> <span id="userPhone"></span></div> 
                     <div>🆔 <b>NID:</b> <span id="userNid"></span></div> 
                     <div>🩸 <b>Blood:</b> <span id="userBlood"></span></div> 
                     <div style="display: flex;">📍 <b>Address:</b> <span id="userAddress" style="margin-left:5px;"></span></div> 
                 </div>
-
-                <div id="userId" style="background: #0b6623; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 24px; letter-spacing: 2px;"></div>
+                <div id="userId" style="background: #0b6623; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 22px;"></div>
             </div>
 
             <div style="width: 350px; height: 550px; background: #1e293b; border-radius: 20px; color: white; padding: 40px 30px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center;">
                 <div>
                     <div style="font-size: 60px; background: white; border-radius: 15px; width: 85px; height: 85px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">🌳</div>
-                    <h2 style="color:white; letter-spacing: 3px; font-weight: 900;">EVERGREEN</h2>
+                    <h2 style="color:white; letter-spacing: 2px; font-weight: 900;">EVERGREEN</h2>
                 </div>
                 <div style="background: white; padding: 15px; border-radius: 15px;">
                     <img id="qrCode" src="" style="width: 150px; display: block;">
                 </div>
-                <div style="font-size: 12px; opacity: 0.8;">Helpline: +880 1700-111222</div>
+                <div style="font-size: 13px; opacity: 0.8;">Helpline: +880 1700-111222</div>
             </div>
         </div>
 
-        <button onclick="generatePDF()" style="margin-top:25px; background:#0b6623; color:white; padding:15px 40px; border:none; border-radius:12px; cursor:pointer;">📥 Download PDF</button>
+        <button onclick="generatePDF()" style="margin-top:25px; background:#0b6623; color:white; padding:15px 40px; border:none; border-radius:12px; cursor:pointer; font-weight:bold;">📥 Download Full PDF</button>
     </div>
 </div>
+
 
   
 </div>
@@ -758,41 +755,35 @@ function logout() {
 
   
 
-   // মডাল কন্ট্রোল
+
+
     function openModal() { document.getElementById('idCardModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('idCardModal').style.display = 'none'; }
-
-    // পিডিএফ ডাউনলোড
+    
     function generatePDF() {
         const element = document.getElementById('full-card-area');
-        const opt = {
-            margin: 5,
-            filename: 'Evergreen_ID_Card.pdf',
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 3, useCORS: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-        };
-        html2pdf().set(opt).from(element).save();
+        html2pdf().from(element).save('Evergreen_ID_Card.pdf');
     }
 
-    // এই ফাংশনটি ডেটা সার্ভার থেকে নিয়ে এসে কার্ডের ভেতর বসাবে
+    // ডেটা লোড ফাংশন
     function loadMemberData() {
         if (typeof google !== 'undefined' && google.script) {
             google.script.run.withSuccessHandler(function(member) {
-                // এখানে member অবজেক্ট থেকে ডেটা নিয়ে আইডিগুলোর ভেতর বসানো হচ্ছে
-                if(document.getElementById('userName')) document.getElementById('userName').innerText = member.name;
-                if(document.getElementById('userDesignation')) document.getElementById('userDesignation').innerText = member.designation;
-                if(document.getElementById('userPhone')) document.getElementById('userPhone').innerText = member.phone;
-                if(document.getElementById('userNid')) document.getElementById('userNid').innerText = member.nid;
-                if(document.getElementById('userBlood')) document.getElementById('userBlood').innerText = member.blood;
-                if(document.getElementById('userAddress')) document.getElementById('userAddress').innerText = member.address;
+                if(member) {
+                    document.getElementById('userName').innerText = member.name || "N/A";
+                    document.getElementById('userDesignation').innerText = member.designation || "N/A";
+                    document.getElementById('userPhone').innerText = member.phone || "N/A";
+                    document.getElementById('userNid').innerText = member.nid || "N/A";
+                    document.getElementById('userBlood').innerText = member.blood || "N/A";
+                    document.getElementById('userAddress').innerText = member.address || "N/A";
+                    document.getElementById('userId').innerText = "ID: " + (member.id || "N/A");
+                    document.getElementById('qrCode').src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + (member.id || "NA");
+                }
             }).getMemberData();
         } else {
-            console.log("Apps Script এনভায়রনমেন্ট পাওয়া যায়নি। সরাসরি টেস্ট মোডে চলছে।");
+            console.log("টেস্ট মোড: Apps Script এনভায়রনমেন্ট পাওয়া যায়নি।");
         }
     }
-
-    // পেজ পুরোপুরি লোড হওয়ার পর ডেটা লোড ফাংশনটি কল করবে
     document.addEventListener("DOMContentLoaded", loadMemberData);
 </script>
 </body>
