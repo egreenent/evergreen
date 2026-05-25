@@ -384,7 +384,7 @@ color:#444;
 </div>
 
 
-<div style="display: none;">
+<div style="position: absolute; left: -9999px; top: -9999px; overflow: hidden; height: 0;">
     <div id="receiptTemplate" style="width: 595px; padding: 45px; background: #ffffff; color: #1e293b; font-family: 'Poppins', sans-serif; position: relative; border: 1px solid #e2e8f0; box-sizing: border-box;">
         
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0b6623; padding-bottom: 20px; margin-bottom: 30px;">
@@ -600,30 +600,36 @@ function renderPaymentTable(payments) {
 // 🎯 মেইন পিডিএফ জেনারেশন ম্যাজিক ফাংশন
 function generateReceiptPDF(month, amount, fine) {
     const m = window.currentMemberData;
-    if (!m) {
-        alert("ডাটা এখনো লোড হচ্ছে, কিছুক্ষণ পর চেষ্টা করুন।");
-        return;
-    }
+    
+    // ফলব্যাক: যদি কোনো কারণে গ্লোবাল ডাটা মিস হয়, তবে লোকাল স্টোরেজ ও ড্যাশবোর্ড থেকে নাম নেবে
+    const memberName = (m && m.name) ? m.name : (document.getElementById("memberName") ? document.getElementById("memberName").innerText : "Member");
+    const memberId = (m && m.memberId) ? m.memberId : localStorage.getItem('memberId');
+    const memberPhone = (m && m.phone) ? m.phone : (document.getElementById("memberPhone") ? document.getElementById("memberPhone").innerText : "");
 
     const today = new Date().toLocaleDateString('en-GB'); 
 
-    // ডাটা সেট করা রিসিট কার্ডে
+    // রিসিট কার্ডের এলিমেন্টগুলোতে ডাটা সেট করা
     document.getElementById("rCurrentDate").innerText = today;
-    document.getElementById("rMemberName").innerText = m.name || "N/A";
-    document.getElementById("rMemberId").innerText = m.memberId || localStorage.getItem('memberId');
-    document.getElementById("rMemberPhone").innerText = m.phone ? "📞 " + m.phone : "";
+    document.getElementById("rMemberName").innerText = memberName;
+    document.getElementById("rMemberId").innerText = memberId || "N/A";
+    document.getElementById("rMemberPhone").innerText = memberPhone;
     document.getElementById("rMonth").innerText = month;
     document.getElementById("rMainAmount").innerText = "৳ " + amount.toLocaleString();
     document.getElementById("rFineAmount").innerText = "৳ " + fine.toLocaleString();
     document.getElementById("rTotalAmount").innerText = "৳ " + (amount + fine).toLocaleString();
 
-    // পিডিএফ কনফিগারেশন
+    // পিডিএফ কনফিগারেশন (সাদা পেজ ফিক্স করার জন্য ইমপ্রুভড মোড)
     const element = document.getElementById("receiptTemplate");
     const opt = {
-        margin:       10,
-        filename:     `Receipt_${month}_ID_${m.memberId || 'Member'}.pdf`,
+        margin:       [10, 10, 10, 10], // চারপাশের মার্জিন ফিক্সড করা হলো
+        filename:     `Receipt_${month}_ID_${memberId}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, allowTaint: true }, 
+        html2canvas:  { 
+            scale: 2, 
+            useCORS: true, 
+            logging: false, // ফালতু কনসোল লগ বন্ধ করবে
+            letterRendering: true
+        }, 
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
