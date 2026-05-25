@@ -795,6 +795,37 @@ function loadMemberData() {
         document.getElementById('userImg').src = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
     }
 }
+
+  function loadMemberData() {
+        if (typeof google !== 'undefined' && google.script) {
+            google.script.run.withSuccessHandler(function(member) {
+                if(member) {
+                    document.getElementById('userName').innerText = member.name || "N/A";
+                    document.getElementById('userDesignation').innerText = member.designation || "N/A";
+                    document.getElementById('userPhone').innerText = member.phone || "N/A";
+                    document.getElementById('userNid').innerText = member.nid || "N/A";
+                    document.getElementById('userBlood').innerText = member.blood || "N/A";
+                    document.getElementById('userAddress').innerText = member.address || "N/A";
+                    document.getElementById('userId').innerText = "ID: " + (member.id || "N/A");
+                    
+                    if(member.photoUrl) {
+                        document.getElementById('userImg').src = member.photoUrl;
+                    } else {
+                        document.getElementById('userImg').src = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+                    }
+                    
+                    document.getElementById('qrCode').src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + (member.id || "NA");
+                }
+            }).getMemberData();
+        } else {
+            console.log("সরাসরি টেস্ট মোডে চলছে।");
+            document.getElementById('userName').innerText = "Arif Rahman";
+            document.getElementById('userImg').src = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+        }
+    }
+
+    // এটি নিশ্চিত করবে যে পেজ লোড হলেই ডেটা আসবে
+    document.addEventListener("DOMContentLoaded", loadMemberData);
 </script>
 </body>
 </html>
