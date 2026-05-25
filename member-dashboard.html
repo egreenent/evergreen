@@ -283,8 +283,9 @@ font-size:15px;
 line-height:1.6;
 color:#444;
 }
+  
 .viewProfileBtn{
-  "margin-left:10px;
+  margin-left:10px;
   padding:5px 10px;
   background:#0b6623;
   color:#fff;
@@ -334,16 +335,13 @@ Logout
 <div class="member-status" id="memberStatus">
 Active Member
 </div>
-<!--  <p>
-   <a href="#" id="viewProfileBtn">Profile</a>
-</p> -->
+  
+<p><a href="#" id="viewProfileBtn">Profile</a></p>
 
   
 </div>
 
 </div>
-
-<div class="stats-grid">
 
 <div class="stats-grid">
 
@@ -432,7 +430,6 @@ class="download-btn"
 </tbody>
 </table>
 </div>
-</div>
 
 <div class="section">
 <h2>Online Payment</h2>
@@ -512,7 +509,7 @@ async function fetchMemberDashboardData(memberId) {
         if (result.success) {
 
             const m = result.profile;
-
+window.currentMemberData = m;
             const payments = result.payments;
 
 
@@ -535,14 +532,13 @@ async function fetchMemberDashboardData(memberId) {
             ).innerText = "📧 " + m.email;
 
 
-            if(document.getElementById("addressText")){
+if(document.getElementById("addressText")){
 
-                document.getElementById(
-                "addressText"
-                ).innerText =
-                "📍 " + m.address;
-
-            }
+document.getElementById(
+"memberAddress"
+).innerText =
+"📍 " + m.address;
+}
 
 
             document.getElementById(
@@ -754,10 +750,11 @@ async function fetchMemberDashboardData(memberId) {
 
           
             // ৬. নোটিশ বক্স
-            if(result.notice && document.getElementById("noticeBox")) {
-                document.getElementById("noticeBox").innerHTML = `📢 <strong>${result.notice.title}</strong><br>${result.notice.content}`;
-            }
-        }
+document.getElementById(
+'paymentTableBody'
+).innerHTML =
+tableHTML;
+  
     } catch (error) {
         console.error("Dashboard Error:", error);
     }
@@ -765,36 +762,7 @@ async function fetchMemberDashboardData(memberId) {
 
 
 // ১. 'Profile' বাটনে ক্লিক করার লজিক (নিশ্চিত করুন আপনার প্রোফাইল বাটনের ID 'viewProfileBtn')
-document.getElementById("viewProfileBtn").addEventListener("click", function(e) {
-    e.preventDefault();
-    const m = window.currentMemberData; // এটি আপনার fetchMemberDashboardData ফাংশন থেকে আসবে
-    
-    if(!m) {
-        alert("সদস্য তথ্য লোড হচ্ছে, দয়া করে অপেক্ষা করুন।");
-        return;
-    }
-    
-    // পপআপের আইডিগুলো ম্যাপিং করা
-    document.getElementById("popupMemberId").innerText = m.memberId;
-    document.getElementById("popupName").innerText = m.name;
-    document.getElementById("popupPhone").innerText = m.phone;
-    document.getElementById("popupEmail").innerText = m.email;
-    document.getElementById("popupNid").innerText = m.nid || 'N/A';
-    document.getElementById("popupBlood").innerText = m.blood || 'N/A';
-    document.getElementById("popupAddress").innerText = m.address || 'N/A';
-    document.getElementById("popupNomineeName").innerText = m.nomineeName || 'N/A';
-    document.getElementById("popupNomineePhone").innerText = m.nomineePhone || 'N/A';
-    document.getElementById("popupJoinDate").innerText = m.joinDate || 'N/A';
-    document.getElementById("popupFee").innerText = m.monthlyFee || 'N/A';
-    
-    // ছবি, স্বাক্ষর এবং আইডি কার্ড
-    document.getElementById("popupPhoto").src = m.photo;
-    document.getElementById("popupSignature").src = m.signatureUrl || ''; 
-    document.getElementById("popupIdCard").href = m.idCardUrl || '#';
-    
-    // পপআপ ওপেন করা
-    document.getElementById("profilePopup").style.display = "block";
-});
+
 
 // ২. ক্লোজ বাটনে ক্লিক করলে পপআপ বন্ধ করার লজিক
 document.getElementById("closePopup").addEventListener("click", function() {
