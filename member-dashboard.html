@@ -420,30 +420,24 @@ class="download-btn"
 
 
 <div class="section">
-
 <h2>Payment History</h2>
-
+<div class="table-wrapper">
 <table class="payment-table">
-
 <thead>
-
 <tr>
 
 <th>Month</th>
 <th>Status</th>
 <th>Amount</th>
 <th>Total</th>
+<th>Receipt</th>
 
 </tr>
-
 </thead>
-
 <tbody id="paymentTableBody">
-
 </tbody>
-
 </table>
-
+</div>
 </div>
 
 <div class="section">
@@ -560,14 +554,56 @@ async function fetchMemberDashboardData(memberId) {
             if(document.getElementById("idCard")) document.getElementById("idCard").href = m.idCardUrl;
 
             // ৫. পেমেন্ট টেবিল রেন্ডার
-            let tableHTML = "";
-            let runningTotal = 0;
-            payments.forEach(p => {
-                runningTotal += Number(p.amount) + Number(p.fine);
-                tableHTML += `<tr><td>${p.month}</td><td>${p.status}</td><td>৳${p.amount}</td><td>৳${runningTotal}</td></tr>`;
-            });
-            document.getElementById("paymentTableBody").innerHTML = tableHTML;
+const response =
+await fetch(
 
+API_URL +
+'?action=memberPayments&memberId=' +
+memberId
+);
+
+const payments =
+await response.json();
+          
+let tableHTML = '';
+let runningTotal = 0;
+payments.forEach(p => {
+
+runningTotal +=
+(Number(p.amount) || 0) +
+(Number(p.fine) || 0);
+
+
+tableHTML += `
+<tr>
+<td>${p.month}</td>
+<td>${p.status}</td>
+
+<td>
+৳ ${p.amount}
+</td>
+
+<td>
+৳ ${runningTotal}
+</td>
+
+<td>
+<a
+href="${p.receiptUrl}"
+target="_blank"
+class="download-btn"
+>Download</a>
+</td>
+</tr>
+`;
+});
+
+
+document.getElementById(
+'paymentTableBody'
+).innerHTML = tableHTML;
+
+          
             // ৬. নোটিশ বক্স
             if(result.notice && document.getElementById("noticeBox")) {
                 document.getElementById("noticeBox").innerHTML = `📢 <strong>${result.notice.title}</strong><br>${result.notice.content}`;
