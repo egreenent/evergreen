@@ -735,6 +735,19 @@ function setupProfilePopupEvents() {
 }
 
 
+  // শীট থেকে ডেটা নিয়ে কার্ডের ভেতর বসানোর ফাংশন
+  function loadData() {
+    google.script.run.withSuccessHandler(function(member) {
+      document.getElementById('userName').innerText = member.name;
+      document.getElementById('userDesignation').innerText = member.designation;
+      // অন্যান্য ফিল্ডগুলো এখানে আপডেট করুন
+    }).getMemberData();
+  }
+  
+  // পেজ লোড হওয়ার সময় তথ্য আপডেট করবে
+  window.onload = loadData;
+
+  
     function openModal() { document.getElementById('idCardModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('idCardModal').style.display = 'none'; }
     function generatePDF() {
