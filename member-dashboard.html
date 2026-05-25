@@ -294,8 +294,7 @@ font-size:32px;
     padding-bottom: 15px;
 }
 
-  <style>.card-header { height: 200px; background: linear-gradient(135deg, #0b6623, #15803d); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-</style>
+
 </style>
 </head>
 <body>
@@ -357,39 +356,53 @@ font-size:32px;
 <a id="membershipPdf" href="#" target="_blank" class="download-btn">📄 Membership PDF</a>
 <a id="idCard" href="#" target="_blank" class="download-btn">🪪 ID Card</a>
 
+ <div onclick="openModal()" style="cursor: pointer; display: inline-block;">
+    <img src="https://i.imgur.com/k4Kk96v.png" style="width: 200px; border-radius: 10px; border: 1px solid #ccc;">
+    <p style="text-align: center; font-size: 12px; font-weight: bold;">Click to View Full ID Card</p>
+</div>
 
-<button class="btn-download" onclick="generatePDF()">📥 Download PDF</button>
-
-<div id="id-card-area" style="display: flex; gap: 30px; justify-content: center; padding: 40px;">
+<div id="idCardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center; overflow-y: auto; padding: 20px;">
     
-    <div class="id-card">
-        <div class="card-header">
-            <img src="YOUR_LOGO_URL_HERE" style="width: 60px; height: 60px; margin-bottom: 5px;">
-            <div style="color: white; font-weight: 900; font-size: 18px;">EVERGREEN ENTERPRISE</div>
-        </div>
-
-        <div class="profile-img">
-            <img src="MEMBER_PHOTO_URL_HERE" alt="Member Photo">
-        </div>
+    <div style="background:white; padding:30px; border-radius:20px; position:relative; text-align:center; max-width: 800px; width: 100%;">
         
-        <div class="member-info">
-            <h2>Arif Rahman</h2>
-            <span class="designation">Marketing Manager</span>
+        <button onclick="closeModal()" style="position:absolute; top:10px; right:15px; border:none; background:red; color:white; font-size:20px; border-radius:50%; width:40px; height:40px; cursor:pointer;">&times;</button>
+        
+        <div id="full-card-area" style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin-top: 20px;">
             
-            <div class="data-list">
-                <div>📱 <b>01712-345678</b></div>
-                <div>🆔 <b>1234 5678 9012</b></div>
-                <div>🩸 <b>B+ (Positive)</b></div>
-                <div style="margin-top: 5px; font-size: 12px;">📍 <b>House 12, Road 5, Dhanmondi, Dhaka</b></div>
+            <div style="width: 320px; height: 500px; background: white; border-radius: 20px; overflow: hidden; border: 1px solid #eee; display: flex; flex-direction: column;">
+                <div style="background: linear-gradient(135deg, #0b6623, #15803d); padding: 20px; text-align: center; color: white;">
+                    <div style="font-size: 40px; margin-bottom: 5px;">🌳</div>
+                    <div style="font-weight: 900; font-size: 18px;">EVERGREEN ENTERPRISE</div>
+                </div>
+                <div style="width: 120px; height: 120px; border-radius: 50%; border: 5px solid white; background: #eee; margin: -50px auto 10px; overflow: hidden;">
+                    <img src="https://i.imgur.com/k4Kk96v.png" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <div style="text-align: center; padding: 10px;">
+                    <h2 style="margin: 0; font-size: 22px;">Arif Rahman</h2>
+                    <p style="color: #0b6623; font-weight: bold; margin: 0;">MARKETING MANAGER</p>
+                </div>
+                <div style="padding: 10px 25px; font-size: 13px; text-align: left; line-height: 1.8; flex-grow: 1;">
+                    <div>📱 <b>01712-345678</b></div>
+                    <div>🆔 <b>1234 5678 9012</b></div>
+                    <div>🩸 <b>B+ (Positive)</b></div>
+                    <div>📍 <b>House 12, Road 5, Dhanmondi, Dhaka</b></div>
+                </div>
+                <div style="background: #0b6623; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 20px;">ID: S-45920</div>
+            </div>
+
+            <div style="width: 320px; height: 500px; background: #1e293b; border-radius: 20px; color: white; padding: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <div style="font-size: 50px; background: white; border-radius: 10px; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">🌳</div>
+                <h2 style="margin-bottom: 20px;">EVERGREEN</h2>
+                <div style="background: white; padding: 10px; border-radius: 10px;">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=S-45920" style="width: 140px; display: block;">
+                </div>
+                <p style="font-size: 12px; margin-top: 20px; opacity: 0.8;">Helpline: +880 1700-111222</p>
             </div>
         </div>
-        <div class="id-footer">ID: S-45920</div>
+
+        <button onclick="generatePDF()" style="margin-top:20px; background:#0b6623; color:white; padding:15px 30px; border:none; border-radius:10px; font-size:16px; cursor:pointer;">📥 Download Full PDF</button>
     </div>
-
-    </div>
-
-
-  
+</div> 
   
 </div>
 </div>
@@ -730,11 +743,13 @@ function setupProfilePopupEvents() {
     });
 }
 
-    function generatePDF() {
-        const element = document.getElementById('id-card-area');
-        html2pdf().from(element).save();
-    }
 
+    function openModal() { document.getElementById('idCardModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('idCardModal').style.display = 'none'; }
+    function generatePDF() {
+        const element = document.getElementById('full-card-area');
+        html2pdf().from(element).save('Evergreen_ID_Card.pdf');
+    }
   
 function logout() {
     localStorage.clear();
