@@ -747,14 +747,6 @@ function setupProfilePopupEvents() {
 }
 
 
-<script>
-    function openModal() { document.getElementById('idCardModal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('idCardModal').style.display = 'none'; }
-    function generatePDF() {
-        const element = document.getElementById('full-card-area');
-        html2pdf().from(element).save('Evergreen_ID_Card.pdf');
-    }
-
 
   
     function openModal() { document.getElementById('idCardModal').style.display = 'flex'; }
