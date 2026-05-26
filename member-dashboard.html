@@ -11,7 +11,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-
 <style>
 *{
 margin:0;
@@ -293,8 +292,6 @@ font-size:32px;
     border-bottom: 2px dashed #0b6623;
     padding-bottom: 15px;
 }
-
-
 </style>
 </head>
 <body>
@@ -355,59 +352,6 @@ font-size:32px;
 <div class="download-box">
 <a id="membershipPdf" href="#" target="_blank" class="download-btn">📄 Membership PDF</a>
 <a id="idCard" href="#" target="_blank" class="download-btn">🪪 ID Card</a>
-
-<div id="id-trigger-area" onclick="openModal()" style="cursor: pointer; display: inline-block;">
-    <div style="width: 200px; height: 120px; background: #0b6623; color: white; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        Click to View ID Card
-    </div>
-</div>
-
-<div id="idCardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; overflow-y:auto; padding: 20px;">
-    
-    <div style="background:#f4f4f4; padding:30px; border-radius:25px; position:relative; text-align:center; max-width: 850px; width: 100%;">
-        <button onclick="closeModal()" style="position:absolute; top:10px; right:15px; border:none; background:#ff4d4d; color:white; font-size:22px; border-radius:50%; width:45px; height:45px; cursor:pointer;">&times;</button>
-        
-        <div id="full-card-area" style="display:flex; gap:30px; justify-content:center; flex-wrap:wrap; margin-top: 20px;">
-            
-            <div style="width: 350px; height: 550px; background: white; border-radius: 20px; border: 1px solid #ddd; display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
-                <div style="height: 200px; background: linear-gradient(135deg, #0b6623, #15803d); clip-path: ellipse(150% 100% at 50% 0%); display: flex; flex-direction: column; align-items: center; padding-top: 20px; color: white;">
-                    <div style="font-size: 45px;">🌳</div> 
-                    <div style="font-weight: 900; font-size: 18px; text-transform: uppercase;">EVERGREEN ENTERPRISE</div>
-                </div>
-                <div style="width: 160px; height: 160px; border-radius: 50%; border: 6px solid white; background: #eee; margin: -80px auto 10px; overflow: hidden; z-index: 10;">
-                    <img id="userImg" src="https://via.placeholder.com/160" style="width:100%; height:100%; object-fit:cover;">
-                </div>
-                <div style="text-align: center; padding: 5px 20px;">
-                    <h2 id="userName" style="margin: 0; font-size: 26px; color: #1e293b; font-weight: 800;">Loading...</h2> 
-                    <p id="userDesignation" style="color: #0b6623; font-weight: 700; margin: 2px 0; font-size: 15px; text-transform: uppercase;"></p> 
-                </div>
-                <div style="padding: 15px 35px; font-size: 14px; text-align: left; line-height: 1.9; color: #444; flex-grow: 1;">
-                    <div>📱 <b>Mobile:</b> <span id="userPhone"></span></div> 
-                    <div>🆔 <b>NID:</b> <span id="userNid"></span></div> 
-                    <div>🩸 <b>Blood:</b> <span id="userBlood"></span></div> 
-                    <div style="display: flex;">📍 <b>Address:</b> <span id="userAddress" style="margin-left:5px;"></span></div> 
-                </div>
-                <div id="userId" style="background: #0b6623; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 22px;"></div>
-            </div>
-
-            <div style="width: 350px; height: 550px; background: #1e293b; border-radius: 20px; color: white; padding: 40px 30px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center;">
-                <div>
-                    <div style="font-size: 60px; background: white; border-radius: 15px; width: 85px; height: 85px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">🌳</div>
-                    <h2 style="color:white; letter-spacing: 2px; font-weight: 900;">EVERGREEN</h2>
-                </div>
-                <div style="background: white; padding: 15px; border-radius: 15px;">
-                    <img id="qrCode" src="" style="width: 150px; display: block;">
-                </div>
-                <div style="font-size: 13px; opacity: 0.8;">Helpline: +880 1700-111222</div>
-            </div>
-        </div>
-
-        <button onclick="generatePDF()" style="margin-top:25px; background:#0b6623; color:white; padding:15px 40px; border:none; border-radius:12px; cursor:pointer; font-weight:bold;">📥 Download Full PDF</button>
-    </div>
-</div>
-
-
-  
 </div>
 </div>
 
@@ -522,15 +466,6 @@ font-size:32px;
                     <p style="margin: 0; font-size: 11px; color: #475569; font-weight: 500;">Billing Manager</p>
                 </div>
             </div>
-<div style="margin-top: 25px; text-align: center; gap: 15px; display: flex; justify-content: center;">
-            <button onclick="document.getElementById('receiptPreviewWrapper').style.display='none'" 
-                    style="padding: 12px 25px; background: #e2e8f0; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; color: #475569;">
-                Close
-            </button>
-            <button id="downloadPdfBtn" onclick="processDownload()" 
-                    style="padding: 12px 25px; background: #0b6623; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; color: #ffffff; box-shadow: 0 4px 10px rgba(11, 102, 35, 0.3);">
-                ✅ Download PDF
-            </button>
         </div>
     </div>
 </div>
@@ -648,16 +583,12 @@ function renderPaymentTable(payments) {
         const currentStatus = String(p.status || 'Pending').trim();
         const statusClass = currentStatus.toLowerCase() === 'paid' ? 'paid' : 'due';
         
- let actionButton = "-";
-if(currentStatus.toLowerCase() === 'paid') {
-    // এখানে generateReceiptPDF এর বদলে showReceiptPreview ব্যবহার করুন
-    actionButton = `<button onclick="showReceiptPreview('${p.month}', ${amount}, ${fine})" 
-                    style="background: #0b6623; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;">
-                    📄 View & Download
-                    </button>`;
-} else {
-    actionButton = `<span style="color: #b91c1c; font-size: 13px; font-weight: 600;">Unpaid</span>`;
-}
+        let actionButton = "-";
+        if(currentStatus.toLowerCase() === 'paid') {
+            actionButton = `<button onclick="generateReceiptPDF('${p.month}', ${amount}, ${fine})" style="background: #0b6623; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">📄 Download</button>`;
+        } else {
+            actionButton = `<span style="color: #b91c1c; font-size: 13px; font-weight: 600;">Unpaid</span>`;
+        }
 
         tableHTML += `<tr>
             <td>${p.month}</td>
@@ -670,31 +601,50 @@ if(currentStatus.toLowerCase() === 'paid') {
     document.getElementById("paymentTableBody").innerHTML = tableHTML;
 }
 
-// ১. পপআপ দেখানোর জন্য
-async function downloadReceiptAsImage() {
-    const receiptElement = document.getElementById("receiptTemplate");
-    
-    // প্রিভিউ বক্সটি দৃশ্যমান থাকা জরুরি
+// 🎯 ১০০% কার্যকারী পিডিএফ ডাউনলোড ফাংশন (লাইভ ভিউ মেথড)
+function generateReceiptPDF(month, amount, fine) {
+    // প্রিভিউ বক্সটি স্ক্রিনে চালু করা
     document.getElementById("receiptPreviewWrapper").style.display = "block";
 
-    // html2canvas ব্যবহার করে ছবি তোলা
-    html2canvas(receiptElement, {
-        scale: 2,           // ছবির মান ভালো করার জন্য
-        useCORS: true,      // বাইরের ইমেজ সাপোর্ট করার জন্য
-        backgroundColor: "#ffffff"
-    }).then(canvas => {
-        // ক্যানভাসকে ইমেজে রূপান্তর করা
-        const image = canvas.toDataURL("image/png", 1.0);
-        
-        // ডাউনলোড করার জন্য একটি লিঙ্কিং ট্রিক
-        const link = document.createElement('a');
-        link.href = image;
-        link.download = 'Money_Receipt_' + document.getElementById("rMemberId").innerText + '.png';
-        link.click();
-        
-        // কাজ শেষে পপআপ বন্ধ (ঐচ্ছিক)
-        // document.getElementById("receiptPreviewWrapper").style.display = "none";
-    });
+    const m = window.currentMemberData;
+    const memberName = (m && m.name) ? m.name : document.getElementById("memberName").innerText;
+    const memberId = localStorage.getItem('memberId') || "N/A";
+    const memberPhone = document.getElementById("memberPhone") ? document.getElementById("memberPhone").innerText : "";
+
+    const today = new Date().toLocaleDateString('en-GB'); 
+
+    // লাইভ দৃশ্যমান বক্সে ডাটা সেট করা
+    document.getElementById("rCurrentDate").innerText = today;
+    document.getElementById("rMemberName").innerText = memberName;
+    document.getElementById("rMemberId").innerText = memberId;
+    document.getElementById("rMemberPhone").innerText = memberPhone;
+    document.getElementById("rMonth").innerText = month;
+    document.getElementById("rMainAmount").innerText = "৳ " + amount.toLocaleString();
+    document.getElementById("rFineAmount").innerText = "৳ " + fine.toLocaleString();
+    document.getElementById("rTotalAmount").innerText = "৳ " + (amount + fine).toLocaleString();
+
+    // স্ক্রিনের একদম নিচে রিসিট প্রিভিউ বক্সে ফোকাস নিয়ে যাওয়া যেন ইউজার দেখতে পায়
+    document.getElementById("receiptPreviewWrapper").scrollIntoView({ behavior: 'smooth' });
+
+    // ক্যানভাস ইমেজ তুলতে ব্রাউজারকে ১০মিলি-সেকেন্ড সময় দেওয়া যেন ডাটা রেন্ডার হয়ে যায়
+    setTimeout(() => {
+        const element = document.getElementById("receiptTemplate");
+        const opt = {
+            margin:       12, 
+            filename:     `Receipt_${month}_ID_${memberId}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff' // ব্যাকগ্রাউন্ড সাদা ফিক্সড করা হলো
+            }, 
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // পিডিএফ জেনারেশন এবং অটো সেভ
+        html2pdf().set(opt).from(element).save();
+    }, 150);
 }
 
 function setupProfilePopupEvents() {
@@ -741,103 +691,10 @@ function setupProfilePopupEvents() {
     });
 }
 
-     
 function logout() {
     localStorage.clear();
     window.location.href = "login.html";
 }
-
-  
-
-
-
-    function openModal() { document.getElementById('idCardModal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('idCardModal').style.display = 'none'; }
-    
-function generatePDF() {
-    const element = document.getElementById('full-card-area');
-    
-    // পিডিএফ তৈরির অপশনগুলো সেট করা
-    const opt = {
-        margin: 5,
-        filename: 'Evergreen_ID_Card.pdf',
-        image: { type: 'jpeg', quality: 1 }, // কোয়ালিটি সর্বোচ্চ করা হলো
-        html2canvas: { 
-            scale: 2,           // ক্লারিটির জন্য স্কেল বাড়ানো হলো
-            useCORS: true,      // বাইরের ডোমেইন থেকে ছবি লোড করতে এটি মাস্ট
-            logging: false, 
-            backgroundColor: '#ffffff' 
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-    };
-
-    // নিশ্চিত করার জন্য কিছুটা দেরি করে পিডিএফ তৈরি শুরু করা
-    setTimeout(() => {
-        html2pdf().set(opt).from(element).save();
-    }, 500); // ৫০০ মিলি-সেকেন্ড সময় দেওয়া হলো যাতে সব ডাটা রেন্ডার হতে পারে
-}
-
-function loadMemberData() {
-    if (typeof google !== 'undefined' && google.script) {
-        google.script.run.withSuccessHandler(function(member) {
-            if(member) {
-                document.getElementById('userName').innerText = member.name || "N/A";
-                document.getElementById('userDesignation').innerText = member.designation || "N/A";
-                document.getElementById('userPhone').innerText = member.phone || "N/A";
-                document.getElementById('userNid').innerText = member.nid || "N/A";
-                document.getElementById('userBlood').innerText = member.blood || "N/A";
-                document.getElementById('userAddress').innerText = member.address || "N/A";
-                document.getElementById('userId').innerText = "ID: " + (member.id || "N/A");
-                
-                // ছবি লোড করার জন্য ট্রাই-ক্যাচ
-                if(member.photoUrl) {
-                    document.getElementById('userImg').src = member.photoUrl;
-                } else {
-                    // ছবি না থাকলে ডিফল্ট একটি ইমেজ লিংক
-                    document.getElementById('userImg').src = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
-                }
-                
-                document.getElementById('qrCode').src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + (member.id || "NA");
-            }
-        }).getMemberData();
-    } else {
-        console.log("সরাসরি টেস্ট মোডে চলছে। অ্যাপস স্ক্রিপ্ট ফাংশন পাওয়া যায়নি।");
-        // টেস্ট করার জন্য নিচে ম্যানুয়ালি কিছু ভ্যালু সেট করে দিন
-        document.getElementById('userName').innerText = "Arif Rahman";
-        document.getElementById('userImg').src = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
-    }
-}
-
-  function loadMemberData() {
-        if (typeof google !== 'undefined' && google.script) {
-            google.script.run.withSuccessHandler(function(member) {
-                if(member) {
-                    document.getElementById('userName').innerText = member.name || "N/A";
-                    document.getElementById('userDesignation').innerText = member.designation || "N/A";
-                    document.getElementById('userPhone').innerText = member.phone || "N/A";
-                    document.getElementById('userNid').innerText = member.nid || "N/A";
-                    document.getElementById('userBlood').innerText = member.blood || "N/A";
-                    document.getElementById('userAddress').innerText = member.address || "N/A";
-                    document.getElementById('userId').innerText = "ID: " + (member.id || "N/A");
-                    
-                    if(member.photoUrl) {
-                        document.getElementById('userImg').src = member.photoUrl;
-                    } else {
-                        document.getElementById('userImg').src = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
-                    }
-                    
-                    document.getElementById('qrCode').src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + (member.id || "NA");
-                }
-            }).getMemberData();
-        } else {
-            console.log("সরাসরি টেস্ট মোডে চলছে।");
-            document.getElementById('userName').innerText = "Arif Rahman";
-            document.getElementById('userImg').src = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
-        }
-    }
-
-    // এটি নিশ্চিত করবে যে পেজ লোড হলেই ডেটা আসবে
-    document.addEventListener("DOMContentLoaded", loadMemberData);
 </script>
 </body>
 </html>
