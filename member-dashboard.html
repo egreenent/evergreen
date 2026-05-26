@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 
 <style>
 *{
@@ -616,80 +616,165 @@ function renderPaymentTable(payments) {
     document.getElementById("paymentTableBody").innerHTML = tableHTML;
 }
 
-// 🎯 ১০০% কার্যকারী পিডিএফ ডাউনলোড ফাংশন (লাইভ ভিউ মেথড)
+// ✅ Print-based PDF Download (সবচেয়ে নির্ভরযোগ্য পদ্ধতি)
 function generateReceiptPDF(month, amount, fine) {
-    // প্রিভিউ বক্সটি স্ক্রিনে চালু করা
-    document.getElementById("receiptPreviewWrapper").style.display = "block";
-
     const m = window.currentMemberData;
     const memberName = (m && m.name) ? m.name : document.getElementById("memberName").innerText;
     const memberId = localStorage.getItem('memberId') || "N/A";
-    const memberPhone = document.getElementById("memberPhone") ? document.getElementById("memberPhone").innerText : "";
+    const memberPhone = (m && m.phone) ? m.phone : "";
+    const today = new Date().toLocaleDateString('en-GB');
 
-    const today = new Date().toLocaleDateString('en-GB'); 
+    const receiptHTML = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Receipt_${month}_${memberId}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: 'Poppins', Arial, sans-serif; background: #fff; color: #1e293b; }
+            @media print {
+                @page { margin: 15mm; size: A4 portrait; }
+                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
+            .receipt { width: 100%; max-width: 650px; margin: 0 auto; padding: 40px 30px; }
 
-    // লাইভ দৃশ্যমান বক্সে ডাটা সেট করা
-    document.getElementById("rCurrentDate").innerText = today;
-    document.getElementById("rMemberName").innerText = memberName;
-    document.getElementById("rMemberId").innerText = memberId;
-    document.getElementById("rMemberPhone").innerText = memberPhone;
-    document.getElementById("rMonth").innerText = month;
-    document.getElementById("rMainAmount").innerText = "৳ " + amount.toLocaleString();
-    document.getElementById("rFineAmount").innerText = "৳ " + fine.toLocaleString();
-    document.getElementById("rTotalAmount").innerText = "৳ " + (amount + fine).toLocaleString();
+            /* Header */
+            .header-table { width: 100%; border-collapse: collapse; border-bottom: 2px solid #0b6623; padding-bottom: 18px; margin-bottom: 25px; }
+            .logo-box { width: 45px; height: 45px; background: #0b6623; color: #fff; text-align: center; line-height: 45px; font-weight: 700; border-radius: 8px; font-size: 20px; display: inline-block; vertical-align: middle; }
+            .company-name { font-size: 22px; font-weight: 700; color: #0b6623; display: inline-block; vertical-align: middle; margin-left: 12px; }
+            .company-sub { font-size: 10px; color: #556b2f; text-transform: uppercase; letter-spacing: 2px; margin-top: 3px; }
+            .date-box { text-align: right; vertical-align: top; }
+            .date-label { font-size: 11px; color: #64748b; }
+            .date-value { font-size: 13px; font-weight: 600; color: #0f172a; }
 
-    // স্ক্রিনের একদম নিচে রিসিট প্রিভিউ বক্সে ফোকাস নিয়ে যাওয়া যেন ইউজার দেখতে পায়
-    document.getElementById("receiptPreviewWrapper").scrollIntoView({ behavior: 'smooth' });
+            /* Member Info */
+            .member-box { background: #f4f9f4; border-top: 4px solid #0b6623; border-radius: 10px; padding: 20px; margin-bottom: 30px; }
+            .member-table { width: 100%; border-collapse: collapse; }
+            .label-small { font-size: 10px; color: #556b2f; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 5px; }
+            .member-name { font-size: 16px; font-weight: 600; color: #0f172a; }
+            .member-detail { font-size: 12px; color: #475569; margin-top: 3px; }
+            .paid-stamp { width: 80px; height: 80px; border: 3px dashed #6d28d9; border-radius: 50%; text-align: center; padding-top: 15px; display: inline-block; }
+            .paid-stamp .s1 { font-size: 9px; color: #7c3aed; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+            .paid-stamp .s2 { font-size: 18px; color: #5b21b6; font-weight: 800; letter-spacing: 1px; }
+            .paid-stamp .s3 { font-size: 8px; color: #7c3aed; font-weight: 500; }
 
-    // ব্রাউজারকে সময় দেওয়া যেন ডাটা রেন্ডার হয়ে যায়
-    setTimeout(() => {
-        const element = document.getElementById("receiptTemplate");
-        const wrapper = document.getElementById("receiptPreviewWrapper");
+            /* Transaction Table */
+            .txn-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; font-size: 13px; }
+            .txn-table thead tr { background: #0b6623; color: #fff; }
+            .txn-table thead th { padding: 12px 16px; font-weight: 500; text-align: left; }
+            .txn-table thead th:last-child { text-align: right; }
+            .txn-table tbody td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; }
+            .txn-table tbody td:last-child { text-align: right; }
+            .total-badge { background: #0b6623; color: #fff; padding: 8px 18px; border-radius: 6px; font-weight: 700; font-size: 15px; display: inline-block; }
 
-        // wrapper সাময়িকভাবে off-screen এ রাখা (visible কিন্তু চোখে পড়বে না)
-        wrapper.style.display = "block";
-        wrapper.style.position = "fixed";
-        wrapper.style.top = "-9999px";
-        wrapper.style.left = "-9999px";
-        wrapper.style.zIndex = "-1";
+            /* Footer */
+            .footer-table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+            .footer-note { font-size: 10px; color: #94a3b8; line-height: 1.5; }
+            .signature-line { border-bottom: 1px dashed #cbd5e1; margin-bottom: 6px; height: 25px; }
+            .signature-label { font-size: 11px; color: #475569; font-weight: 500; text-align: center; }
+        </style>
+    </head>
+    <body>
+    <div class="receipt">
 
-        const opt = {
-            margin: [10, 10, 10, 10],
-            filename: `Receipt_${month}_ID_${memberId}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true,
-                allowTaint: true,
-                logging: false,
-                backgroundColor: '#ffffff',
-                windowWidth: 700,
-                onclone: function(clonedDoc) {
-                    const clonedWrapper = clonedDoc.getElementById("receiptPreviewWrapper");
-                    if(clonedWrapper) {
-                        clonedWrapper.style.display = "block";
-                        clonedWrapper.style.position = "static";
-                        clonedWrapper.style.top = "0";
-                        clonedWrapper.style.left = "0";
-                        clonedWrapper.style.zIndex = "1";
-                        clonedWrapper.style.opacity = "1";
-                    }
-                }
-            }, 
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        <!-- Header -->
+        <table class="header-table">
+            <tr>
+                <td style="padding-bottom: 18px; vertical-align: middle;">
+                    <span class="logo-box">E</span>
+                    <span class="company-name">EverGreen Enterprise</span>
+                    <div class="company-sub" style="margin-left: 57px;">Secure Digital Money Receipt</div>
+                </td>
+                <td class="date-box" style="padding-bottom: 18px; vertical-align: top;">
+                    <div class="date-label">Statement Date</div>
+                    <div class="date-value">${today}</div>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Member Info -->
+        <div class="member-box">
+            <table class="member-table">
+                <tr>
+                    <td style="vertical-align: top; width: 55%;">
+                        <div class="label-small">Account Holder</div>
+                        <div class="member-name">${memberName}</div>
+                        <div class="member-detail">ID: <strong style="color: #0b6623;">${memberId}</strong></div>
+                        <div class="member-detail">${memberPhone}</div>
+                    </td>
+                    <td style="vertical-align: top; width: 25%; text-align: right; padding-right: 15px;">
+                        <div class="member-detail">Billing Month: <strong>${month}</strong></div>
+                        <div class="member-detail" style="margin-top: 5px;">Status: <strong style="color: #0b6623;">PAID</strong></div>
+                    </td>
+                    <td style="vertical-align: middle; width: 20%; text-align: center;">
+                        <div class="paid-stamp">
+                            <div class="s1">OFFICIAL</div>
+                            <div class="s2">PAID</div>
+                            <div class="s3">VERIFIED</div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Transaction Table -->
+        <table class="txn-table">
+            <thead>
+                <tr>
+                    <th>Transaction Item Description</th>
+                    <th style="text-align: right;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="color: #334155;">Monthly Membership Subscription Fee</td>
+                    <td style="text-align: right; font-weight: 500;">৳ ${amount.toLocaleString()}</td>
+                </tr>
+                <tr>
+                    <td style="color: #64748b; font-style: italic;">Late Fine / System Penalty Charges</td>
+                    <td style="text-align: right; color: #b91c1c;">৳ ${fine.toLocaleString()}</td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 18px; text-align: right; font-weight: 600; color: #0f172a; font-size: 14px;">Total Paid Amount:</td>
+                    <td style="padding-top: 18px; text-align: right;">
+                        <span class="total-badge">৳ ${(amount + fine).toLocaleString()}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Footer -->
+        <table class="footer-table">
+            <tr>
+                <td style="vertical-align: bottom; width: 60%;">
+                    <p class="footer-note">* This is a secure, automated digital invoice generated by the billing engine. No physical ink signature is required for authentication.</p>
+                </td>
+                <td style="vertical-align: bottom; width: 40%; text-align: center; padding-left: 20px;">
+                    <div class="signature-line"></div>
+                    <p class="signature-label">Billing Manager</p>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <script>
+        window.onload = function() {
+            window.print();
+            window.onafterprint = function() { window.close(); };
         };
+    </script>
+    </body>
+    </html>`;
 
-        // পিডিএফ জেনারেশন এবং অটো সেভ, তারপর wrapper রিসেট
-        html2pdf().set(opt).from(element).save().then(() => {
-            wrapper.style.position = "";
-            wrapper.style.top = "";
-            wrapper.style.left = "";
-            wrapper.style.zIndex = "";
-            wrapper.style.display = "block";
-            document.getElementById("receiptPreviewWrapper").scrollIntoView({ behavior: 'smooth' });
-        });
-    }, 300);
+    // নতুন popup window-এ receipt খুলে print করা
+    const printWin = window.open('', '_blank', 'width=800,height=900');
+    printWin.document.open();
+    printWin.document.write(receiptHTML);
+    printWin.document.close();
 }
+
 
 function setupProfilePopupEvents() {
     const viewBtn = document.getElementById("viewProfileBtn");
