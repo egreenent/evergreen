@@ -668,7 +668,7 @@ border-radius:8px;
 
 <a href="#" onclick="showSection('dashboardSection', this)" class="active">🏠 Dashboard</a>
 <a href="#" onclick="showSection('membersSection', this)">👥 Members</a>
-<a href="#" onclick="showSection('paymentsSection', this)">💰 Payments</a>
+<a href="#" onclick="showSection('paymentsSection', this); fetchLivePaymentData();">💰 Payments</a>
 <a href="#" onclick="showSection('noticesSection', this)">📢 Notices</a>
 <a href="#" onclick="showSection('downloadsSection', this)">📥 Downloads</a>
 <a href="#" onclick="showSection('analyticsSection', this)">📊 Analytics</a>
@@ -829,6 +829,7 @@ Save Member
         <div class="filter-group">
             <label>বছর নির্বাচন করুন (Select Year)</label>
             <select id="filterYear" class="filter-select">
+                <option value="all">সব বছর (All)</option>
                 <option value="2025">2025</option>
                 <option value="2026" selected>2026</option>
                 <option value="2027">2027</option>
@@ -838,6 +839,7 @@ Save Member
         <div class="filter-group">
             <label>মাস নির্বাচন করুন (Select Month)</label>
             <select id="filterMonth" class="filter-select">
+                <option value="all">সব মাস (All Months)</option>
                 <option value="01">জানুয়ারি (January)</option>
                 <option value="02">ফেব্রুয়ারি (February)</option>
                 <option value="03">মার্চ (March)</option>
@@ -1496,23 +1498,31 @@ function filterPaymentData() {
     
     if (!tbody) return;
     
-    const monthNamesEng = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    const monthNamesBng = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+    const monthNamesEng = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const monthNamesBng = ["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
     
     const monthIndex = parseInt(selectedMonth) - 1;
-    const currentMonthLongEng = monthNamesEng[monthIndex].toLowerCase(); 
-    const currentMonthLongBng = monthNamesBng[monthIndex]; 
-    const singleDigitMonth = parseInt(selectedMonth).toString(); 
+    const engMonthName = monthNamesEng[monthIndex].toLowerCase();
+    const bngMonthName = monthNamesBng[monthIndex];
 
     const filteredData = rawPaymentDatabase.filter(item => {
-        const itemMonthStr = String(item.monthStr || '').toLowerCase().trim();
-        const itemYearStr = String(item.year || item.monthStr || '').trim();
+        // monthStr ফিল্ড থেকে year এবং month আলাদা করে check করা
+        const ms = String(item.monthStr || '').toLowerCase().trim();
 
-        const isYearMatch = itemYearStr.includes(selectedYear);
-        const isMonthMatch = itemMonthStr.includes(selectedMonth) || 
-                             itemMonthStr.includes(singleDigitMonth) || 
-                             itemMonthStr.includes(currentMonthLongEng) || 
-                             itemMonthStr.includes(currentMonthLongBng);
+        // Year match: monthStr এর মধ্যে selected year আছে কিনা
+        const isYearMatch = selectedYear === 'all' || ms.includes(selectedYear);
+
+        // Month match: English নাম, বাংলা নাম, বা সংখ্যা (01-12 বা 1-12) যেকোনোভাবে থাকুক
+        const paddedMonth = selectedMonth;                        // "01","02"...
+        const numMonth = String(parseInt(selectedMonth));         // "1","2"...
+        const isMonthMatch = selectedMonth === 'all' ||
+                             ms.includes(engMonthName) ||
+                             ms.includes(bngMonthName) ||
+                             ms.startsWith(paddedMonth + '/') ||
+                             ms.startsWith(paddedMonth + '-') ||
+                             ms.startsWith(numMonth + '/') ||
+                             ms.startsWith(numMonth + '-') ||
+                             new RegExp('\\b' + numMonth + '\\b').test(ms);
                              
         return isYearMatch && isMonthMatch;
     });
