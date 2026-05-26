@@ -396,47 +396,59 @@ font-size:32px;
     
     <div style="display: flex; justify-content: center; background: #f8fafc; padding: 20px; border-radius: 12px; overflow-x: auto;">
         
-        <div id="receiptTemplate" style="width: 595px; min-width: 595px; padding: 45px; background: #ffffff; color: #1e293b; font-family: 'Poppins', sans-serif; position: relative; border: 1px solid #e2e8f0; box-sizing: border-box; text-align: left;">
+        <div id="receiptTemplate" style="width: 595px; min-width: 595px; padding: 45px; background: #ffffff; color: #1e293b; font-family: 'Poppins', sans-serif; border: 1px solid #e2e8f0; box-sizing: border-box; text-align: left;">
             
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0b6623; padding-bottom: 20px; margin-bottom: 30px;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="width: 45px; height: 45px; background: #0b6623; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; border-radius: 8px; font-size: 20px;">E</div>
-                    <div>
-                        <h2 style="color: #0b6623; margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px;">EverGreen Enterprise</h2>
-                        <p style="margin: 4px 0 0 0; font-size: 10px; color: #556b2f; text-transform: uppercase; letter-spacing: 2px; font-weight: 500;">Secure Digital Money Receipt</p>
-                    </div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 11px; color: #64748b; margin-bottom: 4px;">Statement Date</div>
-                    <div id="rCurrentDate" style="color: #0f172a; font-weight: 600; font-size: 13px;">-</div>
-                </div>
-            </div>
+            <!-- Header: table layout instead of flex -->
+            <table style="width: 100%; border-collapse: collapse; border-bottom: 2px solid #0b6623; padding-bottom: 20px; margin-bottom: 30px;">
+                <tr>
+                    <td style="vertical-align: middle; padding-bottom: 20px;">
+                        <table style="border-collapse: collapse;">
+                            <tr>
+                                <td style="vertical-align: middle; padding-right: 15px;">
+                                    <div style="width: 45px; height: 45px; background: #0b6623; color: #fff; text-align: center; line-height: 45px; font-weight: 700; border-radius: 8px; font-size: 20px;">E</div>
+                                </td>
+                                <td style="vertical-align: middle;">
+                                    <h2 style="color: #0b6623; margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px;">EverGreen Enterprise</h2>
+                                    <p style="margin: 4px 0 0 0; font-size: 10px; color: #556b2f; text-transform: uppercase; letter-spacing: 2px; font-weight: 500;">Secure Digital Money Receipt</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="text-align: right; vertical-align: middle; padding-bottom: 20px;">
+                        <div style="font-size: 11px; color: #64748b; margin-bottom: 4px;">Statement Date</div>
+                        <div id="rCurrentDate" style="color: #0f172a; font-weight: 600; font-size: 13px;">-</div>
+                    </td>
+                </tr>
+            </table>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; background: #f4f9f4; padding: 22px; border-radius: 12px; margin-bottom: 35px; border-top: 4px solid #0b6623; position: relative;">
-                <div>
-                    <p style="margin: 0 0 6px 0; font-size: 10px; color: #556b2f; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Account Holder</p>
-                    <h4 id="rMemberName" style="margin: 0 0 4px 0; font-size: 16px; color: #0f172a; font-weight: 600;">-</h4>
-                    <p style="margin: 0; font-size: 12px; color: #334155;">ID: <span id="rMemberId" style="font-weight: 600; color: #0b6623;">-</span></p>
-                    <p id="rMemberPhone" style="margin: 2px 0 0 0; font-size: 12px; color: #475569;">-</p>
-                </div>
-                
-                <div style="text-align: right; margin-right: 100px;">
-                    <p style="margin: 0 0 4px 0; font-size: 12px; color: #334155;">Billing Month: <strong id="rMonth" style="color: #0f172a;">-</strong></p>
-                    <p style="margin: 0; font-size: 12px; color: #334155;">Status: <span style="font-weight: 600; color: #0b6623;">PAID</span></p>
-                </div>
-
-                <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%) rotate(-10deg); width: 85px; height: 85px; border: 3px dashed #6d28d9; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(109, 40, 217, 0.03); box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px rgba(109, 40, 217, 0.15); user-select: none;">
-                    <span style="font-size: 9px; color: #7c3aed; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">OFFICIAL</span>
-                    <span style="font-size: 18px; color: #5b21b6; font-weight: 800; letter-spacing: 1px; margin: -2px 0;">PAID</span>
-                    <span style="font-size: 8px; color: #7c3aed; font-weight: 500;">VERIFIED</span>
-                </div>
-            </div>
+            <!-- Member Info Block: table layout -->
+            <table style="width: 100%; border-collapse: collapse; background: #f4f9f4; border-top: 4px solid #0b6623; border-radius: 12px; margin-bottom: 35px;">
+                <tr>
+                    <td style="padding: 22px; vertical-align: top; width: 55%;">
+                        <p style="margin: 0 0 6px 0; font-size: 10px; color: #556b2f; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Account Holder</p>
+                        <h4 id="rMemberName" style="margin: 0 0 4px 0; font-size: 16px; color: #0f172a; font-weight: 600;">-</h4>
+                        <p style="margin: 0; font-size: 12px; color: #334155;">ID: <span id="rMemberId" style="font-weight: 600; color: #0b6623;">-</span></p>
+                        <p id="rMemberPhone" style="margin: 2px 0 0 0; font-size: 12px; color: #475569;">-</p>
+                    </td>
+                    <td style="padding: 22px; vertical-align: top; text-align: right; width: 25%;">
+                        <p style="margin: 0 0 4px 0; font-size: 12px; color: #334155;">Billing Month: <strong id="rMonth" style="color: #0f172a;">-</strong></p>
+                        <p style="margin: 0; font-size: 12px; color: #334155;">Status: <span style="font-weight: 600; color: #0b6623;">PAID</span></p>
+                    </td>
+                    <td style="padding: 22px; vertical-align: middle; text-align: center; width: 20%;">
+                        <div style="width: 85px; height: 85px; border: 3px dashed #6d28d9; border-radius: 50%; display: inline-block; padding-top: 18px; background: rgba(109,40,217,0.03); box-sizing: border-box; text-align: center;">
+                            <div style="font-size: 9px; color: #7c3aed; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; line-height: 1.3;">OFFICIAL</div>
+                            <div style="font-size: 18px; color: #5b21b6; font-weight: 800; letter-spacing: 1px; line-height: 1.2;">PAID</div>
+                            <div style="font-size: 8px; color: #7c3aed; font-weight: 500; line-height: 1.3;">VERIFIED</div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
 
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 45px; font-size: 13px;">
                 <thead>
                     <tr style="background: #0b6623; color: #ffffff; text-align: left;">
-                        <th style="padding: 12px 16px; font-weight: 500; border-top-left-radius: 6px; border-bottom-left-radius: 6px; color: #fff;">Transaction Item Description</th>
-                        <th style="padding: 12px 16px; font-weight: 500; text-align: right; border-top-right-radius: 6px; border-bottom-right-radius: 6px; color: #fff;">Amount</th>
+                        <th style="padding: 12px 16px; font-weight: 500; color: #fff;">Transaction Item Description</th>
+                        <th style="padding: 12px 16px; font-weight: 500; text-align: right; color: #fff;">Amount</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -451,21 +463,24 @@ font-size:32px;
                     <tr>
                         <td style="padding: 20px 16px 0 16px; text-align: right; font-weight: 600; color: #0f172a; font-size: 14px;">Total Paid Amount:</td>
                         <td style="padding: 20px 0 0 0; text-align: right;">
-                            <span style="font-size: 16px; font-weight: 700; color: #ffffff; background: #0b6623; padding: 10px 20px; border-radius: 6px; display: inline-block; min-width: 110px; box-shadow: 0 4px 10px rgba(11, 102, 35, 0.2);" id="rTotalAmount">৳ 0</span>
+                            <span style="font-size: 16px; font-weight: 700; color: #ffffff; background: #0b6623; padding: 10px 20px; border-radius: 6px; display: inline-block; min-width: 110px;" id="rTotalAmount">৳ 0</span>
                         </td>
                     </tr>
                 </tbody>
             </table>
 
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 50px;">
-                <div style="max-width: 65%;">
-                    <p style="margin: 0; font-size: 10px; color: #94a3b8; line-height: 1.5;">* This is a secure, automated digital invoice generated by the billing engine. No physical ink signature is required for authentication.</p>
-                </div>
-                <div style="text-align: center; width: 130px;">
-                    <div style="border-bottom: 1px dashed #cbd5e1; margin-bottom: 6px; height: 25px;"></div>
-                    <p style="margin: 0; font-size: 11px; color: #475569; font-weight: 500;">Billing Manager</p>
-                </div>
-            </div>
+            <!-- Footer: table layout -->
+            <table style="width: 100%; border-collapse: collapse; margin-top: 50px;">
+                <tr>
+                    <td style="vertical-align: bottom; width: 65%;">
+                        <p style="margin: 0; font-size: 10px; color: #94a3b8; line-height: 1.5;">* This is a secure, automated digital invoice generated by the billing engine. No physical ink signature is required for authentication.</p>
+                    </td>
+                    <td style="text-align: center; vertical-align: bottom; width: 35%;">
+                        <div style="border-bottom: 1px dashed #cbd5e1; margin-bottom: 6px; height: 25px;"></div>
+                        <p style="margin: 0; font-size: 11px; color: #475569; font-weight: 500;">Billing Manager</p>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>
@@ -626,25 +641,54 @@ function generateReceiptPDF(month, amount, fine) {
     // স্ক্রিনের একদম নিচে রিসিট প্রিভিউ বক্সে ফোকাস নিয়ে যাওয়া যেন ইউজার দেখতে পায়
     document.getElementById("receiptPreviewWrapper").scrollIntoView({ behavior: 'smooth' });
 
-    // ক্যানভাস ইমেজ তুলতে ব্রাউজারকে ১০মিলি-সেকেন্ড সময় দেওয়া যেন ডাটা রেন্ডার হয়ে যায়
+    // ব্রাউজারকে সময় দেওয়া যেন ডাটা রেন্ডার হয়ে যায়
     setTimeout(() => {
         const element = document.getElementById("receiptTemplate");
+        const wrapper = document.getElementById("receiptPreviewWrapper");
+
+        // wrapper সাময়িকভাবে off-screen এ রাখা (visible কিন্তু চোখে পড়বে না)
+        wrapper.style.display = "block";
+        wrapper.style.position = "fixed";
+        wrapper.style.top = "-9999px";
+        wrapper.style.left = "-9999px";
+        wrapper.style.zIndex = "-1";
+
         const opt = {
-            margin:       12, 
-            filename:     `Receipt_${month}_ID_${memberId}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { 
+            margin: [10, 10, 10, 10],
+            filename: `Receipt_${month}_ID_${memberId}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { 
                 scale: 2, 
                 useCORS: true,
+                allowTaint: true,
                 logging: false,
-                backgroundColor: '#ffffff' // ব্যাকগ্রাউন্ড সাদা ফিক্সড করা হলো
+                backgroundColor: '#ffffff',
+                windowWidth: 700,
+                onclone: function(clonedDoc) {
+                    const clonedWrapper = clonedDoc.getElementById("receiptPreviewWrapper");
+                    if(clonedWrapper) {
+                        clonedWrapper.style.display = "block";
+                        clonedWrapper.style.position = "static";
+                        clonedWrapper.style.top = "0";
+                        clonedWrapper.style.left = "0";
+                        clonedWrapper.style.zIndex = "1";
+                        clonedWrapper.style.opacity = "1";
+                    }
+                }
             }, 
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // পিডিএফ জেনারেশন এবং অটো সেভ
-        html2pdf().set(opt).from(element).save();
-    }, 150);
+        // পিডিএফ জেনারেশন এবং অটো সেভ, তারপর wrapper রিসেট
+        html2pdf().set(opt).from(element).save().then(() => {
+            wrapper.style.position = "";
+            wrapper.style.top = "";
+            wrapper.style.left = "";
+            wrapper.style.zIndex = "";
+            wrapper.style.display = "block";
+            document.getElementById("receiptPreviewWrapper").scrollIntoView({ behavior: 'smooth' });
+        });
+    }, 300);
 }
 
 function setupProfilePopupEvents() {
