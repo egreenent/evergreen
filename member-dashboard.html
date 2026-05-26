@@ -522,6 +522,15 @@ font-size:32px;
                     <p style="margin: 0; font-size: 11px; color: #475569; font-weight: 500;">Billing Manager</p>
                 </div>
             </div>
+<div style="margin-top: 25px; text-align: center; gap: 15px; display: flex; justify-content: center;">
+            <button onclick="document.getElementById('receiptPreviewWrapper').style.display='none'" 
+                    style="padding: 12px 25px; background: #e2e8f0; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; color: #475569;">
+                Close
+            </button>
+            <button id="downloadPdfBtn" onclick="processDownload()" 
+                    style="padding: 12px 25px; background: #0b6623; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; color: #ffffff; box-shadow: 0 4px 10px rgba(11, 102, 35, 0.3);">
+                ✅ Download PDF
+            </button>
         </div>
     </div>
 </div>
@@ -657,53 +666,48 @@ function renderPaymentTable(payments) {
     document.getElementById("paymentTableBody").innerHTML = tableHTML;
 }
 
-// 🎯 ১০০% কার্যকারী পিডিএফ ডাউনলোড ফাংশন (লাইভ ভিউ মেথড)
-async function generateReceiptPDF(month, amount, fine) {
-    const wrapper = document.getElementById("receiptPreviewWrapper");
-    
-    // ১. বক্সটি স্ক্রিনের একদম উপরে নিয়ে আসুন এবং দৃশ্যমান করুন
-    wrapper.style.display = "block";
-    wrapper.style.visibility = "visible"; 
-    wrapper.style.position = "fixed"; // যাতে পিডিএফ জেনারেশনের সময় নড়ে না যায়
-    wrapper.style.top = "0";
-    wrapper.style.left = "0";
-    wrapper.style.zIndex = "9999";
-
-    // ২. ডাটা সেট করা (আপনার আগের কোড)
+// ১. পপআপ দেখানোর জন্য
+function generateReceiptPDF(month, amount, fine) {
+    // ডাটা সেট করা
     const m = window.currentMemberData;
     document.getElementById("rCurrentDate").innerText = new Date().toLocaleDateString('en-GB');
     document.getElementById("rMemberName").innerText = m.name;
     document.getElementById("rMemberId").innerText = localStorage.getItem('memberId');
+    document.getElementById("rMemberPhone").innerText = m.phone;
     document.getElementById("rMonth").innerText = month;
     document.getElementById("rMainAmount").innerText = "৳ " + amount.toLocaleString();
     document.getElementById("rFineAmount").innerText = "৳ " + fine.toLocaleString();
     document.getElementById("rTotalAmount").innerText = "৳ " + (amount + fine).toLocaleString();
 
-    // ৩. অত্যন্ত জরুরি: ব্রাউজারকে ডাটা রেন্ডার করার জন্য সময় দেওয়া
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // পপআপ ওপেন করা
+    document.getElementById("receiptPreviewWrapper").style.display = "block";
+}
 
-    // ৪. পিডিএফ জেনারেশন অপশন
+// ২. ডাউনলোড বাটনে ক্লিক করলে পিডিএফ হবে
+async function processDownload() {
+    const btn = document.getElementById("downloadPdfBtn");
+    btn.innerText = "Generating...";
+    btn.disabled = true;
+
     const element = document.getElementById("receiptTemplate");
     const opt = {
         margin: 5,
-        filename: `Receipt_${month}.pdf`,
+        filename: `Money_Receipt_${document.getElementById("rMonth").innerText}.pdf`,
         image: { type: 'jpeg', quality: 1 },
-        html2canvas: { 
-            scale: 2, 
-            useCORS: true,        // বাইরের ছবি লোড করার জন্য
-            allowTaint: true,     // ক্যানভাস রেন্ডারিং এরর ফিক্স করতে
-            logging: false,
-            backgroundColor: '#ffffff'
-        },
+        html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff' },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // ৫. পিডিএফ ডাউনলোড করুন
-    html2pdf().set(opt).from(element).save().then(() => {
-        // ৬. কাজ শেষে বক্সটি আবার হাইড করে দিন
-        wrapper.style.display = "none";
-        wrapper.style.position = "static";
-    });
+    try {
+        await html2pdf().set(opt).from(element).save();
+    } catch (err) {
+        console.error("PDF Error:", err);
+    } finally {
+        btn.innerText = "✅ Download PDF";
+        btn.disabled = false;
+        // পিডিএফ হওয়ার পর পপআপ বন্ধ (ঐচ্ছিক)
+        document.getElementById("receiptPreviewWrapper").style.display = "none";
+    }
 }
 
 function setupProfilePopupEvents() {
