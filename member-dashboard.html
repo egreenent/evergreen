@@ -760,10 +760,28 @@ function logout() {
     function openModal() { document.getElementById('idCardModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('idCardModal').style.display = 'none'; }
     
-    function generatePDF() {
-        const element = document.getElementById('full-card-area');
-        html2pdf().from(element).save('Evergreen_ID_Card.pdf');
-    }
+function generatePDF() {
+    const element = document.getElementById('full-card-area');
+    
+    // পিডিএফ তৈরির অপশনগুলো সেট করা
+    const opt = {
+        margin: 5,
+        filename: 'Evergreen_ID_Card.pdf',
+        image: { type: 'jpeg', quality: 1 }, // কোয়ালিটি সর্বোচ্চ করা হলো
+        html2canvas: { 
+            scale: 2,           // ক্লারিটির জন্য স্কেল বাড়ানো হলো
+            useCORS: true,      // বাইরের ডোমেইন থেকে ছবি লোড করতে এটি মাস্ট
+            logging: false, 
+            backgroundColor: '#ffffff' 
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    };
+
+    // নিশ্চিত করার জন্য কিছুটা দেরি করে পিডিএফ তৈরি শুরু করা
+    setTimeout(() => {
+        html2pdf().set(opt).from(element).save();
+    }, 500); // ৫০০ মিলি-সেকেন্ড সময় দেওয়া হলো যাতে সব ডাটা রেন্ডার হতে পারে
+}
 
 function loadMemberData() {
     if (typeof google !== 'undefined' && google.script) {
