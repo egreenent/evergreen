@@ -658,18 +658,18 @@ function renderPaymentTable(payments) {
 }
 
 // 🎯 ১০০% কার্যকারী পিডিএফ ডাউনলোড ফাংশন (লাইভ ভিউ মেথড)
-function generateReceiptPDF(month, amount, fine) {
-    // প্রিভিউ বক্সটি স্ক্রিনে চালু করা
-    document.getElementById("receiptPreviewWrapper").style.display = "block";
+async function generateReceiptPDF(month, amount, fine) {
+    // ১. প্রিভিউ বক্সটি দৃশ্যমান করা
+    const wrapper = document.getElementById("receiptPreviewWrapper");
+    wrapper.style.display = "block";
 
+    // ২. ডাটা সেট করা
     const m = window.currentMemberData;
     const memberName = (m && m.name) ? m.name : document.getElementById("memberName").innerText;
     const memberId = localStorage.getItem('memberId') || "N/A";
     const memberPhone = document.getElementById("memberPhone") ? document.getElementById("memberPhone").innerText : "";
-
     const today = new Date().toLocaleDateString('en-GB'); 
 
-    // লাইভ দৃশ্যমান বক্সে ডাটা সেট করা
     document.getElementById("rCurrentDate").innerText = today;
     document.getElementById("rMemberName").innerText = memberName;
     document.getElementById("rMemberId").innerText = memberId;
@@ -679,28 +679,28 @@ function generateReceiptPDF(month, amount, fine) {
     document.getElementById("rFineAmount").innerText = "৳ " + fine.toLocaleString();
     document.getElementById("rTotalAmount").innerText = "৳ " + (amount + fine).toLocaleString();
 
-    // স্ক্রিনের একদম নিচে রিসিট প্রিভিউ বক্সে ফোকাস নিয়ে যাওয়া যেন ইউজার দেখতে পায়
-    document.getElementById("receiptPreviewWrapper").scrollIntoView({ behavior: 'smooth' });
+    // ৩. ডাটা আপডেট হওয়ার পর কিছুটা সময় অপেক্ষা করা (অত্যন্ত জরুরি)
+    await new Promise(resolve => setTimeout(resolve, 800)); 
 
-    // ক্যানভাস ইমেজ তুলতে ব্রাউজারকে ১০মিলি-সেকেন্ড সময় দেওয়া যেন ডাটা রেন্ডার হয়ে যায়
-    setTimeout(() => {
-        const element = document.getElementById("receiptTemplate");
-        const opt = {
-            margin:       12, 
-            filename:     `Receipt_${month}_ID_${memberId}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { 
-                scale: 2, 
-                useCORS: true,
-                logging: false,
-                backgroundColor: '#ffffff' // ব্যাকগ্রাউন্ড সাদা ফিক্সড করা হলো
-            }, 
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
+    // ৪. পিডিএফ জেনারেশন
+    const element = document.getElementById("receiptTemplate");
+    const opt = {
+        margin: 10,
+        filename: `Receipt_${month}_ID_${memberId}.pdf`,
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { 
+            scale: 2, 
+            useCORS: true, 
+            logging: false,
+            backgroundColor: '#ffffff'
+        }, 
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
 
-        // পিডিএফ জেনারেশন এবং অটো সেভ
-        html2pdf().set(opt).from(element).save();
-    }, 150);
+    html2pdf().set(opt).from(element).save().then(() => {
+        // পিডিএফ তৈরির পর বক্সটি হাইড করে দিতে চাইলে এটি আন-কমেন্ট করুন
+        // wrapper.style.display = "none";
+    });
 }
 
 function setupProfilePopupEvents() {
