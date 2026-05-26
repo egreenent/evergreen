@@ -623,7 +623,7 @@ function generateReceiptPDF(month, amount, fine) {
     const memberId = localStorage.getItem('memberId') || "N/A";
     const memberPhone = (m && m.phone) ? m.phone : "";
     const today = new Date().toLocaleDateString('en-GB');
-    const LOGO = "https://raw.githubusercontent.com/egreenent/evergreen/main/logo.png";
+    const LOGO = "logo.png";
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     const receiptContent = `
