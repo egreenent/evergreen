@@ -648,12 +648,16 @@ function renderPaymentTable(payments) {
         const currentStatus = String(p.status || 'Pending').trim();
         const statusClass = currentStatus.toLowerCase() === 'paid' ? 'paid' : 'due';
         
-        let actionButton = "-";
-        if(currentStatus.toLowerCase() === 'paid') {
-            actionButton = `<button onclick="generateReceiptPDF('${p.month}', ${amount}, ${fine})" style="background: #0b6623; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">📄 Download</button>`;
-        } else {
-            actionButton = `<span style="color: #b91c1c; font-size: 13px; font-weight: 600;">Unpaid</span>`;
-        }
+ let actionButton = "-";
+if(currentStatus.toLowerCase() === 'paid') {
+    // এখানে generateReceiptPDF এর বদলে showReceiptPreview ব্যবহার করুন
+    actionButton = `<button onclick="showReceiptPreview('${p.month}', ${amount}, ${fine})" 
+                    style="background: #0b6623; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;">
+                    📄 View & Download
+                    </button>`;
+} else {
+    actionButton = `<span style="color: #b91c1c; font-size: 13px; font-weight: 600;">Unpaid</span>`;
+}
 
         tableHTML += `<tr>
             <td>${p.month}</td>
