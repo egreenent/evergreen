@@ -793,7 +793,7 @@ Save Member
 <h2>👥 Members List</h2>
 
 <div class="search-box">
-<input type="text" id="memberSearch" placeholder="Search Member...">
+<input type="text" id="memberSearch" placeholder="Search Member..." oninput="liveFilterMembers(this.value)">
 </div>
 
 <div class="table-container">
@@ -817,8 +817,6 @@ Save Member
 </div>
 
 <!-- ================== PAYMENTS Section ================================= -->
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <div class="page-section" id="paymentsSection">
     
@@ -905,7 +903,7 @@ Save Member
 
 <!-- NOTICES -->
 
-<div class="page-section" id="noticeSection">
+<div class="page-section" id="noticesSection">
   <div class="section" style="background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 25px;">
     <h2 style="color: #0b6b2d; margin-bottom: 15px;">📢 Live Notice Board</h2>
     
@@ -1039,8 +1037,8 @@ function showSection(sectionId, element) {
    ২. FETCH MEMBERS LIST & DISPLAY IN TABLE
    ========================================= */
 async function fetchMembers() {
-    const tableBody = document.getElementById('membersTableBody');
-    if(tableBody) tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Loading members...</td></tr>`;
+    const tableBody = document.getElementById('membersTable');
+    if(tableBody) tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Loading members...</td></tr>`;
 
     try {
         const response = await fetch(API_URL + '?action=members');
@@ -1428,7 +1426,7 @@ let rawPaymentDatabase = [];
 // ২. নোটিশ বোর্ড ফাংশন (গুগল অ্যাপস স্ক্রিপ্টের getNotices অ্যাকশনের সাথে মিলিয়ে ফিক্সড)
 function loadAdminNotices() {
     // HTML-এর মেইন সেকশনের সঠিক আইডি (noticeSection) ধরা হলো
-    const noticeSection = document.getElementById('noticeSection');
+    const noticeSection = document.getElementById('noticesSection');
     
     // মেইন সেকশনের ভেতরে নোটিশের সুন্দর ডিজাইন ও ইনার কন্টেইনার (adminNoticeList) তৈরি করা হলো
     if (noticeSection) {
@@ -1442,7 +1440,7 @@ function loadAdminNotices() {
     }
 
     // গুগল অ্যাপস স্ক্রিপ্ট থেকে নোটিশ ডাটা ফেচ করা
-    fetch(`${APPS_SCRIPT_URL}?action=getNotices`)
+    fetch(`${API_URL}?action=getNotices`)
         .then(res => res.json())
         .then(data => {
             const list = document.getElementById('adminNoticeList');
@@ -1479,7 +1477,7 @@ function fetchLivePaymentData() {
     if (!tbody) return;
     tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#0b6623; font-weight:600;">🔄 গুগল শিট থেকে লাইভ ডাটা লোড হচ্ছে...</td></tr>`;
 
-    fetch(`${APPS_SCRIPT_URL}?action=getPayments`) 
+    fetch(`${API_URL}?action=getPayments`)
         .then(response => response.json())
         .then(data => {
             rawPaymentDatabase = data;
@@ -1568,28 +1566,67 @@ function filterPaymentData() {
 }
 
 function downloadPaymentPDF() {
-    const element = document.getElementById('pdfPrintArea');
     const year = document.getElementById('filterYear').value;
     const month = document.getElementById('filterMonth').value;
     const titleText = document.getElementById('pdfReportTitle');
-    
-    if(!element) return;
+
     if(titleText) {
         titleText.style.display = "block";
         titleText.innerText = `EverGreen Enterprise - Financial Payment Report (${month}/${year})`;
     }
 
-    const opt = {
-        margin: 10,
-        filename: `Payment_Report_${month}_${year}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-    };
+    // Print-based PDF — সবচেয়ে নির্ভরযোগ্য পদ্ধতি
+    const printContent = document.getElementById('pdfPrintArea').innerHTML;
+    const printWin = window.open('', '_blank', 'width=1100,height=800');
+    printWin.document.write(`
+        <!DOCTYPE html><html><head>
+        <meta charset="UTF-8">
+        <title>Payment_Report_${month}_${year}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+            body { padding: 20px; color: #1e293b; }
+            @media print {
+                @page { margin: 10mm; size: A4 landscape; }
+                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
+            table { width:100%; border-collapse:collapse; font-size:12px; }
+            th { background:#0b6623; color:#fff; padding:10px 12px; text-align:left; font-weight:600; }
+            td { padding:9px 12px; border-bottom:1px solid #edf2ed; color:#333; }
+            tr:hover { background:#f9fbf9; }
+            .status-pill { padding:3px 10px; border-radius:50px; font-size:11px; font-weight:600; display:inline-block; }
+            .status-paid { background:rgba(34,197,94,0.15); color:#22c55e; }
+            .status-pending { background:rgba(255,59,48,0.15); color:#ff3b30; }
+            .payment-summary-cards { display:flex; gap:15px; margin-bottom:20px; }
+            .summary-mini-card { background:#fff; padding:15px 20px; border-radius:10px; border:1px solid #eee; border-left:5px solid #0b6623; flex:1; }
+            .summary-mini-card.dues { border-left-color:#ff3b30; }
+            .summary-mini-card h4 { font-size:11px; color:#666; text-transform:uppercase; margin-bottom:4px; }
+            .summary-mini-card p { font-size:20px; font-weight:700; color:#111; }
+            #pdfReportTitle { display:block !important; color:#0b6623; margin-bottom:15px; font-size:16px; font-weight:700; }
+            .no-data-message { text-align:center; padding:30px; color:#888; }
+        </style>
+        </head><body>
+        ${printContent}
+        <script>
+            window.onload = function() { window.print(); window.onafterprint = function(){ window.close(); }; };
+        <\/script>
+        </body></html>
+    `);
+    printWin.document.close();
 
-    html2pdf().set(opt).from(element).save().then(() => {
-        if(titleText) titleText.style.display = "none";
-    });
+    if(titleText) titleText.style.display = "none";
+}
+
+
+// লাইভ মেম্বার সার্চ ফিল্টার
+function liveFilterMembers(query) {
+    const q = query.toLowerCase().trim();
+    const filtered = q === "" ? members : members.filter(m =>
+        String(m.memberId).toLowerCase().includes(q) ||
+        String(m.name).toLowerCase().includes(q) ||
+        String(m.phone).toLowerCase().includes(q)
+    );
+    displayMembers(filtered);
 }
 
 // ৪. পেজ লোড বা ট্যাব সুইচের সাথে রান হওয়ার গ্লোবাল ট্রিগার
