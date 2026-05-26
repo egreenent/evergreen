@@ -405,7 +405,7 @@ font-size:32px;
                         <table style="border-collapse: collapse;">
                             <tr>
                                 <td style="vertical-align: middle; padding-right: 15px;">
-                                    <div style="width: 45px; height: 45px; background: #0b6623; color: #fff; text-align: center; line-height: 45px; font-weight: 700; border-radius: 8px; font-size: 20px;">E</div>
+                                    <div class="logo"><img src="logo.png" alt="Logo"></div>
                                 </td>
                                 <td style="vertical-align: middle;">
                                     <h2 style="color: #0b6623; margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px;">EverGreen Enterprise</h2>
@@ -623,7 +623,7 @@ function generateReceiptPDF(month, amount, fine) {
     const memberId = localStorage.getItem('memberId') || "N/A";
     const memberPhone = (m && m.phone) ? m.phone : "";
     const today = new Date().toLocaleDateString('en-GB');
-    const LOGO = "logo.png";
+    const LOGO = "https://raw.githubusercontent.com/egreenent/evergreen/main/logo.png";
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     const receiptContent = `
