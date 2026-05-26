@@ -659,47 +659,50 @@ function renderPaymentTable(payments) {
 
 // 🎯 ১০০% কার্যকারী পিডিএফ ডাউনলোড ফাংশন (লাইভ ভিউ মেথড)
 async function generateReceiptPDF(month, amount, fine) {
-    // ১. প্রিভিউ বক্সটি দৃশ্যমান করা
     const wrapper = document.getElementById("receiptPreviewWrapper");
+    
+    // ১. বক্সটি স্ক্রিনের একদম উপরে নিয়ে আসুন এবং দৃশ্যমান করুন
     wrapper.style.display = "block";
+    wrapper.style.visibility = "visible"; 
+    wrapper.style.position = "fixed"; // যাতে পিডিএফ জেনারেশনের সময় নড়ে না যায়
+    wrapper.style.top = "0";
+    wrapper.style.left = "0";
+    wrapper.style.zIndex = "9999";
 
-    // ২. ডাটা সেট করা
+    // ২. ডাটা সেট করা (আপনার আগের কোড)
     const m = window.currentMemberData;
-    const memberName = (m && m.name) ? m.name : document.getElementById("memberName").innerText;
-    const memberId = localStorage.getItem('memberId') || "N/A";
-    const memberPhone = document.getElementById("memberPhone") ? document.getElementById("memberPhone").innerText : "";
-    const today = new Date().toLocaleDateString('en-GB'); 
-
-    document.getElementById("rCurrentDate").innerText = today;
-    document.getElementById("rMemberName").innerText = memberName;
-    document.getElementById("rMemberId").innerText = memberId;
-    document.getElementById("rMemberPhone").innerText = memberPhone;
+    document.getElementById("rCurrentDate").innerText = new Date().toLocaleDateString('en-GB');
+    document.getElementById("rMemberName").innerText = m.name;
+    document.getElementById("rMemberId").innerText = localStorage.getItem('memberId');
     document.getElementById("rMonth").innerText = month;
     document.getElementById("rMainAmount").innerText = "৳ " + amount.toLocaleString();
     document.getElementById("rFineAmount").innerText = "৳ " + fine.toLocaleString();
     document.getElementById("rTotalAmount").innerText = "৳ " + (amount + fine).toLocaleString();
 
-    // ৩. ডাটা আপডেট হওয়ার পর কিছুটা সময় অপেক্ষা করা (অত্যন্ত জরুরি)
-    await new Promise(resolve => setTimeout(resolve, 800)); 
+    // ৩. অত্যন্ত জরুরি: ব্রাউজারকে ডাটা রেন্ডার করার জন্য সময় দেওয়া
+    await new Promise(resolve => setTimeout(resolve, 800));
 
-    // ৪. পিডিএফ জেনারেশন
+    // ৪. পিডিএফ জেনারেশন অপশন
     const element = document.getElementById("receiptTemplate");
     const opt = {
-        margin: 10,
-        filename: `Receipt_${month}_ID_${memberId}.pdf`,
+        margin: 5,
+        filename: `Receipt_${month}.pdf`,
         image: { type: 'jpeg', quality: 1 },
         html2canvas: { 
             scale: 2, 
-            useCORS: true, 
+            useCORS: true,        // বাইরের ছবি লোড করার জন্য
+            allowTaint: true,     // ক্যানভাস রেন্ডারিং এরর ফিক্স করতে
             logging: false,
             backgroundColor: '#ffffff'
-        }, 
+        },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
+    // ৫. পিডিএফ ডাউনলোড করুন
     html2pdf().set(opt).from(element).save().then(() => {
-        // পিডিএফ তৈরির পর বক্সটি হাইড করে দিতে চাইলে এটি আন-কমেন্ট করুন
-        // wrapper.style.display = "none";
+        // ৬. কাজ শেষে বক্সটি আবার হাইড করে দিন
+        wrapper.style.display = "none";
+        wrapper.style.position = "static";
     });
 }
 
