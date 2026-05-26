@@ -667,47 +667,30 @@ function renderPaymentTable(payments) {
 }
 
 // ১. পপআপ দেখানোর জন্য
-function generateReceiptPDF(month, amount, fine) {
-    // ডাটা সেট করা
-    const m = window.currentMemberData;
-    document.getElementById("rCurrentDate").innerText = new Date().toLocaleDateString('en-GB');
-    document.getElementById("rMemberName").innerText = m.name;
-    document.getElementById("rMemberId").innerText = localStorage.getItem('memberId');
-    document.getElementById("rMemberPhone").innerText = m.phone;
-    document.getElementById("rMonth").innerText = month;
-    document.getElementById("rMainAmount").innerText = "৳ " + amount.toLocaleString();
-    document.getElementById("rFineAmount").innerText = "৳ " + fine.toLocaleString();
-    document.getElementById("rTotalAmount").innerText = "৳ " + (amount + fine).toLocaleString();
-
-    // পপআপ ওপেন করা
+async function downloadReceiptAsImage() {
+    const receiptElement = document.getElementById("receiptTemplate");
+    
+    // প্রিভিউ বক্সটি দৃশ্যমান থাকা জরুরি
     document.getElementById("receiptPreviewWrapper").style.display = "block";
-}
 
-// ২. ডাউনলোড বাটনে ক্লিক করলে পিডিএফ হবে
-async function processDownload() {
-    const btn = document.getElementById("downloadPdfBtn");
-    btn.innerText = "Generating...";
-    btn.disabled = true;
-
-    const element = document.getElementById("receiptTemplate");
-    const opt = {
-        margin: 5,
-        filename: `Money_Receipt_${document.getElementById("rMonth").innerText}.pdf`,
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff' },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    try {
-        await html2pdf().set(opt).from(element).save();
-    } catch (err) {
-        console.error("PDF Error:", err);
-    } finally {
-        btn.innerText = "✅ Download PDF";
-        btn.disabled = false;
-        // পিডিএফ হওয়ার পর পপআপ বন্ধ (ঐচ্ছিক)
-        document.getElementById("receiptPreviewWrapper").style.display = "none";
-    }
+    // html2canvas ব্যবহার করে ছবি তোলা
+    html2canvas(receiptElement, {
+        scale: 2,           // ছবির মান ভালো করার জন্য
+        useCORS: true,      // বাইরের ইমেজ সাপোর্ট করার জন্য
+        backgroundColor: "#ffffff"
+    }).then(canvas => {
+        // ক্যানভাসকে ইমেজে রূপান্তর করা
+        const image = canvas.toDataURL("image/png", 1.0);
+        
+        // ডাউনলোড করার জন্য একটি লিঙ্কিং ট্রিক
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = 'Money_Receipt_' + document.getElementById("rMemberId").innerText + '.png';
+        link.click();
+        
+        // কাজ শেষে পপআপ বন্ধ (ঐচ্ছিক)
+        // document.getElementById("receiptPreviewWrapper").style.display = "none";
+    });
 }
 
 function setupProfilePopupEvents() {
