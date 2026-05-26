@@ -623,136 +623,124 @@ function generateReceiptPDF(month, amount, fine) {
     const memberId = localStorage.getItem('memberId') || "N/A";
     const memberPhone = (m && m.phone) ? m.phone : "";
     const today = new Date().toLocaleDateString('en-GB');
-    const LOGO_URL = "LOGO_PLACEHOLDER";
+    const LOGO = "https://raw.githubusercontent.com/egreenent/evergreen/main/logo.png";
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    const receiptHTML = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Receipt - ${month} - ${memberId}</title>
+    const receiptContent = `
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
-body{background:#f1f5f1;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:16px;}
 @media print{
-  body{background:#fff;padding:0;display:block;}
-  .topbar{display:none!important;}
-  .card{box-shadow:none;margin:0;max-width:100%;}
+  .no-print{display:none!important;}
   @page{margin:10mm;size:A4 portrait;}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
 }
-.topbar{width:100%;max-width:640px;background:#0b6623;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.topbar{background:#0b6623;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-radius:10px;}
 .topbar span{color:#fff;font-weight:700;font-size:15px;}
-.topbar button{background:#fff;color:#0b6623;border:none;padding:10px 22px;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer;}
-.card{background:#fff;width:100%;max-width:640px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.10);padding:28px 24px;}
+.topbar button{background:#fff;color:#0b6623;border:none;padding:10px 20px;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer;}
+.card{background:#fff;border-radius:12px;padding:26px 20px;}
 .hdr{width:100%;border-collapse:collapse;border-bottom:2px solid #0b6623;margin-bottom:20px;}
-.logo-img{width:44px;height:44px;border-radius:8px;object-fit:cover;vertical-align:middle;}
-.co-name{font-size:18px;font-weight:700;color:#0b6623;vertical-align:middle;margin-left:10px;}
-.co-sub{font-size:9px;color:#556b2f;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;margin-left:54px;}
+.logo-img{width:42px;height:42px;border-radius:8px;object-fit:cover;vertical-align:middle;}
+.logo-fallback{width:42px;height:42px;background:#0b6623;color:#fff;text-align:center;line-height:42px;font-weight:700;border-radius:8px;font-size:19px;display:none;vertical-align:middle;}
 .mbox{background:#f4f9f4;border-top:4px solid #0b6623;border-radius:10px;padding:16px;margin-bottom:20px;}
-.mtbl{width:100%;border-collapse:collapse;}
-.stamp{width:68px;height:68px;border:3px dashed #6d28d9;border-radius:50%;text-align:center;padding-top:10px;display:inline-block;}
-.txn{width:100%;border-collapse:collapse;margin-bottom:22px;font-size:13px;}
+.stamp{width:66px;height:66px;border:3px dashed #6d28d9;border-radius:50%;text-align:center;padding-top:9px;display:inline-block;}
+.txn{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px;}
 .txn thead tr{background:#0b6623;color:#fff;}
 .txn th{padding:10px 12px;font-weight:600;text-align:left;}
 .txn th:last-child,.txn td:last-child{text-align:right;}
 .txn td{padding:11px 12px;border-bottom:1px solid #e2e8f0;}
 .badge{background:#0b6623;color:#fff;padding:7px 16px;border-radius:6px;font-weight:700;font-size:14px;display:inline-block;}
-.ftr{width:100%;border-collapse:collapse;margin-top:22px;}
 </style>
-</head>
-<body>
 
-<div class="topbar no-print">
+<div class="no-print topbar">
   <span>📄 Payment Receipt</span>
   <button onclick="window.print()">🖨️ Save as PDF</button>
 </div>
 
 <div class="card">
-<table class="hdr">
-<tr>
-<td style="padding-bottom:16px;vertical-align:middle;">
-  <img src="${LOGO_URL}" class="logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block';" />
-  <span style="width:44px;height:44px;background:#0b6623;color:#fff;text-align:center;line-height:44px;font-weight:700;border-radius:8px;font-size:20px;display:none;vertical-align:middle;">E</span>
-  <span class="co-name">EverGreen Enterprise</span>
-  <div class="co-sub">Secure Digital Money Receipt</div>
-</td>
-<td style="text-align:right;vertical-align:top;padding-bottom:16px;">
-  <div style="font-size:10px;color:#64748b;">Statement Date</div>
-  <div style="font-size:12px;font-weight:600;color:#0f172a;">${today}</div>
-</td>
-</tr>
-</table>
+  <table class="hdr"><tr>
+    <td style="padding-bottom:16px;vertical-align:middle;">
+      <img src="${LOGO}" class="logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block';">
+      <span class="logo-fallback">E</span>
+      <span style="font-size:17px;font-weight:700;color:#0b6623;vertical-align:middle;margin-left:9px;">EverGreen Enterprise</span>
+      <div style="font-size:9px;color:#556b2f;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;margin-left:51px;">Secure Digital Money Receipt</div>
+    </td>
+    <td style="text-align:right;vertical-align:top;padding-bottom:16px;">
+      <div style="font-size:10px;color:#64748b;">Statement Date</div>
+      <div style="font-size:12px;font-weight:600;">${today}</div>
+    </td>
+  </tr></table>
 
-<div class="mbox">
-<table class="mtbl"><tr>
-<td style="vertical-align:top;width:55%;">
-  <div style="font-size:9px;color:#556b2f;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Account Holder</div>
-  <div style="font-size:15px;font-weight:600;color:#0f172a;">${memberName}</div>
-  <div style="font-size:11px;color:#475569;margin-top:2px;">ID: <strong style="color:#0b6623;">${memberId}</strong></div>
-  <div style="font-size:11px;color:#475569;margin-top:2px;">${memberPhone}</div>
-</td>
-<td style="vertical-align:top;width:25%;text-align:right;padding-right:10px;">
-  <div style="font-size:11px;color:#334155;">Month: <strong>${month}</strong></div>
-  <div style="font-size:11px;color:#334155;margin-top:5px;">Status: <strong style="color:#0b6623;">PAID ✓</strong></div>
-</td>
-<td style="vertical-align:middle;width:20%;text-align:center;">
-  <div class="stamp">
-    <div style="font-size:8px;color:#7c3aed;font-weight:600;letter-spacing:1px;">OFFICIAL</div>
-    <div style="font-size:16px;color:#5b21b6;font-weight:800;">PAID</div>
-    <div style="font-size:7px;color:#7c3aed;">VERIFIED</div>
+  <div class="mbox">
+    <table style="width:100%;border-collapse:collapse;"><tr>
+      <td style="vertical-align:top;width:55%;">
+        <div style="font-size:9px;color:#556b2f;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Account Holder</div>
+        <div style="font-size:15px;font-weight:600;color:#0f172a;">${memberName}</div>
+        <div style="font-size:11px;color:#475569;margin-top:2px;">ID: <strong style="color:#0b6623;">${memberId}</strong></div>
+        <div style="font-size:11px;color:#475569;margin-top:2px;">${memberPhone}</div>
+      </td>
+      <td style="vertical-align:top;width:25%;text-align:right;padding-right:10px;">
+        <div style="font-size:11px;color:#334155;">Month: <strong>${month}</strong></div>
+        <div style="font-size:11px;color:#334155;margin-top:5px;">Status: <strong style="color:#0b6623;">PAID ✓</strong></div>
+      </td>
+      <td style="vertical-align:middle;width:20%;text-align:center;">
+        <div class="stamp">
+          <div style="font-size:8px;color:#7c3aed;font-weight:600;">OFFICIAL</div>
+          <div style="font-size:16px;color:#5b21b6;font-weight:800;">PAID</div>
+          <div style="font-size:7px;color:#7c3aed;">VERIFIED</div>
+        </div>
+      </td>
+    </tr></table>
   </div>
-</td>
-</tr></table>
-</div>
 
-<table class="txn">
-<thead><tr><th>Transaction Description</th><th>Amount</th></tr></thead>
-<tbody>
-<tr><td style="color:#334155;">Monthly Membership Subscription Fee</td><td>৳ ${amount.toLocaleString()}</td></tr>
-<tr><td style="color:#64748b;font-style:italic;">Late Fine / Penalty Charges</td><td style="color:#b91c1c;">৳ ${fine.toLocaleString()}</td></tr>
-<tr>
-  <td style="padding-top:14px;text-align:right;font-weight:600;font-size:13px;">Total Paid Amount:</td>
-  <td style="padding-top:14px;"><span class="badge">৳ ${(amount + fine).toLocaleString()}</span></td>
-</tr>
-</tbody>
-</table>
+  <table class="txn">
+    <thead><tr><th>Transaction Description</th><th>Amount</th></tr></thead>
+    <tbody>
+      <tr><td style="color:#334155;">Monthly Membership Fee</td><td>৳ ${amount.toLocaleString()}</td></tr>
+      <tr><td style="color:#64748b;font-style:italic;">Late Fine / Penalty</td><td style="color:#b91c1c;">৳ ${fine.toLocaleString()}</td></tr>
+      <tr>
+        <td style="padding-top:14px;text-align:right;font-weight:600;font-size:13px;">Total Paid:</td>
+        <td style="padding-top:14px;"><span class="badge">৳ ${(amount+fine).toLocaleString()}</span></td>
+      </tr>
+    </tbody>
+  </table>
 
-<table class="ftr"><tr>
-<td style="vertical-align:bottom;width:60%;">
-  <p style="font-size:9px;color:#94a3b8;line-height:1.5;">* Automated digital invoice. No physical signature required.</p>
-</td>
-<td style="vertical-align:bottom;width:40%;text-align:center;padding-left:15px;">
-  <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:5px;height:22px;"></div>
-  <p style="font-size:10px;color:#475569;font-weight:500;">Billing Manager</p>
-</td>
-</tr></table>
-</div>
+  <table style="width:100%;border-collapse:collapse;margin-top:20px;"><tr>
+    <td style="vertical-align:bottom;width:60%;">
+      <p style="font-size:9px;color:#94a3b8;line-height:1.5;">* Automated digital invoice. No physical signature required.</p>
+    </td>
+    <td style="vertical-align:bottom;width:40%;text-align:center;padding-left:15px;">
+      <div style="border-bottom:1px dashed #cbd5e1;margin-bottom:5px;height:22px;"></div>
+      <p style="font-size:10px;color:#475569;font-weight:500;">Billing Manager</p>
+    </td>
+  </tr></table>
+</div>`;
 
-</body>
-</html>`;
-
-    // Data URL দিয়ে নতুন tab এ খোলা — mobile ও desktop সব জায়গায় কাজ করে
-    const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(receiptHTML);
-    const newTab = window.open(dataUrl, '_blank');
-    if (!newTab) {
-        // popup block হলে fallback — same page এ একটা overlay দেখাবে
-        let ov = document.getElementById('_receiptOverlay');
+    if (isMobile) {
+        // ── Mobile: same page এ fullscreen overlay ──
+        // Data URL mobile এ নতুন tab খোলে না, তাই overlay সবচেয়ে নির্ভরযোগ্য
+        let ov = document.getElementById('_receiptOv');
         if (!ov) {
             ov = document.createElement('div');
-            ov.id = '_receiptOverlay';
-            ov.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99999;overflow:auto;';
+            ov.id = '_receiptOv';
+            ov.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#f1f5f1;z-index:99999;overflow-y:auto;padding:12px;';
             document.body.appendChild(ov);
         }
-        ov.innerHTML = receiptHTML + '<style>.topbar button{margin:10px auto;display:block;}</style>';
-        // topbar close button যোগ করা
-        const closeBtn = document.createElement('button');
-        closeBtn.textContent = '✕ বন্ধ করুন';
-        closeBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:100000;background:#e11d48;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;';
-        closeBtn.onclick = () => { ov.remove(); };
-        ov.appendChild(closeBtn);
+        ov.innerHTML = receiptContent;
+        // close বাটন
+        const cb = document.createElement('button');
+        cb.innerHTML = '✕';
+        cb.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:100000;background:#e11d48;color:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,0.3);';
+        cb.onclick = () => { ov.remove(); cb.remove(); };
+        document.body.appendChild(cb);
+        ov.style.display = 'block';
+    } else {
+        // ── Desktop: নতুন window এ খোলা ──
+        const w = window.open('', '_blank', 'width=780,height=900');
+        w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Receipt - ' + month + ' - ' + memberId + '</title></head><body style="background:#f1f5f1;padding:20px;">' + receiptContent + '</body></html>');
+        w.document.close();
     }
 }
+
 
 
 
