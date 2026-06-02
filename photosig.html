@@ -103,6 +103,38 @@
       })
       .processForm(this);
   });
+
+
+  fetch(
+  SCRIPT_URL + "?action=uploadDocuments",
+  {
+    method:"POST",
+    body:JSON.stringify({
+      action:"uploadDocuments",
+      memberId:memberId,
+
+      photo:{
+        name:photoFile.name,
+        type:photoFile.type,
+        data:photoBase64
+      },
+
+      signature:{
+        name:"signature.png",
+        type:"image/png",
+        data:signatureBase64
+      },
+
+      pdf:{
+        name:pdfFile.name,
+        type:"application/pdf",
+        data:pdfBase64
+      }
+    })
+  }
+)
+.then(r=>r.json())
+.then(console.log);
 </script>
 
 </body>
