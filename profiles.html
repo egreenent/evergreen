@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EverGreen Enterprise — সদস্য তালিকা</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-50:  #f0faf4;
+    --green-100: #d6f2e2;
+    --green-200: #a8dfc0;
+    --green-400: #1D9E75;
+    --green-600: #0F6E56;
+    --green-800: #085041;
+    --gold:      #BA7517;
+    --gold-light:#FFF3DC;
+    --white:     #ffffff;
+    --text:      #1a2e22;
+    --text-muted:#4a7060;
+    --radius-card: 16px;
+    --radius-field: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Hind Siliguri', sans-serif;
+    background: var(--green-50);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .page-header img.logo {
+    height: 56px;
+    margin-bottom: .75rem;
+  }
+  .page-header h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--green-600);
+    letter-spacing: .02em;
+  }
+  .page-header p {
+    font-size: .9rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* ── Loading / Error ── */
+  #status {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1rem;
+    color: var(--text-muted);
+  }
+  .spinner {
+    display: inline-block;
+    width: 36px; height: 36px;
+    border: 3px solid var(--green-200);
+    border-top-color: var(--green-400);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+    margin-bottom: .75rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Search bar ── */
+  .search-wrap {
+    max-width: 400px;
+    margin: 0 auto 1.75rem;
+    display: none;
+  }
+  .search-wrap.show { display: block; }
+  .search-wrap input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border: 1.5px solid var(--green-200);
+    border-radius: 24px;
+    background: var(--white);
+    font-family: inherit;
+    font-size: .95rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .search-wrap input:focus { border-color: var(--green-400); }
+  .search-wrap .s-icon {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 16px;
+    pointer-events: none;
+  }
+  .search-wrap { position: relative; }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--white);
+    border: 1.5px solid var(--green-100);
+    border-radius: var(--radius-card);
+    padding: 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: box-shadow .2s, border-color .2s;
+  }
+  .card:hover {
+    border-color: var(--green-200);
+    box-shadow: 0 4px 20px rgba(29,158,117,.08);
+  }
+
+  /* ── Photo column ── */
+  .photo-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0;
+  }
+
+  .photo-wrap {
+    width: 90px; height: 90px;
+    cursor: pointer;
+    position: relative;
+    transition: transform .18s;
+  }
+  .photo-wrap:hover { transform: scale(1.04); }
+
+  .photo-inner {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--green-100);
+    transition: border-radius .35s cubic-bezier(.4,0,.2,1),
+                border-color .35s;
+    border: 3px solid var(--green-400);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .photo-inner.square {
+    border-radius: 12px;
+    border-color: var(--gold);
+  }
+  .photo-inner img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .photo-inner .initials {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--green-600);
+  }
+
+  .photo-hint {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .status-badge {
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid var(--green-200);
+    background: var(--green-50);
+    color: var(--green-600);
+    font-weight: 500;
+  }
+  .status-badge.inactive {
+    border-color: #fdd;
+    background: #fff5f5;
+    color: #b33;
+  }
+
+  /* ── Info column ── */
+  .info-col { flex: 1; min-width: 0; }
+
+  .member-name {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .member-desig {
+    font-size: .8rem;
+    color: var(--green-400);
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .field {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    padding: 5px 0;
+    border-bottom: .5px solid var(--green-100);
+    font-size: .82rem;
+  }
+  .field:last-child { border-bottom: none; }
+  .field-icon {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+    color: var(--green-400);
+    margin-top: 1px;
+  }
+  .field-lbl {
+    min-width: 62px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .field-val {
+    color: var(--text);
+    word-break: break-word;
+  }
+  .field-val.id { color: var(--green-600); font-weight: 600; }
+
+  /* ── Overlay ── */
+  .overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(10,40,20,.75);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+  }
+  .overlay.show { display: flex; }
+
+  .overlay-inner {
+    position: relative;
+    animation: popIn .22s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(.6); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  .overlay-photo {
+    width: 260px; height: 260px;
+    overflow: hidden;
+    background: var(--green-100);
+    border: 4px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    transition: border-radius .35s;
+    border-radius: 50%;
+  }
+  .overlay-photo.square { border-radius: 16px; }
+  .overlay-photo img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .overlay-photo .initials-big {
+    font-size: 72px; font-weight: 600;
+    color: var(--green-600);
+  }
+
+  .overlay-name {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+  }
+  .overlay-desig {
+    text-align: center;
+    font-size: .85rem;
+    color: rgba(255,255,255,.7);
+    margin-top: 3px;
+  }
+  .overlay-toggle-hint {
+    text-align: center;
+    font-size: .75rem;
+    color: rgba(255,255,255,.5);
+    margin-top: 8px;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: -14px; right: -14px;
+    width: 32px; height: 32px;
+    background: var(--gold);
+    color: #fff;
+    border: none; border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── Count badge ── */
+  .count-label {
+    text-align: center;
+    font-size: .82rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    display: none;
+  }
+  .count-label.show { display: block; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <img src="https://egreenent.github.io/evergreen/logo.png" alt="EverGreen Logo" class="logo"
+       onerror="this.style.display='none'">
+  <h1>EverGreen Enterprise</h1>
+  <p>সদস্য তালিকা</p>
+</div>
+
+<div class="search-wrap" id="searchWrap">
+  <svg class="s-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+       fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </svg>
+  <input type="text" id="searchInput" placeholder="নাম বা আইডি দিয়ে খুঁজুন..." oninput="filterCards()">
+</div>
+
+<p class="count-label" id="countLabel"></p>
+
+<div id="status">
+  <div class="spinner"></div><br>
+  তথ্য লোড হচ্ছে...
+</div>
+
+<div class="grid" id="grid"></div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="closeOverlay()">
+  <div class="overlay-inner" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeOverlay()" aria-label="বন্ধ করুন">✕</button>
+    <div class="overlay-photo" id="overlayPhoto">
+      <span class="initials-big" id="overlayInitials"></span>
+      <img id="overlayImg" src="" alt="" style="display:none">
+    </div>
+    <p class="overlay-name" id="overlayName"></p>
+    <p class="overlay-desig" id="overlayDesig"></p>
+    <p class="overlay-toggle-hint">আবার ক্লিক করুন — গোলাকার ↔ চারকোণা</p>
+    <div style="text-align:center; margin-top:10px;">
+      <button onclick="toggleOverlayShape()" style="
+        background: rgba(255,255,255,.15);
+        border: 1px solid rgba(255,255,255,.3);
+        color: #fff;
+        padding: 6px 18px;
+        border-radius: 20px;
+        font-family: inherit;
+        font-size: .8rem;
+        cursor: pointer;">
+        আকৃতি পরিবর্তন করুন
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  ⚙️  এখানে আপনার Google Apps Script URL দিন
+// ══════════════════════════════════════════════
+const APPS_SCRIPT_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+// উদাহরণ:
+// const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfyc.../exec";
+
+// শিটের কলাম নাম (আপনার শিটের header row অনুযায়ী পরিবর্তন করুন)
+const COL = {
+  name:      "নাম",          // সদস্যের নাম
+  desig:     "পদবী",         // পদবী
+  id:        "সদস্য আইডি",  // সদস্য আইডি
+  phone:     "ফোন",          // ফোন নম্বর
+  email:     "ইমেইল",        // ইমেইল
+  address:   "ঠিকানা",       // ঠিকানা
+  photo:     "ছবির লিংক",    // Google Drive ছবির URL (optional)
+  status:    "স্ট্যাটাস",    // সক্রিয় / নিষ্ক্রিয় (optional)
+};
+// ══════════════════════════════════════════════
+
+let allMembers = [];
+
+// ডেমো ডেটা — API সংযুক্ত না হলে এটি দেখাবে
+const DEMO_DATA = [
+  { নাম:"মোহাম্মদ আলী", পদবী:"সভাপতি", "সদস্য আইডি":"EG-2024-0001", ফোন:"+880 1712-345678", ইমেইল:"mali@example.com", ঠিকানা:"পূর্ব আদালত পাড়া, টাঙ্গাইল - ১৯০০", "ছবির লিংক":"", স্ট্যাটাস:"সক্রিয়" },
+  { নাম:"রাহেলা বেগম", পদবী:"সহ-সভাপতি", "সদস্য আইডি":"EG-2024-0002", ফোন:"+880 1815-223344", ইমেইল:"rahela@example.com", ঠিকানা:"উত্তর টাঙ্গাইল, টাঙ্গাইল - ১৯০০", "ছবির লিংক":"", স্ট্যাটাস:"সক্রিয়" },
+  { নাম:"করিম উদ্দিন", পদবী:"সাধারণ সম্পাদক", "সদস্য আইডি":"EG-2024-0003", ফোন:"+880 1916-556677", ইমেইল:"karim@example.com", ঠিকানা:"দক্ষিণ পাড়া, টাঙ্গাইল - ১৯০১", "ছবির লিংক":"", স্ট্যাটাস:"সক্রিয়" },
+  { নাম:"সুমাইয়া খানম", পদবী:"কোষাধ্যক্ষ", "সদস্য আইডি":"EG-2024-0004", ফোন:"+880 1712-998877", ইমেইল:"sumaiya@example.com", ঠিকানা:"পশ্চিম পাড়া, টাঙ্গাইল - ১৯০০", "ছবির লিংক":"", স্ট্যাটাস:"সক্রিয়" },
+];
+
+async function loadMembers() {
+  if (APPS_SCRIPT_URL === "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE") {
+    // API URL সেট না থাকলে ডেমো ডেটা দেখাও
+    document.getElementById('status').innerHTML =
+      `<div style="color:var(--gold);font-size:.85rem;padding:1rem;background:var(--gold-light);border-radius:10px;max-width:460px;margin:0 auto;line-height:1.6;">
+        ⚙️ <strong>ডেভেলপার নোট:</strong><br>
+        <code>APPS_SCRIPT_URL</code> সেট করুন।<br>
+        এখন ডেমো ডেটা দেখানো হচ্ছে।
+      </div>`;
+    setTimeout(() => {
+      document.getElementById('status').style.display = 'none';
+      renderCards(DEMO_DATA);
+    }, 1500);
+    return;
+  }
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    document.getElementById('status').style.display = 'none';
+    renderCards(data);
+  } catch (err) {
+    document.getElementById('status').innerHTML =
+      `<p style="color:#c33;">❌ ডেটা লোড হয়নি।<br><small>${err.message}</small></p>
+       <button onclick="loadMembers()" style="margin-top:12px;padding:8px 20px;background:var(--green-400);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;">আবার চেষ্টা করুন</button>`;
+  }
+}
+
+function getInitials(name) {
+  if (!name) return "?";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return parts[0].charAt(0).toUpperCase() + parts[parts.length-1].charAt(0).toUpperCase();
+}
+
+function renderCards(data) {
+  allMembers = data;
+  document.getElementById('searchWrap').classList.add('show');
+  document.getElementById('countLabel').classList.add('show');
+  buildGrid(data);
+}
+
+function buildGrid(members) {
+  const grid = document.getElementById('grid');
+  const countEl = document.getElementById('countLabel');
+  countEl.textContent = `মোট ${members.length} জন সদস্য`;
+  grid.innerHTML = '';
+
+  if (members.length === 0) {
+    grid.innerHTML = '<p style="text-align:center;color:var(--text-muted);grid-column:1/-1;padding:2rem;">কোনো ফলাফল পাওয়া যায়নি।</p>';
+    return;
+  }
+
+  members.forEach((m, i) => {
+    const name    = m[COL.name]    || "নাম নেই";
+    const desig   = m[COL.desig]   || "";
+    const id      = m[COL.id]      || "—";
+    const phone   = m[COL.phone]   || "—";
+    const email   = m[COL.email]   || "—";
+    const address = m[COL.address] || "—";
+    const photo   = m[COL.photo]   || "";
+    const status  = m[COL.status]  || "সক্রিয়";
+    const initials = getInitials(name);
+    const isActive = status !== "নিষ্ক্রিয়" && status !== "inactive";
+
+    const photoHTML = photo
+      ? `<img src="${photo}" alt="${name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
+      : '';
+    const initialsStyle = photo ? 'style="display:none"' : '';
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.name = name.toLowerCase();
+    card.dataset.id = id.toLowerCase();
+
+    card.innerHTML = `
+      <div class="photo-col">
+        <div class="photo-wrap" onclick="openOverlay(${i})" title="ক্লিক করুন">
+          <div class="photo-inner" id="thumb-${i}">
+            ${photoHTML}
+            <span class="initials" ${initialsStyle}>${initials}</span>
+          </div>
+        </div>
+        <span class="status-badge ${isActive ? '' : 'inactive'}">${isActive ? '✓ সক্রিয়' : '✗ নিষ্ক্রিয়'}</span>
+        <span class="photo-hint">ক্লিক করুন<br>গোলাকার ↔ চারকোণা</span>
+      </div>
+      <div class="info-col">
+        <p class="member-name">${name}</p>
+        <p class="member-desig">${desig}${desig ? ' — ' : ''}EverGreen Enterprise</p>
+        <div class="field">
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <span class="field-lbl">সদস্য আইডি</span>
+          <span class="field-val id">${id}</span>
+        </div>
+        <div class="field">
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span class="field-lbl">ফোন</span>
+          <span class="field-val">${phone}</span>
+        </div>
+        <div class="field">
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span class="field-lbl">ইমেইল</span>
+          <span class="field-val">${email}</span>
+        </div>
+        <div class="field">
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span class="field-lbl">ঠিকানা</span>
+          <span class="field-val">${address}</span>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+
+    // ছোট কার্ডে ক্লিক করলে গোলাকার ↔ চারকোণা টগল
+    const thumb = document.getElementById(`thumb-${i}`);
+    thumb._square = false;
+    // handled by openOverlay
+  });
+}
+
+function filterCards() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const cards = document.querySelectorAll('.card');
+  let count = 0;
+  cards.forEach(c => {
+    const match = c.dataset.name.includes(q) || c.dataset.id.includes(q);
+    c.style.display = match ? '' : 'none';
+    if (match) count++;
+  });
+  document.getElementById('countLabel').textContent = `${count} জন সদস্য পাওয়া গেছে`;
+}
+
+// ── Overlay ──
+let overlaySquare = false;
+
+function openOverlay(i) {
+  const m = allMembers[i];
+  const name    = m[COL.name]  || "নাম নেই";
+  const desig   = m[COL.desig] || "";
+  const photo   = m[COL.photo] || "";
+  const initials = getInitials(name);
+
+  const thumb = document.getElementById(`thumb-${i}`);
+  const isSquare = thumb._square || false;
+
+  overlaySquare = isSquare;
+
+  const op = document.getElementById('overlayPhoto');
+  const oi = document.getElementById('overlayImg');
+  const oinit = document.getElementById('overlayInitials');
+
+  document.getElementById('overlayName').textContent = name;
+  document.getElementById('overlayDesig').textContent = desig ? `${desig} — EverGreen Enterprise` : 'EverGreen Enterprise';
+
+  if (photo) {
+    oi.src = photo;
+    oi.style.display = 'block';
+    oinit.style.display = 'none';
+  } else {
+    oi.style.display = 'none';
+    oinit.style.display = 'flex';
+    oinit.textContent = initials;
+  }
+
+  applyOverlayShape();
+  document.getElementById('overlay').classList.add('show');
+
+  // ক্লিকে ছোট কার্ডের আকৃতিও পরিবর্তন হবে
+  document.getElementById('overlay')._cardIndex = i;
+}
+
+function applyOverlayShape() {
+  const op = document.getElementById('overlayPhoto');
+  if (overlaySquare) op.classList.add('square');
+  else op.classList.remove('square');
+}
+
+function toggleOverlayShape() {
+  overlaySquare = !overlaySquare;
+  applyOverlayShape();
+  // ছোট কার্ডেও প্রতিফলিত হবে
+  const idx = document.getElementById('overlay')._cardIndex;
+  if (idx !== undefined) {
+    const thumb = document.getElementById(`thumb-${idx}`);
+    if (thumb) {
+      thumb._square = overlaySquare;
+      if (overlaySquare) thumb.classList.add('square');
+      else thumb.classList.remove('square');
+    }
+  }
+}
+
+function closeOverlay() {
+  document.getElementById('overlay').classList.remove('show');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+
+// ── Boot ──
+loadMembers();
+</script>
+
+<!--
+═══════════════════════════════════════════════════════
+  📋 Google Apps Script কোড (নতুন Script তৈরি করুন)
+═══════════════════════════════════════════════════════
+
+  function doGet() {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    const data  = sheet.getDataRange().getValues();
+    const headers = data[0];
+    const rows = data.slice(1).map(row => {
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = row[i] || "");
+      return obj;
+    });
+    return ContentService
+      .createTextOutput(JSON.stringify(rows))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  Deploy → Web App → Execute as: Me → Who has access: Anyone
+  তারপর URL কপি করে APPS_SCRIPT_URL এ বসান।
+
+═══════════════════════════════════════════════════════
+  📊 Google Sheet এর Header Row (প্রথম সারি):
+═══════════════════════════════════════════════════════
+  নাম | পদবী | সদস্য আইডি | ফোন | ইমেইল | ঠিকানা | ছবির লিংক | স্ট্যাটাস
+═══════════════════════════════════════════════════════
+-->
+</body>
+</html>
