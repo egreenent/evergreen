@@ -23,6 +23,14 @@
     #status { margin-top: 20px; text-align: center; font-size: 14px; font-weight: 600; }
     .loader { display: none; margin: 10px auto; border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+
+
+   @keyframes flash{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.03);}
+  100%{transform:scale(1);}
+}
   </style>
 </head>
 <body>
@@ -75,66 +83,174 @@
 </div>
 
 <script>
-  const form = document.getElementById('uploadForm');
-  const btn = document.getElementById('submitBtn');
-  const status = document.getElementById('status');
-  const loader = document.getElementById('loader');
 
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    btn.disabled = true;
-    loader.style.display = "block";
-    status.innerHTML = "ফাইল প্রসেস হচ্ছে...";
-    status.style.color = "#002B49";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
 
-    google.script.run
-      .withSuccessHandler(function(response) {
-        status.innerHTML = response;
-        status.style.color = "green";
-        loader.style.display = "none";
-        form.reset();
-        btn.disabled = false;
-      })
-      .withFailureHandler(function(err) {
-        status.innerHTML = "ব্যর্থ হয়েছে: " + err;
-        status.style.color = "red";
-        loader.style.display = "none";
-        btn.disabled = false;
-      })
-      .processForm(this);
+const form = document.getElementById('uploadForm');
+const btn = document.getElementById('submitBtn');
+const status = document.getElementById('status');
+const loader = document.getElementById('loader');
+
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      resolve(reader.result.split(',')[1]);
+    };
+
+    reader.onerror = error => reject(error);
+
+    reader.readAsDataURL(file);
   });
+}
 
+form.addEventListener('submit', async function(e){
 
-  fetch(
-  SCRIPT_URL + "?action=uploadDocuments",
-  {
-    method:"POST",
-    body:JSON.stringify({
-      action:"uploadDocuments",
-      memberId:memberId,
+  e.preventDefault();
 
-      photo:{
-        name:photoFile.name,
-        type:photoFile.type,
-        data:photoBase64
-      },
+  btn.disabled = true;
+  loader.style.display = "block";
 
-      signature:{
-        name:"signature.png",
-        type:"image/png",
-        data:signatureBase64
-      },
+  status.innerHTML = `
+    <div style="
+      background:#fff3cd;
+      color:#856404;
+      padding:15px;
+      border-radius:8px;
+      font-size:18px;
+      font-weight:bold;
+      border:1px solid #ffeeba;">
+      ⏳ ফাইল আপলোড হচ্ছে...
+    </div>
+  `;
 
-      pdf:{
-        name:pdfFile.name,
-        type:"application/pdf",
-        data:pdfBase64
+  try{
+
+    const memberId =
+      document.getElementById("userId").value;
+
+    const photoFile =
+      document.querySelector('input[name="imageFile"]').files[0];
+
+    const signatureFile =
+      document.querySelector('input[name="sigFile"]').files[0];
+
+    const pdfFile =
+      document.querySelector('input[name="pdfFile"]').files[0];
+
+    const photoBase64 =
+      await fileToBase64(photoFile);
+
+    const signatureBase64 =
+      await fileToBase64(signatureFile);
+
+    const pdfBase64 =
+      await fileToBase64(pdfFile);
+
+    const response = await fetch(
+      SCRIPT_URL + "?action=uploadDocuments",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+
+          action:"uploadDocuments",
+
+          memberId:memberId,
+
+          photo:{
+            name:photoFile.name,
+            type:photoFile.type,
+            data:photoBase64
+          },
+
+          signature:{
+            name:signatureFile.name,
+            type:signatureFile.type,
+            data:signatureBase64
+          },
+
+          pdf:{
+            name:pdfFile.name,
+            type:"application/pdf",
+            data:pdfBase64
+          }
+
+        })
       }
-    })
+    );
+
+    const result = await response.json();
+
+    loader.style.display = "none";
+    btn.disabled = false;
+
+    if(result.success){
+
+      status.innerHTML = `
+      <div style="
+        background:#d4edda;
+        color:#155724;
+        padding:20px;
+        border-radius:10px;
+        border:2px solid #28a745;
+        font-size:22px;
+        font-weight:bold;
+        text-align:center;
+        animation:flash 1s infinite;">
+        ✅ Upload Successful
+        <br><br>
+        Member ID: ${memberId}
+      </div>`;
+
+      form.reset();
+
+      console.log(result);
+
+    }else{
+
+      status.innerHTML = `
+      <div style="
+        background:#f8d7da;
+        color:#721c24;
+        padding:20px;
+        border-radius:10px;
+        border:2px solid red;
+        font-size:20px;
+        font-weight:bold;
+        text-align:center;">
+        ❌ Upload Failed
+        <br><br>
+        ${result.error || 'Unknown Error'}
+      </div>`;
+    }
+
+  }catch(error){
+
+    loader.style.display = "none";
+    btn.disabled = false;
+
+    status.innerHTML = `
+    <div style="
+      background:#f8d7da;
+      color:#721c24;
+      padding:20px;
+      border-radius:10px;
+      border:2px solid red;
+      font-size:20px;
+      font-weight:bold;
+      text-align:center;">
+      ❌ Server Error
+      <br><br>
+      ${error}
+    </div>`;
   }
-)
-.then(r=>r.json())
-.then(console.log);
+
+});
+
 </script>
 
 </body>
