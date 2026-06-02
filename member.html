@@ -644,16 +644,17 @@ function generateIDCard() {
 <title>ID Card - ${m.name || ''}</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
-body{background:#e8f0e8;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:20px;}
+body{background:#e8f0e8;min-height:100vh;padding:20px;}
 @media print{
-  body{background:#fff;padding:0;justify-content:center;}
+  body{background:#fff;padding:0;display:flex;flex-direction:row;gap:15px;justify-content:center;align-items:flex-start;}
   .no-print{display:none!important;}
-  .id-card{page-break-after:always;}
-  @page{margin:5mm;size:90mm 55mm landscape;}
+  .id-card{page-break-after:avoid;}
+  @page{margin:8mm;size:A4 landscape;}
+  #cardWrapper{display:flex!important;flex-direction:row!important;gap:15px!important;justify-content:center!important;}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
 }
-.no-print{margin-bottom:16px;width:100%;max-width:400px;}
-.no-print button{width:100%;background:#0b6623;color:#fff;border:none;padding:12px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;}
+.no-print{margin-bottom:16px;text-align:center;}
+.no-print button{background:#0b6623;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;}
 
 /* Card — Credit card size 85.6×54mm */
 .id-card{
@@ -730,6 +731,7 @@ body{background:#e8f0e8;display:flex;flex-direction:column;align-items:center;ju
   <button onclick="window.print()">🖨️ Save as PDF / Print</button>
 </div>
 
+<div style="display:flex;flex-direction:row;gap:20px;justify-content:center;align-items:center;flex-wrap:wrap;" id="cardWrapper">
 <div class="id-card">
   <div class="circle1"></div>
   <div class="circle2"></div>
@@ -781,6 +783,8 @@ body{background:#e8f0e8;display:flex;flex-direction:column;align-items:center;ju
   </div>
 </div>
 
+</div><!-- end cardWrapper -->
+
 </body>
 </html>`;
 
@@ -799,7 +803,7 @@ body{background:#e8f0e8;display:flex;flex-direction:column;align-items:center;ju
         cb.onclick = () => { ov.remove(); cb.remove(); };
         document.body.appendChild(cb);
     } else {
-        const w = window.open('', '_blank', 'width=520,height=780');
+        const w = window.open('', '_blank', 'width=760,height=520');
         w.document.write(cardHTML);
         w.document.close();
     }
