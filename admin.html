@@ -1458,8 +1458,11 @@ function loadAdminNotices() {
             data.forEach(item => {
                 list.innerHTML += `
                     <div style="padding: 15px; background: #f4f7f4; border-left: 5px solid #0b6b2d; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
-                        <small style="color: #666; font-weight: 600; display: block; margin-bottom: 5px;">📅 তারিখ: ${item.date || 'N/A'}</small>
-                        <p style="color: #333; font-size: 14px; line-height: 1.5; margin: 0; white-space: pre-line;">${item.text || 'কোনো লেখা নেই'}</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <strong style="color:#0b6b2d; font-size:15px;">📢 ${item.title || 'নোটিশ'}</strong>
+                            <small style="color:#666; font-weight:600;">📅 ${item.date || 'N/A'}</small>
+                        </div>
+                        <p style="color:#333; font-size:14px; line-height:1.6; margin:0; white-space:pre-line;">${item.content || 'কোনো বিষয়বস্তু নেই'}</p>
                     </div>`;
             });
         })
