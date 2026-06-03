@@ -202,50 +202,80 @@
             }
         }
 
+        const API_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
+
         /* =========================
         LOGIN FUNCTION
         ========================= */
-        function login() {
+        async function login() {
             const userId = document.getElementById("userId").value.trim().toLowerCase();
             const password = document.getElementById("password").value.trim();
+            const btn = document.querySelector(".login-btn");
+
+            if (!userId || !password) {
+                showError("User ID এবং Password দিন।");
+                return;
+            }
+
+            // Loading state
+            btn.textContent = "⏳ Checking...";
+            btn.disabled = true;
 
             /* =========================
-            ADMIN LOGIN
+            ADMIN LOGIN — Google Sheet থেকে verify
             ========================= */
             if (loginType === "admin") {
-                const adminUsers = ["ege0101", "ege0102", "ege0103", "ege0104", "ege0105"];
-                const adminPassword = "Egreene@2022";
-
-                if (adminUsers.includes(userId) && password === adminPassword) {
-                    localStorage.setItem("adminLoggedIn", "true");
-                    localStorage.setItem("adminId", userId);
-                    window.location.href = "admin.html";
-                } else {
-                    alert("Invalid Admin Login");
+                try {
+                    const res = await fetch(`${API_URL}?action=adminLogin&userId=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        localStorage.setItem("adminLoggedIn", "true");
+                        localStorage.setItem("adminId", userId);
+                        window.location.href = "admin.html";
+                    } else {
+                        showError("Admin ID বা Password ভুল!");
+                    }
+                } catch(e) {
+                    showError("সার্ভার সংযোগে সমস্যা হয়েছে!");
                 }
+                btn.textContent = "Login Now";
+                btn.disabled = false;
                 return;
             }
 
             /* =========================
-            MEMBER LOGIN
+            MEMBER LOGIN — Google Sheet থেকে verify
             ========================= */
             if (loginType === "member") {
-                const memberUsers = [
-                    "ege0101", "ege0102", "ege0103", "ege0104", "ege0105",
-                    "ege0106", "ege0107", "ege0108", "ege0109", "ege0110",
-                    "ege0111", "ege0112", "ege0113", "ege0114", "ege0115",
-                    "ege0116", "ege0117", "ege0118", "ege0119", "ege0120"
-                ];
-                const memberPassword = "Egreen@22";
-
-                if (memberUsers.includes(userId) && password === memberPassword) {
-                    localStorage.setItem("memberLoggedIn", "true");
-                    localStorage.setItem("memberId", userId);
-                    window.location.href = "member-dashboard.html";
-                } else {
-                    alert("Invalid Member Login");
+                try {
+                    const res = await fetch(`${API_URL}?action=memberLogin&userId=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        localStorage.setItem("memberLoggedIn", "true");
+                        localStorage.setItem("memberId", userId);
+                        window.location.href = "member-dashboard.html";
+                    } else {
+                        showError("Member ID বা Password ভুল!");
+                    }
+                } catch(e) {
+                    showError("সার্ভার সংযোগে সমস্যা হয়েছে!");
                 }
+                btn.textContent = "Login Now";
+                btn.disabled = false;
             }
+        }
+
+        function showError(msg) {
+            let err = document.getElementById("errorMsg");
+            if (!err) {
+                err = document.createElement("div");
+                err.id = "errorMsg";
+                err.style.cssText = "background:#fff0f0;border:1px solid #ffcccc;color:#cc0000;padding:12px 16px;border-radius:10px;margin-top:16px;font-size:14px;font-weight:500;text-align:center;";
+                document.querySelector(".login-btn").after(err);
+            }
+            err.textContent = "⚠️ " + msg;
+            err.style.display = "block";
+            setTimeout(() => { err.style.display = "none"; }, 4000);
         }
 
         /* =========================
