@@ -342,6 +342,36 @@ border-radius:8px;
 cursor:pointer;
 
 }
+
+.info-box{
+
+background:#edf3ee;
+border:1px solid #0b5d2a;
+border-radius:10px;
+padding:12px 18px;
+margin:10px 0;
+text-align:left;
+
+}
+
+.info-box span{
+
+display:block;
+font-size:13px;
+color:#666;
+margin-bottom:3px;
+
+}
+
+.info-box strong{
+
+display:block;
+color:#0b5d2a;
+font-size:20px;
+font-weight:700;
+letter-spacing:2px;
+
+}
 </style>
 </head>
 
@@ -628,6 +658,22 @@ Reset Form
 Together We Grow, Together We Succeed
 </div>
 
+</div>
+
+<!-- Success Box -->
+<div id="successBox" style="display:none;">
+  <h2>✅ Registration Successful!</h2>
+  <p>আপনার আবেদন সফলভাবে জমা হয়েছে।</p>
+  <div class="info-box">
+    <span>Member ID</span>
+    <strong id="showMemberId"></strong>
+  </div>
+  <div class="info-box">
+    <span>Password</span>
+    <strong id="showPassword"></strong>
+  </div>
+  <p style="font-size:13px;color:#888;">এই তথ্য সংরক্ষণ করুন। অ্যাডমিন Approve করার পরে লগইন করতে পারবেন।</p>
+  <button onclick="document.getElementById('successBox').style.display='none'">Close</button>
 </div>
 
 <script>
