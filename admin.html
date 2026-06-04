@@ -1186,6 +1186,21 @@ async function loadPayments() {
 
         if (tableBody) tableBody.innerHTML = tableHtml;
         if (recentDiv) recentDiv.innerHTML = recentHtml;
+
+        // Payments section rawPaymentDatabase আপডেট করো যাতে Payments ট্যাবে যাওয়া মাত্র কাজ করে
+        if (typeof rawPaymentDatabase !== 'undefined') {
+            rawPaymentDatabase = payments.map(p => ({
+                receiptNo:   String(p.receipt || ''),
+                id:          String(p.memberId || ''),
+                name:        p.name || '',
+                monthStr:    String(p.month || ''),
+                amount:      Number(p.amount) || 0,
+                fine:        Number(p.fine) || 0,
+                paymentDate: p.date ? String(p.date) : '-',
+                status:      String(p.status || 'Pending'),
+                receiptUrl:  p.receiptUrl || ''
+            }));
+        }
     } catch (error) {
         console.error("Error loading payments:", error);
     }
@@ -1479,19 +1494,35 @@ function loadAdminNotices() {
 function fetchLivePaymentData() {
     const tbody = document.getElementById('paymentTableBody');
     if (!tbody) return;
+
+    // যদি payments গ্লোবাল array তে ইতিমধ্যে ডাটা থাকে
+    if (payments && payments.length > 0) {
+        rawPaymentDatabase = payments.map(p => ({
+            receiptNo:   String(p.receipt || ''),
+            id:          String(p.memberId || ''),
+            name:        p.name || '',
+            monthStr:    String(p.month || ''),
+            amount:      Number(p.amount) || 0,
+            fine:        Number(p.fine) || 0,
+            paymentDate: p.date ? String(p.date) : '-',
+            status:      String(p.status || 'Pending'),
+            receiptUrl:  p.receiptUrl || ''
+        }));
+        filterPaymentData();
+        return;
+    }
+
+    // payments এখনো লোড না হলে নতুন করে fetch করো
     tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#0b6623; font-weight:600;">🔄 গুগল শিট থেকে লাইভ ডাটা লোড হচ্ছে...</td></tr>`;
 
-    fetch(`${API_URL}?action=payments`, {
-        method: 'GET',
-        mode: 'cors',
-        headers: { 'Content-Type': 'application/json' }
-    })
+    fetch(`${API_URL}?action=payments`)
         .then(response => response.json())
         .then(data => {
             if (!Array.isArray(data)) {
                 tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#ff3b30;">❌ ডাটা লোড ব্যর্থ হয়েছে!</td></tr>`;
                 return;
             }
+            payments = data;
             rawPaymentDatabase = data.map(p => ({
                 receiptNo:   String(p.receipt || ''),
                 id:          String(p.memberId || ''),
@@ -1499,7 +1530,7 @@ function fetchLivePaymentData() {
                 monthStr:    String(p.month || ''),
                 amount:      Number(p.amount) || 0,
                 fine:        Number(p.fine) || 0,
-                paymentDate: String(p.date || '-'),
+                paymentDate: p.date ? String(p.date) : '-',
                 status:      String(p.status || 'Pending'),
                 receiptUrl:  p.receiptUrl || ''
             }));
@@ -1523,32 +1554,30 @@ function filterPaymentData() {
         return;
     }
     
-    const monthNamesEng = ["january","february","march","april","may","june","july","august","september","october","november","december"];
+    const monthNamesEng = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const monthNamesBng = ["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
     
+    // "all" হলে month name দরকার নেই — crash এড়ানোর জন্য আলাদা check
     const monthIndex = (selectedMonth === 'all') ? -1 : parseInt(selectedMonth) - 1;
-    const engMonthName = monthIndex >= 0 ? monthNamesEng[monthIndex] : '';
+    const engMonthName = monthIndex >= 0 ? monthNamesEng[monthIndex].toLowerCase() : '';
     const bngMonthName = monthIndex >= 0 ? monthNamesBng[monthIndex] : '';
-    const padMonth = monthIndex >= 0 ? String(monthIndex + 1).padStart(2, '0') : '';
 
     const filteredData = rawPaymentDatabase.filter(item => {
         const ms = String(item.monthStr || '').toLowerCase().trim();
 
-        // Year match — "all" হলে সব দেখাবে
+        // Year match
         const isYearMatch = selectedYear === 'all' || ms.includes(selectedYear);
 
         // Month match — "all" হলে সব দেখাবে
         let isMonthMatch = (selectedMonth === 'all');
         if (!isMonthMatch && engMonthName) {
-            isMonthMatch = ms.includes(engMonthName)          // "january-2025"
-                        || ms.includes(bngMonthName)          // "জানুয়ারি-২০২৫"
-                        || ms.includes('-' + padMonth + '-')  // "2025-01-xx"
-                        || ms.startsWith(padMonth + '/')      // "01/2025"
-                        || ms.startsWith(padMonth + '-')      // "01-2025"
-                        || ms.startsWith(String(monthIndex + 1) + '/') // "1/2025"
-                        || ms.startsWith(String(monthIndex + 1) + '-') // "1-2025"
-                        || ms === engMonthName                // exact "january"
-                        || ms === padMonth;                   // exact "01"
+            const numMonth = String(parseInt(selectedMonth));
+            isMonthMatch = ms.includes(engMonthName) ||
+                           ms.includes(bngMonthName) ||
+                           ms.startsWith(selectedMonth + '/') ||
+                           ms.startsWith(selectedMonth + '-') ||
+                           ms.startsWith(numMonth + '/') ||
+                           ms.startsWith(numMonth + '-');
         }
                              
         return isYearMatch && isMonthMatch;
