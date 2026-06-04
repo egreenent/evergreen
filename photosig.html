@@ -83,174 +83,69 @@
 </div>
 
 <script>
-
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6nKVRoZvbS15qGyRWlsmaa6WrTOKTy6xaj50tS/exec";
-
 const form = document.getElementById('uploadForm');
 const btn = document.getElementById('submitBtn');
 const status = document.getElementById('status');
 const loader = document.getElementById('loader');
 
-function fileToBase64(file){
-  return new Promise((resolve,reject)=>{
+// ফাইলকে Base64 এ রূপান্তর করার ফাংশন
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) return resolve(null);
     const reader = new FileReader();
-
-    reader.onload = () => {
-      resolve(reader.result.split(',')[1]);
-    };
-
+    reader.onload = () => resolve(reader.result.split(',')[1]);
     reader.onerror = error => reject(error);
-
     reader.readAsDataURL(file);
   });
 }
 
 form.addEventListener('submit', async function(e){
-
   e.preventDefault();
-
   btn.disabled = true;
-  loader.style.display = "block";
+  if(loader) loader.style.display = "block";
 
-  status.innerHTML = `
-    <div style="
-      background:#fff3cd;
-      color:#856404;
-      padding:15px;
-      border-radius:8px;
-      font-size:18px;
-      font-weight:bold;
-      border:1px solid #ffeeba;">
-      ⏳ ফাইল আপলোড হচ্ছে...
-    </div>
-  `;
+  status.innerHTML = `<div style="background:#fff3cd; color:#856404; padding:15px; border-radius:8px; font-weight:bold; border:1px solid #ffeeba;">⏳ ফাইল আপলোড হচ্ছে...</div>`;
 
-  try{
+  try {
+    const memberId = document.getElementById("userId").value;
+    const photoInput = document.querySelector('input[name="imageFile"]');
+    const sigInput = document.querySelector('input[name="sigFile"]');
+    const pdfInput = document.querySelector('input[name="pdfFile"]');
 
-    const memberId =
-      document.getElementById("userId").value;
+    // ফাইলগুলো প্রসেস করা
+    const photoData = photoInput.files[0] ? { name: photoInput.files[0].name, type: photoInput.files[0].type, data: await fileToBase64(photoInput.files[0]) } : null;
+    const sigData = sigInput.files[0] ? { name: sigInput.files[0].name, type: sigInput.files[0].type, data: await fileToBase64(sigInput.files[0]) } : null;
+    const pdfData = pdfInput.files[0] ? { name: pdfInput.files[0].name, type: "application/pdf", data: await fileToBase64(pdfInput.files[0]) } : null;
 
-    const photoFile =
-      document.querySelector('input[name="imageFile"]').files[0];
-
-    const signatureFile =
-      document.querySelector('input[name="sigFile"]').files[0];
-
-    const pdfFile =
-      document.querySelector('input[name="pdfFile"]').files[0];
-
-    const photoBase64 =
-      await fileToBase64(photoFile);
-
-    const signatureBase64 =
-      await fileToBase64(signatureFile);
-
-    const pdfBase64 =
-      await fileToBase64(pdfFile);
-
-    const response = await fetch(
-      SCRIPT_URL + "?action=uploadDocuments",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-
-          action:"uploadDocuments",
-
-          memberId:memberId,
-
-          photo:{
-            name:photoFile.name,
-            type:photoFile.type,
-            data:photoBase64
-          },
-
-          signature:{
-            name:signatureFile.name,
-            type:signatureFile.type,
-            data:signatureBase64
-          },
-
-          pdf:{
-            name:pdfFile.name,
-            type:"application/pdf",
-            data:pdfBase64
-          }
-
-        })
-      }
-    );
+    const response = await fetch(SCRIPT_URL + "?action=uploadDocuments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "uploadDocuments",
+        memberId: memberId,
+        photo: photoData,
+        signature: sigData,
+        pdf: pdfData
+      })
+    });
 
     const result = await response.json();
-
-    loader.style.display = "none";
+    if(loader) loader.style.display = "none";
     btn.disabled = false;
 
     if(result.success){
-
-      status.innerHTML = `
-      <div style="
-        background:#d4edda;
-        color:#155724;
-        padding:20px;
-        border-radius:10px;
-        border:2px solid #28a745;
-        font-size:22px;
-        font-weight:bold;
-        text-align:center;
-        animation:flash 1s infinite;">
-        ✅ Upload Successful
-        <br><br>
-        Member ID: ${memberId}
-      </div>`;
-
+      status.innerHTML = `<div style="background:#d4edda; color:#155724; padding:20px; border-radius:10px; border:2px solid #28a745; text-align:center;">✅ Upload Successful<br><br>Member ID: ${memberId}</div>`;
       form.reset();
-
-      console.log(result);
-
-    }else{
-
-      status.innerHTML = `
-      <div style="
-        background:#f8d7da;
-        color:#721c24;
-        padding:20px;
-        border-radius:10px;
-        border:2px solid red;
-        font-size:20px;
-        font-weight:bold;
-        text-align:center;">
-        ❌ Upload Failed
-        <br><br>
-        ${result.error || 'Unknown Error'}
-      </div>`;
+    } else {
+      throw new Error(result.error || 'Unknown Error');
     }
-
-  }catch(error){
-
-    loader.style.display = "none";
+  } catch(error) {
+    if(loader) loader.style.display = "none";
     btn.disabled = false;
-
-    status.innerHTML = `
-    <div style="
-      background:#f8d7da;
-      color:#721c24;
-      padding:20px;
-      border-radius:10px;
-      border:2px solid red;
-      font-size:20px;
-      font-weight:bold;
-      text-align:center;">
-      ❌ Server Error
-      <br><br>
-      ${error}
-    </div>`;
+    status.innerHTML = `<div style="background:#f8d7da; color:#721c24; padding:20px; border-radius:10px; border:2px solid red; text-align:center;">❌ Upload Failed<br><br>${error}</div>`;
   }
-
 });
-
 </script>
 
 </body>
