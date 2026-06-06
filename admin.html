@@ -839,19 +839,19 @@ Save Member
         <div class="filter-group">
             <label>মাস নির্বাচন করুন (Select Month)</label>
             <select id="filterMonth" class="filter-select">
-                <option value="all">All Months</option>
-                <option value="01">January</option>
-                <option value="02">February</option>
-                <option value="03">March</option>
-                <option value="04">April</option>
-                <option value="05" >May</option>
-                <option value="06">June</option>
-                <option value="07">July</option>
-                <option value="08">August</option>
-                <option value="09">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">ডDecember</option>
+                <option value="all">সব মাস (All Months)</option>
+                <option value="01">জানুয়ারি (January)</option>
+                <option value="02">ফেব্রুয়ারি (February)</option>
+                <option value="03">মার্চ (March)</option>
+                <option value="04">এপ্রিল (April)</option>
+                <option value="05" selected>মে (May)</option>
+                <option value="06">জুন (June)</option>
+                <option value="07">জুলাই (July)</option>
+                <option value="08">আগস্ট (August)</option>
+                <option value="09">সেপ্টেম্বর (September)</option>
+                <option value="10">অক্টোবর (October)</option>
+                <option value="11">নভেম্বর (November)</option>
+                <option value="12">ডিসেম্বর (December)</option>
             </select>
         </div>
 
@@ -1565,21 +1565,30 @@ function filterPaymentData() {
     const filteredData = rawPaymentDatabase.filter(item => {
         const ms = String(item.monthStr || '').toLowerCase().trim();
 
-        // Year match
-        const isYearMatch = selectedYear === 'all' || ms.includes(selectedYear);
+        // Payment Date থেকে year বের করো (e.g. "5/26/2026 13:50:56" → "2026")
+        // format: dd-MM-yyyy বা M/D/YYYY HH:MM:SS যেকোনোটা handle করে
+        const pd = String(item.paymentDate || '');
+        const yearMatch = pd.match(/\d{4}/);
+        const paymentYear = yearMatch ? yearMatch[0] : '';
 
-        // Month match — "all" হলে সব দেখাবে
+        // Year match — Payment Date এর year দিয়ে filter
+        const isYearMatch = selectedYear === 'all'
+                         || paymentYear === selectedYear
+                         || paymentYear === '';
+
+        // Month match — monthStr দিয়ে filter ("May", "May-2026", "05" সব handle করে)
         let isMonthMatch = (selectedMonth === 'all');
         if (!isMonthMatch && engMonthName) {
             const numMonth = String(parseInt(selectedMonth));
-            isMonthMatch = ms.includes(engMonthName) ||
-                           ms.includes(bngMonthName) ||
-                           ms.startsWith(selectedMonth + '/') ||
-                           ms.startsWith(selectedMonth + '-') ||
-                           ms.startsWith(numMonth + '/') ||
-                           ms.startsWith(numMonth + '-');
+            isMonthMatch = ms === engMonthName
+                        || ms.includes(engMonthName)
+                        || ms.includes(bngMonthName)
+                        || ms.startsWith(selectedMonth + '/')
+                        || ms.startsWith(selectedMonth + '-')
+                        || ms.startsWith(numMonth + '/')
+                        || ms.startsWith(numMonth + '-');
         }
-                             
+
         return isYearMatch && isMonthMatch;
     });
     
