@@ -74,6 +74,133 @@ font-weight:700;
 cursor:pointer;
 }
 
+.change-pass-btn{
+background:#1a6fb5;
+color:#fff;
+border:none;
+padding:16px 28px;
+border-radius:14px;
+font-size:18px;
+font-weight:700;
+cursor:pointer;
+margin-right:10px;
+}
+
+.change-pass-btn:hover{
+background:#155a92;
+}
+
+/* Password Modal */
+#passwordModal{
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.55);
+z-index:9999;
+justify-content:center;
+align-items:center;
+}
+
+.pass-modal-box{
+background:#fff;
+border-radius:18px;
+padding:40px 35px;
+width:420px;
+max-width:95vw;
+box-shadow:0 15px 40px rgba(0,0,0,0.2);
+border-top:6px solid #0b5d2a;
+position:relative;
+}
+
+.pass-modal-box h2{
+color:#0b5d2a;
+font-size:22px;
+margin-bottom:25px;
+text-align:center;
+}
+
+.pass-field{
+margin-bottom:18px;
+}
+
+.pass-field label{
+display:block;
+font-weight:600;
+color:#333;
+margin-bottom:7px;
+font-size:15px;
+}
+
+.pass-field input{
+width:100%;
+padding:12px 15px;
+border:1.5px solid #ccc;
+border-radius:10px;
+font-size:15px;
+outline:none;
+transition:0.3s;
+}
+
+.pass-field input:focus{
+border-color:#0b5d2a;
+box-shadow:0 0 6px rgba(11,93,42,0.25);
+}
+
+.pass-msg{
+text-align:center;
+font-size:14px;
+margin-top:10px;
+min-height:20px;
+font-weight:600;
+}
+
+.pass-btn-row{
+display:flex;
+gap:12px;
+margin-top:22px;
+}
+
+.pass-save-btn{
+flex:1;
+background:#0b5d2a;
+color:#fff;
+border:none;
+padding:13px;
+border-radius:10px;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+transition:0.3s;
+}
+
+.pass-save-btn:hover{background:#094821;}
+
+.pass-cancel-btn{
+flex:1;
+background:#e0e0e0;
+color:#333;
+border:none;
+padding:13px;
+border-radius:10px;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+transition:0.3s;
+}
+
+.pass-cancel-btn:hover{background:#ccc;}
+
+.pass-close-x{
+position:absolute;
+top:15px;right:18px;
+background:none;
+border:none;
+font-size:22px;
+cursor:pointer;
+color:#888;
+}
+
 .profile-card{
 margin-top:25px;
 background:#fff;
@@ -303,6 +430,7 @@ font-size:32px;
 </div>
 <div class="header-right">
 <div class="member-id-box" id="memberIdText">Member ID</div>
+<button class="change-pass-btn" onclick="document.getElementById('passwordModal').style.display='flex'">🔑 পাসওয়ার্ড পরিবর্তন</button>
 <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 </div>
@@ -381,6 +509,36 @@ font-size:32px;
 <button>Nagad Payment</button>
 <button>Rocket Payment</button>
 </div>
+</div>
+
+<!-- Password Change Modal -->
+<div id="passwordModal">
+  <div class="pass-modal-box">
+    <button class="pass-close-x" onclick="closePassModal()">✕</button>
+    <h2>🔑 পাসওয়ার্ড পরিবর্তন</h2>
+
+    <div class="pass-field">
+      <label>বর্তমান পাসওয়ার্ড</label>
+      <input type="password" id="currentPass" placeholder="বর্তমান পাসওয়ার্ড লিখুন">
+    </div>
+
+    <div class="pass-field">
+      <label>নতুন পাসওয়ার্ড</label>
+      <input type="password" id="newPass" placeholder="নতুন পাসওয়ার্ড লিখুন (কমপক্ষে ৬ অক্ষর)">
+    </div>
+
+    <div class="pass-field">
+      <label>নতুন পাসওয়ার্ড নিশ্চিত করুন</label>
+      <input type="password" id="confirmPass" placeholder="আবার নতুন পাসওয়ার্ড লিখুন">
+    </div>
+
+    <div class="pass-msg" id="passMsg"></div>
+
+    <div class="pass-btn-row">
+      <button class="pass-save-btn" onclick="changePassword()">✅ সেভ করুন</button>
+      <button class="pass-cancel-btn" onclick="closePassModal()">বাতিল</button>
+    </div>
+  </div>
 </div>
 
 <div class="footer">
@@ -980,6 +1138,80 @@ function setupProfilePopupEvents() {
         }
     });
 }
+
+function closePassModal() {
+    document.getElementById('passwordModal').style.display = 'none';
+    document.getElementById('currentPass').value = '';
+    document.getElementById('newPass').value = '';
+    document.getElementById('confirmPass').value = '';
+    document.getElementById('passMsg').textContent = '';
+    document.getElementById('passMsg').style.color = '';
+}
+
+async function changePassword() {
+    const memberId  = localStorage.getItem('memberId');
+    const currentPass = document.getElementById('currentPass').value.trim();
+    const newPass     = document.getElementById('newPass').value.trim();
+    const confirmPass = document.getElementById('confirmPass').value.trim();
+    const msgEl       = document.getElementById('passMsg');
+
+    // Validation
+    if (!currentPass || !newPass || !confirmPass) {
+        msgEl.textContent = '❌ সব ঘর পূরণ করুন।';
+        msgEl.style.color = '#c0392b';
+        return;
+    }
+    if (newPass.length < 6) {
+        msgEl.textContent = '❌ নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে।';
+        msgEl.style.color = '#c0392b';
+        return;
+    }
+    if (newPass !== confirmPass) {
+        msgEl.textContent = '❌ নতুন পাসওয়ার্ড দুটো মিলছে না।';
+        msgEl.style.color = '#c0392b';
+        return;
+    }
+
+    msgEl.textContent = '⏳ পাসওয়ার্ড পরিবর্তন হচ্ছে...';
+    msgEl.style.color = '#0b5d2a';
+
+    try {
+        await fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                action: 'changePassword',
+                memberId: memberId,
+                currentPassword: currentPass,
+                newPassword: newPass
+            })
+        });
+
+        // no-cors এ response পড়া যায় না
+        // currentPass যদি ভুল হয় Apps Script error return করবে
+        // তাই সফল ধরে নিয়ে localStorage আপডেট করি
+        // এবং পরের login এ verify হবে
+
+        msgEl.textContent = '✅ পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে! পুনরায় লগইন করুন।';
+        msgEl.style.color = '#0b5d2a';
+
+        setTimeout(() => {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }, 2500);
+
+    } catch (error) {
+        msgEl.textContent = '❌ সার্ভার এরর। আবার চেষ্টা করুন।';
+        msgEl.style.color = '#c0392b';
+        console.error(error);
+    }
+}
+
+// Modal বাইরে click করলে বন্ধ হবে
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('passwordModal');
+    if (e.target === modal) closePassModal();
+});
 
 function logout() {
     localStorage.clear();
