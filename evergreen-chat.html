@@ -23,11 +23,30 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{height:100%;height:-webkit-fill-available}
-body{height:100%;height:-webkit-fill-available;overflow:hidden;font-family:'Hind Siliguri',sans-serif;background:var(--gray1);color:var(--text1)}
+body{height:100%;height:-webkit-fill-available;overflow:hidden;font-family:'Hind Siliguri',sans-serif;background:#1a1a2e;color:var(--text1)}
+
+/* Desktop wrapper */
+#appWrap{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  background:#1a1a2e;
+}
+#appInner{
+  width:100%;
+  max-width:480px;
+  height:100%;
+  position:relative;
+  background:var(--gray1);
+  box-shadow:0 0 60px rgba(0,0,0,.5);
+  overflow:hidden;
+}
+@media(min-width:520px){
+  #appInner{border-radius:0;max-height:100vh;}
+}
 
 /* ══════════ LOADING ══════════ */
 #loader{
-  position:fixed;inset:0;z-index:9999;
+  position:absolute;inset:0;z-index:9999;
   background:linear-gradient(180deg,var(--g1) 0%,var(--g2) 100%);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
 }
@@ -40,9 +59,10 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;font-family:'Hind
 
 /* ══════════ LOGIN ══════════ */
 #loginScreen{
-  display:none;position:fixed;inset:0;z-index:100;
+  display:none;position:absolute;inset:0;z-index:100;
   background:linear-gradient(180deg,var(--g1) 0%,var(--g2) 60%,var(--g5) 100%);
   flex-direction:column;align-items:center;justify-content:center;padding:24px;
+  overflow-y:auto;
 }
 .login-top{display:flex;flex-direction:column;align-items:center;margin-bottom:36px}
 .login-top img{width:110px;height:110px;border-radius:50%;border:4px solid rgba(255,255,255,.4);object-fit:cover;box-shadow:0 8px 32px rgba(0,0,0,.3);margin-bottom:16px}
@@ -59,7 +79,7 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;font-family:'Hind
 .login-err{min-height:20px;text-align:center;font-size:14px;font-weight:500;margin-top:12px;color:var(--danger)}
 
 /* ══════════ APP SHELL ══════════ */
-#app{display:none;position:fixed;inset:0;flex-direction:column;height:100%;height:-webkit-fill-available}
+#app{display:none;position:absolute;inset:0;flex-direction:column;height:100%;}
 
 /* ── HEADER ── */
 .app-header{
@@ -215,7 +235,7 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;font-family:'Hind
 
 /* ══════════ PRIVATE CHAT ══════════ */
 #pmScreen{
-  display:none;position:fixed;inset:0;z-index:200;
+  display:none;position:absolute;inset:0;z-index:200;
   background:var(--gray1);flex-direction:column;
 }
 #pmScreen.open{display:flex}
@@ -228,17 +248,19 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;font-family:'Hind
 .pm-hdr-status{color:rgba(255,255,255,.7);font-size:13px}
 
 /* ══════════ IMAGE VIEWER ══════════ */
-#imgViewer{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.95);align-items:center;justify-content:center}
+#imgViewer{display:none;position:absolute;inset:0;z-index:500;background:rgba(0,0,0,.95);align-items:center;justify-content:center}
 #imgViewer.open{display:flex}
 #imgViewer img{max-width:96vw;max-height:88vh;border-radius:8px}
 .iv-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer}
 
 /* ══════════ TOAST ══════════ */
-#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(16px);background:#1a1a2e;color:#fff;padding:12px 22px;border-radius:24px;font-size:15px;font-weight:500;z-index:600;opacity:0;transition:.3s;white-space:nowrap;pointer-events:none}
+#toast{position:absolute;bottom:80px;left:50%;transform:translateX(-50%) translateY(16px);background:#1a1a2e;color:#fff;padding:12px 22px;border-radius:24px;font-size:15px;font-weight:500;z-index:600;opacity:0;transition:.3s;white-space:nowrap;pointer-events:none}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
+<div id="appWrap">
+<div id="appInner">
 
 <!-- LOADER -->
 <div id="loader">
@@ -399,6 +421,9 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;font-family:'Hind
 <!-- TOAST -->
 <div id="toast"></div>
 
+</div><!-- /appInner -->
+</div><!-- /appWrap -->
+
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getDatabase,ref,push,onValue,set,onDisconnect,serverTimestamp,get,query,orderByChild,limitToLast}
@@ -437,6 +462,27 @@ window.addEventListener('load',async()=>{
 
 function showLogin(){document.getElementById('loginScreen').style.display='flex'}
 function showApp(){document.getElementById('app').style.display='flex'}
+
+// ── MAKE PIC (DOM-based, no HTML injection) ──
+function makePic(url,ini,bg,size){
+  if(url&&url.startsWith('http')){
+    const img=document.createElement('img');
+    img.style.cssText=`width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;display:block;`;
+    img.alt=ini;
+    img.onerror=function(){
+      const d=document.createElement('div');
+      d.style.cssText=`width:${size}px;height:${size}px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;color:#fff;font-size:${Math.round(size*0.4)}px;font-weight:700;`;
+      d.textContent=ini;
+      this.replaceWith(d);
+    };
+    img.src=url; // set src AFTER onerror
+    return img;
+  }
+  const d=document.createElement('div');
+  d.style.cssText=`width:${size}px;height:${size}px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;color:#fff;font-size:${Math.round(size*0.4)}px;font-weight:700;`;
+  d.textContent=ini;
+  return d;
+}
 
 // ── SAFE AVATAR ──
 function safeAvatar(url,ini,bg,size,fs,cls){
@@ -516,6 +562,7 @@ async function renderMembers(list){
   const od=snap.val()||{};
   const ul=document.getElementById('memberList');
   ul.innerHTML='';
+  if(!list.length){ul.innerHTML='<div style="text-align:center;padding:50px;color:var(--gray3);font-size:16px">কোনো সদস্য পাওয়া যায়নি</div>';return;}
   list.forEach(m=>{
     const online=od[m.memberId]?.online;
     const isMe=m.memberId===me?.memberId;
@@ -523,21 +570,37 @@ async function renderMembers(list){
     const sc=m.status==='Active'?'s-active':'s-pending';
     const st2=m.status==='Active'?'সক্রিয়':'পেন্ডিং';
     const bg=aColor(m.memberId);
-    const photoEl=safeAvatar(m.photo,ini,bg,'54px','22px');
-    ul.innerHTML+=`
-      <div class="mi">
-        <div class="mi-av">${photoEl}${online?'<div class="odot"></div>':''}</div>
-        <div class="mi-info">
-          <div class="mi-name">${esc(m.name)}${isMe?' (আপনি)':''}</div>
-          <div class="mi-id">${m.memberId}</div>
-        </div>
-        <div class="mi-right">
-          <span class="mi-status ${sc}">${st2}</span>
-          ${!isMe?`<button class="pm-btn" onclick="openPm('${m.memberId}','${esc(m.name)}','${m.photo||''}')">💬</button>`:''}
-        </div>
-      </div>`;
+
+    // ── DOM-based row (no HTML injection) ──
+    const row=document.createElement('div');row.className='mi';
+
+    // avatar wrap
+    const avWrap=document.createElement('div');avWrap.className='mi-av';
+    const avEl=makePic(m.photo,ini,bg,54);
+    avWrap.appendChild(avEl);
+    if(online){const dot=document.createElement('div');dot.className='odot';avWrap.appendChild(dot);}
+    row.appendChild(avWrap);
+
+    // info
+    const info=document.createElement('div');info.className='mi-info';
+    const nm=document.createElement('div');nm.className='mi-name';nm.textContent=m.name+(isMe?' (আপনি)':'');
+    const mid=document.createElement('div');mid.className='mi-id';mid.textContent=m.memberId;
+    info.appendChild(nm);info.appendChild(mid);row.appendChild(info);
+
+    // right
+    const right=document.createElement('div');right.className='mi-right';
+    const badge=document.createElement('span');badge.className='mi-status '+sc;badge.textContent=st2;
+    right.appendChild(badge);
+    if(!isMe){
+      const btn=document.createElement('button');btn.className='pm-btn';btn.textContent='💬';
+      // store data safely
+      btn.dataset.id=m.memberId;btn.dataset.name=m.name;btn.dataset.photo=m.photo||'';
+      btn.onclick=function(){openPm(this.dataset.id,this.dataset.name,this.dataset.photo);};
+      right.appendChild(btn);
+    }
+    row.appendChild(right);
+    ul.appendChild(row);
   });
-  if(!list.length)ul.innerHTML='<div style="text-align:center;padding:50px;color:var(--gray3);font-size:16px">কোনো সদস্য পাওয়া যায়নি</div>';
 }
 
 window.filterM=()=>{
@@ -703,20 +766,11 @@ function fillProfile(){
   if(!me)return;
   const ini=(me.name||'?')[0].toUpperCase();
   const av=document.getElementById('profAv');
-  if(me.photo&&me.photo.includes('http')){
-    const img=document.createElement('img');
-    img.className='prof-pic';img.id='profAv';img.alt=ini;
-    img.src=me.photo;
-    img.onerror=function(){
-      const d=document.createElement('div');
-      d.className='prof-pic-ini';d.id='profAv';
-      d.style.background=aColor(me.memberId);d.textContent=ini;
-      this.replaceWith(d);
-    };
-    av.replaceWith(img);
-  }else{
-    av.textContent=ini;av.style.background=aColor(me.memberId);
-  }
+  const newAv=makePic(me.photo,ini,aColor(me.memberId),100);
+  newAv.id='profAv';
+  if(newAv.tagName==='IMG'){newAv.className='prof-pic';}
+  else{newAv.className='prof-pic-ini';}
+  av.replaceWith(newAv);
   document.getElementById('profName').textContent=me.name||'---';
   document.getElementById('profMid').textContent=me.memberId||'---';
   const s=me.status||'Pending';
