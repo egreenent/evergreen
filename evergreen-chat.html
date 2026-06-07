@@ -19,10 +19,11 @@
   --text1:#111b21; --text2:#3b4a54;
   --danger:#d62828;
   --bubble-me:#d9fdd3; --bubble-them:#fff;
-  --nav-h:64px; --tab-h:62px;
+  --nav-h:62px; --tab-h:60px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;font-family:'Hind Siliguri',sans-serif;background:var(--gray1);color:var(--text1)}
+html{height:100%;height:-webkit-fill-available}
+body{height:100%;height:-webkit-fill-available;overflow:hidden;font-family:'Hind Siliguri',sans-serif;background:var(--gray1);color:var(--text1)}
 
 /* ══════════ LOADING ══════════ */
 #loader{
@@ -58,7 +59,7 @@ html,body{height:100%;overflow:hidden;font-family:'Hind Siliguri',sans-serif;bac
 .login-err{min-height:20px;text-align:center;font-size:14px;font-weight:500;margin-top:12px;color:var(--danger)}
 
 /* ══════════ APP SHELL ══════════ */
-#app{display:none;position:fixed;inset:0;flex-direction:column}
+#app{display:none;position:fixed;inset:0;flex-direction:column;height:100%;height:-webkit-fill-available}
 
 /* ── HEADER ── */
 .app-header{
@@ -78,24 +79,28 @@ html,body{height:100%;overflow:hidden;font-family:'Hind Siliguri',sans-serif;bac
   height:var(--tab-h);background:#fff;
   display:flex;border-top:1px solid var(--gray2);
   flex-shrink:0;order:3;
+  padding-bottom:env(safe-area-inset-bottom);
 }
-.tb{flex:1;border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--gray3);font-family:inherit;transition:.2s;position:relative;padding:6px 0}
-.tb .ico{font-size:26px;line-height:1}
-.tb .lbl{font-size:12px;font-weight:600}
+.tb{flex:1;border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--gray3);font-family:inherit;transition:.2s;position:relative;padding:4px 0}
+.tb .ico{font-size:28px;line-height:1}
+.tb .lbl{font-size:11px;font-weight:600}
 .tb.active{color:var(--g1)}
 .tb.active::after{content:'';position:absolute;top:0;left:20%;right:20%;height:3px;background:var(--g1);border-radius:0 0 4px 4px}
 .tb-badge{position:absolute;top:4px;right:calc(50% - 20px);background:var(--danger);color:#fff;font-size:11px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px}
 
 /* ── CONTENT ── */
-.content{flex:1;overflow:hidden;order:2}
-.screen{display:none;height:100%;flex-direction:column}
+.content{flex:1;overflow:hidden;order:2;min-height:0}
+.screen{display:none;height:100%;flex-direction:column;min-height:0}
 .screen.active{display:flex}
 
 /* ══════════ GROUP CHAT ══════════ */
 .chat-bg{
-  flex:1;overflow-y:auto;padding:12px 10px;
-  background:#e5ddd5 url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='60' height='60' fill='%23e5ddd5'/%3E%3C/svg%3E");
-  display:flex;flex-direction:column;gap:4px;
+  flex:1;overflow-y:auto;padding:10px 8px;
+  background-color:#e5ddd5;
+  display:flex;flex-direction:column;gap:3px;
+  min-height:0;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
 }
 .chat-bg::-webkit-scrollbar{width:0}
 
@@ -137,7 +142,7 @@ html,body{height:100%;overflow:hidden;font-family:'Hind Siliguri',sans-serif;bac
 .typing-lbl{font-size:13px;color:var(--gray4)}
 
 /* input */
-.chat-input{background:#f0f2f5;padding:10px 10px;padding-bottom:max(10px,env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:8px;flex-shrink:0}
+.chat-input{background:#f0f2f5;padding:8px 8px;padding-bottom:max(8px,env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:8px;flex-shrink:0}
 .ci-attach{width:46px;height:46px;border-radius:50%;border:none;background:none;color:var(--gray3);font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ci-box{flex:1;background:#fff;border-radius:26px;padding:10px 16px;display:flex;align-items:flex-end;gap:8px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .ci-box textarea{flex:1;border:none;background:none;font-size:16px;font-family:inherit;outline:none;resize:none;max-height:120px;line-height:1.5;color:var(--text1)}
@@ -433,6 +438,21 @@ window.addEventListener('load',async()=>{
 function showLogin(){document.getElementById('loginScreen').style.display='flex'}
 function showApp(){document.getElementById('app').style.display='flex'}
 
+// ── SAFE AVATAR ──
+function safeAvatar(url,ini,bg,size,fs,cls){
+  const c=cls||'';
+  const st=`width:${size};height:${size};border-radius:50%;`;
+  if(url&&url.startsWith('http')){
+    // Use a div with background-image to avoid onerror HTML injection issues
+    const imgSt=`${st}object-fit:cover;display:block;`;
+    const fbSt=`${st}background:${bg};display:flex;align-items:center;justify-content:center;color:#fff;font-size:${fs};font-weight:700;`;
+    return `<img src="${url}" class="${c}" style="${imgSt}" alt="${ini}"
+      onload="this.style.display='block'"
+      onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\"${c}\" style=\"${fbSt}\">${ini}</div>')">`;
+  }
+  return `<div class="${c}" style="${`${st}background:${bg};display:flex;align-items:center;justify-content:center;color:#fff;font-size:${fs};font-weight:700;`}">${ini}</div>`;
+}
+
 // ── LOGIN ──
 window.doLogin=async function(){
   const id=document.getElementById('lid').value.trim().toUpperCase();
@@ -503,9 +523,7 @@ async function renderMembers(list){
     const sc=m.status==='Active'?'s-active':'s-pending';
     const st2=m.status==='Active'?'সক্রিয়':'পেন্ডিং';
     const bg=aColor(m.memberId);
-    const photoEl=m.photo&&m.photo.includes('http')
-      ?`<img src="${m.photo}" alt="${ini}" style="width:54px;height:54px;border-radius:50%;object-fit:cover" onerror="this.outerHTML='<div class=\\"ini\\" style=\\"background:${bg}\\">${ini}</div>'">`
-      :`<div class="ini" style="background:${bg}">${ini}</div>`;
+    const photoEl=safeAvatar(m.photo,ini,bg,'54px','22px');
     ul.innerHTML+=`
       <div class="mi">
         <div class="mi-av">${photoEl}${online?'<div class="odot"></div>':''}</div>
@@ -556,9 +574,7 @@ function renderGroup(msgs,scroll){
     const t=d.toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'});
     const ini=(m.senderName||'?')[0].toUpperCase();
     const bg=aColor(m.senderId);
-    const avEl=m.senderPhoto&&m.senderPhoto.includes('http')
-      ?`<img class="msg-av" src="${m.senderPhoto}" onerror="this.outerHTML='<div class=\\"msg-av initial\\" style=\\"background:${bg}\\">${ini}</div>'">`
-      :`<div class="msg-av initial" style="background:${bg}">${ini}</div>`;
+    const avEl=safeAvatar(m.senderPhoto,ini,bg,'34px','14px','msg-av');
     if(m.type==='image'){
       html+=`<div class="msg-wrap ${isMe?'me':'them'}">
         ${!isMe?avEl:''}
@@ -615,15 +631,13 @@ window.openPm=function(id,name,photo){
   document.getElementById('pmName').textContent=name;
   const ini=name[0].toUpperCase();
   const av=document.getElementById('pmAv');
-  if(photo&&photo.includes('http')){
-    document.getElementById('pmScreen').querySelector('.pm-hdr').innerHTML=`
-      <button class="pm-back" onclick="closePm()">←</button>
-      <img class="pm-hdr-av" src="${photo}" onerror="this.outerHTML='<div class=\\"pm-hdr-av ini\\" style=\\"background:${aColor(id)}\\">${ini}</div>'" alt="">
-      <div class="pm-hdr-info"><div class="pm-hdr-name">${esc(name)}</div><div class="pm-hdr-status" id="pmStatus">লোড হচ্ছে...</div></div>`;
-  }else{
-    av.textContent=ini;av.style.background=aColor(id);
-    document.getElementById('pmName').textContent=name;
-  }
+  // PM header - safe approach
+  const pmHdr=document.getElementById('pmScreen').querySelector('.pm-hdr');
+  pmHdr.innerHTML=`<button class="pm-back" onclick="closePm()">←</button>
+    <div id="pmAvWrap"></div>
+    <div class="pm-hdr-info"><div class="pm-hdr-name">${esc(name)}</div><div class="pm-hdr-status" id="pmStatus">লোড হচ্ছে...</div></div>`;
+  const pmAvWrap=document.getElementById('pmAvWrap');
+  pmAvWrap.innerHTML=safeAvatar(photo,ini,aColor(id),'42px','18px','pm-hdr-av');
   document.getElementById('pmMsgs').innerHTML='<div class="sys-msg">🔒 প্রাইভেট চ্যাট</div>';
   document.getElementById('pmScreen').classList.add('open');
   const ck=[me.memberId,id].sort().join('_');
@@ -690,7 +704,16 @@ function fillProfile(){
   const ini=(me.name||'?')[0].toUpperCase();
   const av=document.getElementById('profAv');
   if(me.photo&&me.photo.includes('http')){
-    av.outerHTML=`<img class="prof-pic" id="profAv" src="${me.photo}" onerror="this.outerHTML='<div class=\\"prof-pic-ini\\" id=\\"profAv\\" style=\\"background:${aColor(me.memberId)}\\">${ini}</div>'" alt="">`;
+    const img=document.createElement('img');
+    img.className='prof-pic';img.id='profAv';img.alt=ini;
+    img.src=me.photo;
+    img.onerror=function(){
+      const d=document.createElement('div');
+      d.className='prof-pic-ini';d.id='profAv';
+      d.style.background=aColor(me.memberId);d.textContent=ini;
+      this.replaceWith(d);
+    };
+    av.replaceWith(img);
   }else{
     av.textContent=ini;av.style.background=aColor(me.memberId);
   }
