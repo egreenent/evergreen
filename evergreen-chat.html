@@ -37,16 +37,12 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;font-family:'Hind
   background:var(--gray1);
   overflow:hidden;
 }
-
-/* Desktop only — center with max-width */
-@media(min-width:600px){
-  #appWrap{background:#1a1a2e;}
-  #appInner{
-    max-width:460px;
-    border-radius:12px;
-    box-shadow:0 0 60px rgba(0,0,0,.6);
-    max-height:100vh;
-  }
+/* desktop class added via JS */
+#appWrap.desktop{background:#1a1a2e;}
+#appInner.desktop{
+  max-width:460px;
+  border-radius:12px;
+  box-shadow:0 0 60px rgba(0,0,0,.6);
 }
 
 /* ══════════ LOADING ══════════ */
@@ -435,6 +431,8 @@ import{getDatabase,ref,push,onValue,set,onDisconnect,serverTimestamp,get,query,o
   from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import{getStorage,ref as sr,uploadBytes,getDownloadURL}
   from"https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+import{getMessaging,getToken,onMessage}
+  from"https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
 const FC={
   apiKey:"AIzaSyAW0gcp3PUr3jRb3ZpS9j7IzT2gLb3U1qw",
@@ -450,10 +448,21 @@ const GS="https://script.google.com/macros/s/AKfycbyva2SinAyCPj76zYzUQNc05PItsQ6
 const fapp=initializeApp(FC);
 const db=getDatabase(fapp);
 const st=getStorage(fapp);
+let messaging=null;
+try{messaging=getMessaging(fapp);}catch(e){console.log('FCM not supported',e);}
 
 let me=null,allM=[],pmId=null,pmUnsub=null,tyTimer=null;
 const fill=document.getElementById('ldFill');
 const setLD=p=>fill.style.width=p+'%';
+
+// ── DEVICE DETECT ──
+(function(){
+  const isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)||window.innerWidth<600;
+  if(!isMobile){
+    document.getElementById('appWrap').classList.add('desktop');
+    document.getElementById('appInner').classList.add('desktop');
+  }
+})();
 
 // ── BOOT ──
 window.addEventListener('load',async()=>{
@@ -533,6 +542,38 @@ async function boot(){
   loadMembers();
   loadNotices();
   fillProfile();
+  setupPush();
+}
+
+async function setupPush(){
+  if(!messaging||!('Notification' in window))return;
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm!=='granted')return;
+    // Register service worker for FCM
+    if('serviceWorker' in navigator){
+      const reg=await navigator.serviceWorker.register('firebase-messaging-sw.js');
+      const token=await getToken(messaging,{
+        vapidKey:'YOUR_VAPID_KEY', // Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
+        serviceWorkerRegistration:reg
+      });
+      if(token&&me){
+        // Save token to Firebase so others can send notification
+        set(ref(db,`fcmTokens/${me.memberId}`),{token,name:me.name,ts:Date.now()});
+      }
+    }
+    // Show notification when app is in foreground
+    onMessage(messaging,payload=>{
+      const{title,body}=payload.notification||{};
+      if(title)showNotif(title,body||'');
+    });
+  }catch(e){console.log('Push setup failed:',e);}
+}
+
+function showNotif(title,body){
+  if(Notification.permission==='granted'){
+    new Notification(title,{body,icon:'logo.png',badge:'logo.png'});
+  }
 }
 
 // ── ONLINE ──
@@ -671,6 +712,8 @@ window.sendGroup=async function(){
   if(!txt||!me)return;
   inp.value='';resize(inp);clearTyping();
   await push(ref(db,'groupChat'),{text:txt,senderId:me.memberId,senderName:me.name,senderPhoto:me.photo||'',ts:Date.now(),type:'text'});
+  // Store last message for notification trigger
+  set(ref(db,'lastMsg'),{sender:me.name,text:txt.substring(0,60),ts:Date.now(),senderId:me.memberId});
 };
 
 window.sendImg=async function(inp){
@@ -696,16 +739,25 @@ function clearTyping(){if(me)set(ref(db,`typing/${me.memberId}`),{typing:false})
 // ── PRIVATE CHAT ──
 window.openPm=function(id,name,photo){
   pmId=id;
-  document.getElementById('pmName').textContent=name;
-  const ini=name[0].toUpperCase();
-  const av=document.getElementById('pmAv');
-  // PM header - safe approach
+  const ini=(name||'?')[0].toUpperCase();
+  // PM header — DOM only, no innerHTML for avatar
   const pmHdr=document.getElementById('pmScreen').querySelector('.pm-hdr');
-  pmHdr.innerHTML=`<button class="pm-back" onclick="closePm()">←</button>
-    <div id="pmAvWrap"></div>
-    <div class="pm-hdr-info"><div class="pm-hdr-name">${esc(name)}</div><div class="pm-hdr-status" id="pmStatus">লোড হচ্ছে...</div></div>`;
-  const pmAvWrap=document.getElementById('pmAvWrap');
-  pmAvWrap.innerHTML=safeAvatar(photo,ini,aColor(id),'42px','18px','pm-hdr-av');
+  pmHdr.innerHTML='';
+  // back button
+  const backBtn=document.createElement('button');
+  backBtn.className='pm-back';backBtn.textContent='←';
+  backBtn.onclick=closePm;pmHdr.appendChild(backBtn);
+  // avatar via makePic
+  const avEl=makePic(photo,ini,aColor(id),42);
+  avEl.style.flexShrink='0';
+  avEl.style.borderRadius='50%';
+  avEl.style.border='2px solid rgba(255,255,255,.3)';
+  pmHdr.appendChild(avEl);
+  // name + status
+  const info=document.createElement('div');info.className='pm-hdr-info';
+  const nm=document.createElement('div');nm.className='pm-hdr-name';nm.textContent=name||'';
+  const st2=document.createElement('div');st2.className='pm-hdr-status';st2.id='pmStatus';st2.textContent='লোড হচ্ছে...';
+  info.appendChild(nm);info.appendChild(st2);pmHdr.appendChild(info);
   document.getElementById('pmMsgs').innerHTML='<div class="sys-msg">🔒 প্রাইভেট চ্যাট</div>';
   document.getElementById('pmScreen').classList.add('open');
   const ck=[me.memberId,id].sort().join('_');
