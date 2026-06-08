@@ -591,7 +591,7 @@ async function setupPush(){
     if('serviceWorker' in navigator){
       const reg=await navigator.serviceWorker.register('firebase-messaging-sw.js');
       const token=await getToken(messaging,{
-        vapidKey:'YOUR_VAPID_KEY', // Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
+        vapidKey:'BH25mTXwFSXPt9gqJ0dpjaBluWlM7FtESWjDOTcODdhLzqnHKuN1uYLQm-QbewLgni8IaEFGCio-JG_vHEa8nn0	', // Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
         serviceWorkerRegistration:reg
       });
       if(token&&me){
