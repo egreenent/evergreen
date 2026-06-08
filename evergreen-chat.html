@@ -25,24 +25,28 @@
 html{height:100%;height:-webkit-fill-available}
 body{height:100%;height:-webkit-fill-available;overflow:hidden;font-family:'Hind Siliguri',sans-serif;background:#1a1a2e;color:var(--text1)}
 
-/* Wrapper */
+/* Wrapper — mobile full screen, desktop centered */
 #appWrap{
-  width:100%;height:100%;
+  position:fixed;inset:0;
   display:flex;align-items:center;justify-content:center;
   background:var(--gray1);
 }
 #appInner{
-  width:100%;height:100%;
   position:relative;
+  width:100%;height:100%;
   background:var(--gray1);
   overflow:hidden;
 }
-/* desktop class added via JS */
-#appWrap.desktop{background:#1a1a2e;}
-#appInner.desktop{
-  max-width:460px;
-  border-radius:12px;
-  box-shadow:0 0 60px rgba(0,0,0,.6);
+@media(hover:hover) and (pointer:fine) and (min-width:600px){
+  #appWrap{background:#1a1a2e;}
+  #appInner{
+    width:460px;
+    height:100vh;
+    max-height:100vh;
+    border-radius:16px;
+    box-shadow:0 0 80px rgba(0,0,0,.7);
+    overflow:hidden;
+  }
 }
 
 /* ══════════ LOADING ══════════ */
@@ -455,15 +459,6 @@ let me=null,allM=[],pmId=null,pmUnsub=null,tyTimer=null;
 const fill=document.getElementById('ldFill');
 const setLD=p=>fill.style.width=p+'%';
 
-// ── DEVICE DETECT ──
-(function(){
-  const isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)||window.innerWidth<600;
-  if(!isMobile){
-    document.getElementById('appWrap').classList.add('desktop');
-    document.getElementById('appInner').classList.add('desktop');
-  }
-})();
-
 // ── BOOT ──
 window.addEventListener('load',async()=>{
   setLD(20);
@@ -554,7 +549,7 @@ async function setupPush(){
     if('serviceWorker' in navigator){
       const reg=await navigator.serviceWorker.register('firebase-messaging-sw.js');
       const token=await getToken(messaging,{
-        vapidKey:'BH25mTXwFSXPt9gqJ0dpjaBluWlM7FtESWjDOTcODdhLzqnHKuN1uYLQm-QbewLgni8IaEFGCio-JG_vHEa8nn0	', // Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
+        vapidKey:'YOUR_VAPID_KEY', // Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
         serviceWorkerRegistration:reg
       });
       if(token&&me){
