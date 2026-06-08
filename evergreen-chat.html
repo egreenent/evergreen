@@ -102,6 +102,8 @@ html,body{
   flex-direction:column;
   width:100%;
   height:100%;
+  min-height:0;
+  flex:1;
   overflow:hidden;
 }
 
@@ -537,17 +539,9 @@ function makePic(url,ini,bg,size){
 
 // ── SAFE AVATAR ──
 function safeAvatar(url,ini,bg,size,fs,cls){
-  const c=cls||'';
-  const st=`width:${size};height:${size};border-radius:50%;`;
-  if(url&&url.startsWith('http')){
-    // Use a div with background-image to avoid onerror HTML injection issues
-    const imgSt=`${st}object-fit:cover;display:block;`;
-    const fbSt=`${st}background:${bg};display:flex;align-items:center;justify-content:center;color:#fff;font-size:${fs};font-weight:700;`;
-    return `<img src="${url}" class="${c}" style="${imgSt}" alt="${ini}"
-      onload="this.style.display='block'"
-      onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\"${c}\" style=\"${fbSt}\">${ini}</div>')">`;
-  }
-  return `<div class="${c}" style="${`${st}background:${bg};display:flex;align-items:center;justify-content:center;color:#fff;font-size:${fs};font-weight:700;`}">${ini}</div>`;
+  const c2=cls||'';
+  const st='width:'+size+';height:'+size+';border-radius:50%;background:'+bg+';display:flex;align-items:center;justify-content:center;color:#fff;font-size:'+fs+';font-weight:700;flex-shrink:0;';
+  return '<div class="'+c2+'" style="'+st+'">'+ini+'</div>';
 }
 
 // ── LOGIN ──
@@ -768,7 +762,7 @@ function renderGroup(msgs,scroll){
     }
   });
   c.innerHTML=html;
-  c.scrollTop=c.scrollHeight;
+  requestAnimationFrame(()=>{ c.scrollTop=c.scrollHeight; });
 }
 
 window.sendGroup=async function(){
