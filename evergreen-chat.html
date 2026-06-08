@@ -624,7 +624,7 @@ async function setupPush(){
     if('serviceWorker' in navigator){
       const reg = await navigator.serviceWorker.register('firebase-messaging-sw.js');
       const token = await getToken(messaging,{
-        vapidKey:'BH25mTXwFSXPt9gqJ0dpjaBluWlM7FtESWjDOTcODdhLzqnHKuN1uYLQm-QbewLgni8IaEFGCio-JG_vHEa8nn0	',
+        vapidKey:'BH25mTXwFSXPt9gqJ0dpjaBluWlM7FtESWjDOTcODdhLzqnHKuN1uYLQm-QbewLgni8IaEFGCio-JG_vHEa8nn0',
         serviceWorkerRegistration:reg
       });
       if(token && me){
@@ -723,6 +723,9 @@ function listenGroup(){
   onValue(q2,snap=>{
     const msgs=[];snap.forEach(c=>msgs.push({id:c.key,...c.val()}));
     renderGroup(msgs,first);first=false;
+  },(err)=>{
+    console.error('DB listen error:',err);
+    toast('❌ Database: '+err.message);
   });
   onValue(ref(db,'typing'),snap=>{
     const d=snap.val()||{};
@@ -771,11 +774,26 @@ function renderGroup(msgs,scroll){
 window.sendGroup=async function(){
   const inp=document.getElementById('msgIn');
   const txt=inp.value.trim();
-  if(!txt||!me)return;
+  if(!txt){toast('❌ মেসেজ খালি');return;}
+  if(!me){toast('❌ লগইন করুন');return;}
+  if(!db){toast('❌ Database সংযোগ নেই');return;}
+  const tempTxt=txt;
   inp.value='';resize(inp);clearTyping();
-  await push(ref(db,'groupChat'),{text:txt,senderId:me.memberId,senderName:me.name,senderPhoto:me.photo||'',ts:Date.now(),type:'text'});
-  // Store last message for notification trigger
-  set(ref(db,'lastMsg'),{sender:me.name,text:txt.substring(0,60),ts:Date.now(),senderId:me.memberId});
+  try{
+    await push(ref(db,'groupChat'),{
+      text:tempTxt,
+      senderId:me.memberId,
+      senderName:me.name,
+      senderPhoto:me.photo||'',
+      ts:Date.now(),
+      type:'text'
+    });
+    set(ref(db,'lastMsg'),{sender:me.name,text:tempTxt.substring(0,60),ts:Date.now(),senderId:me.memberId});
+  }catch(err){
+    console.error('Send error:',err);
+    toast('❌ '+err.message);
+    inp.value=tempTxt; // restore message on error
+  }
 };
 
 window.sendImg=async function(inp){
