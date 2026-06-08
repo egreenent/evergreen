@@ -822,4 +822,8 @@ function toast(msg){
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function aColor(id){
   const c=['#0b5d2a','#1565c0','#6a1b9a','#c62828','#00695c','#e65100','#37474f','#ad1457','#4527a0','#00838f'];
-  let h=0;fo
+  let h=0;for(const ch of(id||''))h+=ch.charCodeAt(0);return c[h%c.length];
+}
+</script>
+</body>
+</html>
