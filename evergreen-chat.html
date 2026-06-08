@@ -579,38 +579,63 @@ async function boot(){
   loadMembers();
   loadNotices();
   fillProfile();
-  setupPush();
+  // Push notification — ask after user interaction
+  setTimeout(askNotifPermission, 3000);
 }
 
-async function setupPush(){
-  if(!messaging||!('Notification' in window))return;
+async function askNotifPermission(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission === 'granted'){ setupPush(); return; }
+  if(Notification.permission === 'denied') return;
+  // Show banner asking permission
+  showNotifBanner();
+}
+
+function showNotifBanner(){
+  if(document.getElementById('notifBanner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'notifBanner';
+  banner.style.cssText = 'position:absolute;bottom:70px;left:10px;right:10px;background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 4px 20px rgba(0,0,0,.2);display:flex;align-items:center;gap:12px;z-index:300;border-left:4px solid var(--g2)';
+  banner.innerHTML = `
+    <span style="font-size:24px">🔔</span>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700;color:#111">নোটিফিকেশন চালু করুন</div>
+      <div style="font-size:12px;color:#666">নতুন মেসেজ এলে জানতে পারবেন</div>
+    </div>
+    <button onclick="enableNotif()" style="background:var(--g2);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">চালু করুন</button>
+    <button onclick="document.getElementById('notifBanner').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999">✕</button>`;
+  document.getElementById('appInner').appendChild(banner);
+}
+
+window.enableNotif = async function(){
+  const banner = document.getElementById('notifBanner');
+  if(banner) banner.remove();
   try{
-    const perm=await Notification.requestPermission();
-    if(perm!=='granted')return;
-    // Register service worker for FCM
+    const perm = await Notification.requestPermission();
+    if(perm !== 'granted'){ toast('❌ নোটিফিকেশন বন্ধ'); return; }
+    await setupPush();
+    toast('✅ নোটিফিকেশন চালু হয়েছে!');
+  }catch(e){ console.log(e); }
+};
+
+async function setupPush(){
+  if(!messaging) return;
+  try{
     if('serviceWorker' in navigator){
-      const reg=await navigator.serviceWorker.register('firebase-messaging-sw.js');
-      const token=await getToken(messaging,{
-        vapidKey:'BH25mTXwFSXPt9gqJ0dpjaBluWlM7FtESWjDOTcODdhLzqnHKuN1uYLQm-QbewLgni8IaEFGCio-JG_vHEa8nn0	', // Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
+      const reg = await navigator.serviceWorker.register('firebase-messaging-sw.js');
+      const token = await getToken(messaging,{
+        vapidKey:'BH25mTXwFSXPt9gqJ0dpjaBluWlM7FtESWjDOTcODdhLzqnHKuN1uYLQm-QbewLgni8IaEFGCio-JG_vHEa8nn0	',
         serviceWorkerRegistration:reg
       });
-      if(token&&me){
-        // Save token to Firebase so others can send notification
+      if(token && me){
         set(ref(db,`fcmTokens/${me.memberId}`),{token,name:me.name,ts:Date.now()});
       }
     }
-    // Show notification when app is in foreground
-    onMessage(messaging,payload=>{
-      const{title,body}=payload.notification||{};
-      if(title)showNotif(title,body||'');
+    onMessage(messaging, payload=>{
+      const{title,body} = payload.notification||{};
+      if(title) new Notification(title,{body:body||'',icon:'logo.png'});
     });
-  }catch(e){console.log('Push setup failed:',e);}
-}
-
-function showNotif(title,body){
-  if(Notification.permission==='granted'){
-    new Notification(title,{body,icon:'logo.png',badge:'logo.png'});
-  }
+  }catch(e){ console.log('Push error:',e); }
 }
 
 // ── ONLINE ──
