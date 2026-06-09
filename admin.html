@@ -820,9 +820,21 @@ Save Member
 
 <div class="page-section" id="paymentsSection">
     
-    <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #edf2ed; padding-bottom: 10px;">
+    <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #edf2ed; padding-bottom: 10px;">
         <span style="color: #0b6623; font-size: 24px; font-weight: 700;">💰 মেম্বার পেমেন্ট ও কালেকশন প্যানেল</span>
         <button class="btn-action btn-pdf" onclick="downloadPaymentPDF()">📄 Download PDF Report</button>
+    </div>
+
+    <!-- Payment Tabs -->
+    <div style="display:flex; gap:10px; margin-bottom:20px;">
+        <button id="tabBtnPaid" onclick="switchPayTab('paid')"
+            style="flex:1;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;background:#0b6623;color:#fff;transition:.2s">
+            📋 পেমেন্ট তালিকা
+        </button>
+        <button id="tabBtnDue" onclick="switchPayTab('due')"
+            style="flex:1;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;transition:.2s">
+            ⚠️ বকেয়া সদস্য
+        </button>
     </div>
 
     <div class="filter-wrapper">
@@ -896,6 +908,54 @@ Save Member
             <div id="noDataBox" class="no-data-message" style="display: none;">
                 এই মাস এবং বছরের কোনো পেমেন্ট রেকর্ড খুঁজে পাওয়া যায়নি।
             </div>
+        </div>
+    </div>
+
+    <!-- DUE MEMBERS SECTION -->
+    <div id="dueMembersSection" style="display:none;margin-top:10px">
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:20px">
+            <div>
+                <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">মাস নির্বাচন করুন</label>
+                <select id="dueFilterMonth" style="padding:10px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none;min-width:180px">
+                    <option value="January">জানুয়ারি</option>
+                    <option value="February">ফেব্রুয়ারি</option>
+                    <option value="March">মার্চ</option>
+                    <option value="April">এপ্রিল</option>
+                    <option value="May" selected>মে</option>
+                    <option value="June">জুন</option>
+                    <option value="July">জুলাই</option>
+                    <option value="August">আগস্ট</option>
+                    <option value="September">সেপ্টেম্বর</option>
+                    <option value="October">অক্টোবর</option>
+                    <option value="November">নভেম্বর</option>
+                    <option value="December">ডিসেম্বর</option>
+                </select>
+            </div>
+            <button onclick="loadDueMembers()" style="padding:11px 22px;background:#0b6623;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer">🔍 বকেয়া খুঁজুন</button>
+            <div id="dueSummary" style="margin-left:auto;background:#fff0f0;border:2px solid #ffcdd2;border-radius:10px;padding:10px 20px;display:none;gap:16px;align-items:center">
+                <span style="font-size:13px;color:#666">বকেয়া সদস্য: <strong id="dueCount" style="color:#d62828;font-size:18px">০</strong></span>
+                <span style="font-size:13px;color:#666">মোট বকেয়া: <strong id="dueTotalAmt" style="color:#d62828;font-size:18px">৳ ০</strong></span>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="admin-payment-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Member ID</th>
+                        <th>সদস্যের নাম</th>
+                        <th>মোবাইল</th>
+                        <th>মাসিক ফি</th>
+                        <th>মাস</th>
+                        <th>অবস্থা</th>
+                        <th>পেমেন্ট করুন</th>
+                    </tr>
+                </thead>
+                <tbody id="dueMemberTableBody">
+                    <tr><td colspan="8" style="text-align:center;color:#888;padding:30px">মাস সিলেক্ট করে "বকেয়া খুঁজুন" চাপুন</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -1637,6 +1697,132 @@ function filterPaymentData() {
     
     document.getElementById('totalCollectedVal').innerText = "৳ " + totalCollected.toLocaleString();
     document.getElementById('totalDuesVal').innerText = "৳ " + totalDues.toLocaleString();
+}
+
+// ══════════════════════════════════════
+// PAYMENT TAB SWITCH
+// ══════════════════════════════════════
+function switchPayTab(tab) {
+    const pdfArea    = document.getElementById('pdfPrintArea');
+    const dueArea    = document.getElementById('dueMembersSection');
+    const filterWrap = document.querySelector('.filter-wrapper');
+    const btnPaid    = document.getElementById('tabBtnPaid');
+    const btnDue     = document.getElementById('tabBtnDue');
+
+    if (tab === 'paid') {
+        pdfArea.style.display    = 'block';
+        filterWrap.style.display = 'flex';
+        dueArea.style.display    = 'none';
+        btnPaid.style.background = '#0b6623'; btnPaid.style.color = '#fff';
+        btnDue.style.background  = '#f0f0f0'; btnDue.style.color  = '#555';
+    } else {
+        pdfArea.style.display    = 'none';
+        filterWrap.style.display = 'none';
+        dueArea.style.display    = 'block';
+        btnDue.style.background  = '#0b6623'; btnDue.style.color = '#fff';
+        btnPaid.style.background = '#f0f0f0'; btnPaid.style.color  = '#555';
+        loadDueMembers();
+    }
+}
+
+// ══════════════════════════════════════
+// LOAD DUE MEMBERS
+// ══════════════════════════════════════
+async function loadDueMembers() {
+    const tbody      = document.getElementById('dueMemberTableBody');
+    const summary    = document.getElementById('dueSummary');
+    const selMonth   = document.getElementById('dueFilterMonth').value;
+
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:#0b6623">⏳ লোড হচ্ছে...</td></tr>';
+    summary.style.display = 'none';
+
+    // members ও payments গ্লোবাল array থেকে নাও
+    if (!members || members.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#888;padding:20px">সদস্য তথ্য লোড হয়নি। পেজ রিফ্রেশ করুন।</td></tr>';
+        return;
+    }
+
+    // এই মাসে যারা payment দিয়েছে তাদের ID বের করো
+    const paidIds = new Set(
+        (payments || [])
+            .filter(p => {
+                const ms = String(p.month || p.monthStr || '').toLowerCase();
+                const st = String(p.status || '').toLowerCase();
+                return st === 'paid' && ms.includes(selMonth.toLowerCase());
+            })
+            .map(p => String(p.memberId || p.id || '').trim().toLowerCase())
+    );
+
+    // Active member যারা pay করেনি
+    const dueList = members.filter(m =>
+        String(m.status || '').toLowerCase() === 'active' &&
+        !paidIds.has(String(m.memberId || '').trim().toLowerCase())
+    );
+
+    if (dueList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#0b6623;padding:30px;font-weight:600">✅ ${selMonth} মাসে সকল সদস্য পেমেন্ট করেছেন!</td></tr>`;
+        return;
+    }
+
+    // Summary
+    const totalDue = dueList.reduce((s, m) => s + (Number(m.monthlyFee) || 0), 0);
+    document.getElementById('dueCount').textContent    = dueList.length;
+    document.getElementById('dueTotalAmt').textContent = '৳ ' + totalDue.toLocaleString();
+    summary.style.display = 'flex';
+
+    // Table render
+    let html = '';
+    dueList.forEach((m, i) => {
+        html += `<tr>
+            <td>${i + 1}</td>
+            <td><strong>${m.memberId || '-'}</strong></td>
+            <td>${m.name || '-'}</td>
+            <td>${m.phone || '-'}</td>
+            <td>৳ ${Number(m.monthlyFee || 0).toLocaleString()}</td>
+            <td>${selMonth}</td>
+            <td><span style="background:#fff0f0;color:#d62828;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700">⚠️ বকেয়া</span></td>
+            <td>
+                <button onclick="payDueNow('${m.memberId}','${m.name}','${m.monthlyFee || 1000}','${selMonth}')"
+                    style="background:#0b6623;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">
+                    💳 Pay করুন
+                </button>
+            </td>
+        </tr>`;
+    });
+    tbody.innerHTML = html;
+}
+
+// ══════════════════════════════════════
+// PAY DUE NOW — একক সদস্যের due clear
+// ══════════════════════════════════════
+async function payDueNow(memberId, name, fee, month) {
+    if (!confirm(`${name} (${memberId}) এর ${month} মাসের ৳${fee} পেমেন্ট করবেন?`)) return;
+
+    const fine = prompt('জরিমানা (Fine) থাকলে লিখুন, না থাকলে 0:', '0') || '0';
+
+    const payment = {
+        memberId: memberId,
+        name:     name,
+        month:    month,
+        amount:   fee,
+        fine:     fine,
+        status:   'Paid'
+    };
+
+    try {
+        await fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({ action: 'addPayment', ...payment })
+        });
+        alert(`✅ ${name} এর ${month} মাসের পেমেন্ট সফলভাবে সেভ হয়েছে!`);
+        // Reload payments then refresh due list
+        await loadPayments();
+        loadDueMembers();
+    } catch(err) {
+        alert('❌ পেমেন্ট সেভ করতে সমস্যা হয়েছে।');
+        console.error(err);
+    }
 }
 
 function downloadPaymentPDF() {
