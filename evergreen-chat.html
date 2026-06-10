@@ -539,11 +539,12 @@ function showLogin(){document.getElementById('loginScreen').style.display='flex'
 function showApp(){
   const app=document.getElementById('app');
   app.style.display='flex';
-  // Ensure chat scrolls to bottom after render
+  // Re-render cached messages after app becomes visible
   setTimeout(()=>{
-    const msgs=document.getElementById('groupMsgs');
-    if(msgs) msgs.scrollTop=msgs.scrollHeight;
-  },300);
+    if(cachedGroupMsgs && cachedGroupMsgs.length>0){
+      renderGroup(cachedGroupMsgs);
+    }
+  },200);
 }
 
 // ── MAKE PIC (DOM-based, no HTML injection) ──
@@ -741,12 +742,13 @@ window.filterM=()=>{
 };
 
 // ── GROUP CHAT ──
+let cachedGroupMsgs=[];
 function listenGroup(){
   const q2=query(ref(db,'groupChat'),orderByChild('ts'),limitToLast(100));
-  let first=true;
   onValue(q2,snap=>{
-    const msgs=[];snap.forEach(c=>msgs.push({id:c.key,...c.val()}));
-    renderGroup(msgs,first);first=false;
+    cachedGroupMsgs=[];
+    snap.forEach(ch=>cachedGroupMsgs.push({id:ch.key,...ch.val()}));
+    renderGroup(cachedGroupMsgs);
   },(err)=>{
     console.error('DB listen error:',err);
     toast('❌ Database: '+err.message);
@@ -760,8 +762,9 @@ function listenGroup(){
   });
 }
 
-function renderGroup(msgs,scroll){
+function renderGroup(msgs){
   const c=document.getElementById('groupMsgs');
+  if(!c){console.warn('groupMsgs not found');return;}
   let html='<div class="sys-msg">EverGreen Group Chat 🌿</div>';
   let lastD='';
   msgs.forEach(m=>{
@@ -792,7 +795,8 @@ function renderGroup(msgs,scroll){
     }
   });
   c.innerHTML=html;
-  requestAnimationFrame(()=>{ c.scrollTop=c.scrollHeight; });
+  // scroll to bottom
+  setTimeout(()=>{ c.scrollTop=c.scrollHeight; },50);
 }
 
 window.sendGroup=async function(){
@@ -884,26 +888,48 @@ window.closePm=function(){
 
 function renderPm(msgs){
   const c=document.getElementById('pmMsgs');
+  if(!c) return;
   let html='<div class="sys-msg">🔒 প্রাইভেট চ্যাট</div>';
   msgs.forEach(m=>{
-    const isMe=m.sid===me?.memberId;
-    const t=new Date(m.ts||Date.now()).toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'});
+    // support both old (sid/txt) and new (senderId/text) field names
+    const senderId = m.senderId || m.sid || '';
+    const text     = m.text     || m.txt || '';
+    const isMe = senderId === me?.memberId;
+    const t = new Date(m.ts||Date.now()).toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'});
     html+=`<div class="msg-wrap ${isMe?'me':'them'}">
       <div class="msg-col">
-        <div class="bubble"><div class="bubble-text">${esc(m.txt||'')}</div>
-        <div class="bubble-foot"><span class="bubble-time">${t}</span>${isMe?'<span class="bubble-tick">✓✓</span>':''}</div></div>
-      </div></div>`;
+        <div class="bubble">
+          <div class="bubble-text">${esc(text)}</div>
+          <div class="bubble-foot">
+            <span class="bubble-time">${t}</span>
+            ${isMe?'<span class="bubble-tick">✓✓</span>':''}
+          </div>
+        </div>
+      </div>
+    </div>`;
   });
-  c.innerHTML=html;c.scrollTop=c.scrollHeight;
+  c.innerHTML=html;
+  setTimeout(()=>{ c.scrollTop=c.scrollHeight; },50);
 }
 
 window.sendPm=async function(){
   const inp=document.getElementById('pmIn');
   const txt=inp.value.trim();
   if(!txt||!me||!pmId)return;
+  const tempTxt=txt;
   inp.value='';resize(inp);
-  const ck=[me.memberId,pmId].sort().join('_');
-  await push(ref(db,`pm/${ck}`),{txt,sid:me.memberId,sname:me.name,ts:Date.now()});
+  try{
+    const ck=[me.memberId,pmId].sort().join('_');
+    await push(ref(db,`pm/${ck}`),{
+      text:tempTxt,
+      senderId:me.memberId,
+      senderName:me.name,
+      ts:Date.now()
+    });
+  }catch(err){
+    console.error('PM send error:',err);
+    toast('❌ '+err.message);
+  }
 };
 
 // ── NOTICES ──
@@ -961,7 +987,11 @@ window.goTab=function(t){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('tb-'+t).classList.add('active');
   document.getElementById('sc-'+t).classList.add('active');
-  if(t==='notices')document.getElementById('nbadge').style.display='none';
+  if(t==='notices') document.getElementById('nbadge').style.display='none';
+  // Re-render group messages when switching to group tab
+  if(t==='group' && cachedGroupMsgs.length>0){
+    setTimeout(()=>renderGroup(cachedGroupMsgs), 50);
+  }
 };
 
 window.goSearch=function(){goTab('members');setTimeout(()=>document.getElementById('msearch').focus(),100)};
