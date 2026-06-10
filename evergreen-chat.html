@@ -17,87 +17,52 @@
   --text1:#111b21;--text2:#3b4a54;
   --danger:#d62828;
   --bubble-me:#d9fdd3;--bubble-them:#fff;
-  --nav-h:58px;--tab-h:58px;
+  --nav-h:58px;--tab-h:60px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-
-html{height:100%;height:-webkit-fill-available}
-body{
-  height:100%;height:-webkit-fill-available;
-  overflow:hidden;
-  font-family:'Hind Siliguri',sans-serif;
-  background:var(--gray1);
-  color:var(--text1);
-}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Hind Siliguri',sans-serif;background:#1a1a2e;color:var(--text1)}
 
 /* ── WRAPPER ── */
-#appWrap{
-  position:fixed;
-  top:0;left:0;right:0;bottom:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:var(--gray1);
-}
-#appInner{
-  position:relative;
-  width:100%;
-  height:100%;
-  background:var(--gray1);
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-}
-
-/* Desktop only */
+#appWrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--gray1)}
+#appInner{position:relative;width:100%;height:100%;background:var(--gray1);overflow:hidden;}
 @media(hover:hover) and (pointer:fine){
   #appWrap{background:#1a1a2e;}
   #appInner{width:460px;border-radius:16px;box-shadow:0 0 80px rgba(0,0,0,.7);}
 }
 
-/* ── APP SHELL ── */
-#app{
-  display:none;
-  flex-direction:column;
-  width:100%;
-  flex:1;
-  min-height:0;
-  overflow:hidden;
-}
+/* ── APP — fixed inside appInner ── */
+#app{display:none;position:absolute;inset:0;flex-direction:column;}
 
-/* ── HEADER ── */
+/* ── HEADER — fixed top ── */
 .app-header{
-  height:var(--nav-h);min-height:var(--nav-h);
+  position:absolute;top:0;left:0;right:0;
+  height:var(--nav-h);
   background:var(--g1);
   display:flex;align-items:center;padding:0 16px;gap:12px;
   box-shadow:0 2px 8px rgba(0,0,0,.25);
-  flex-shrink:0;z-index:10;
+  z-index:10;
 }
 
-/* ── TAB BAR ── */
+/* ── TAB BAR — fixed bottom ── */
 .tab-bar{
-  height:var(--tab-h);min-height:var(--tab-h);
+  position:absolute;bottom:0;left:0;right:0;
+  height:var(--tab-h);
   background:#fff;
   display:flex;
   border-top:2px solid var(--gray2);
-  flex-shrink:0;
+  z-index:10;
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 
-/* ── CONTENT ── */
+/* ── CONTENT — fills between header and tab ── */
 .content{
-  flex:1;
-  min-height:0;
+  position:absolute;
+  top:var(--nav-h);
+  bottom:var(--tab-h);
+  left:0;right:0;
   overflow:hidden;
 }
-.screen{
-  display:none;
-  width:100%;
-  height:100%;
-  min-height:0;
-  flex-direction:column;
-  overflow:hidden;
-}
+.screen{display:none;width:100%;height:100%;flex-direction:column;overflow:hidden;}
 .screen.active{display:flex;}
 
 /* ── CHAT BG ── */
@@ -534,8 +499,9 @@ import{getDatabase,ref,push,onValue,set,onDisconnect,serverTimestamp,get,query,o
   from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import{getStorage,ref as sr,uploadBytes,getDownloadURL}
   from"https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-import{getMessaging,getToken,onMessage}
-  from"https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+// FCM disabled until VAPID key is configured
+// import{getMessaging,getToken,onMessage}
+//   from"https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
 const FC={
   apiKey:"AIzaSyAW0gcp3PUr3jRb3ZpS9j7IzT2gLb3U1qw",
@@ -552,7 +518,8 @@ const fapp=initializeApp(FC);
 const db=getDatabase(fapp);
 const st=getStorage(fapp);
 let messaging=null;
-try{messaging=getMessaging(fapp);}catch(e){console.log('FCM not supported',e);}
+// FCM disabled until VAPID key configured
+// try{messaging=getMessaging(fapp);}catch(e){console.log('FCM not supported',e);}
 
 let me=null,allM=[],pmId=null,pmUnsub=null,tyTimer=null;
 const fill=document.getElementById('ldFill');
@@ -681,7 +648,7 @@ async function setupPush(){
     if('serviceWorker' in navigator){
       const reg = await navigator.serviceWorker.register('firebase-messaging-sw.js');
       const token = await getToken(messaging,{
-        vapidKey:'YOUR_VAPID_KEY',
+        vapidKey:'BH25mTXwFSXPt9gqJ0dpjaBluWlM7FtESWjDOTcODdhLzqnHKuN1uYLQm-QbewLgni8IaEFGCio-JG_vHEa8nn0',
         serviceWorkerRegistration:reg
       });
       if(token && me){
