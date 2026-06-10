@@ -764,99 +764,174 @@ window.filterM=()=>{
 // ── GROUP CHAT ──
 let cachedGroupMsgs=[];
 function listenGroup(){
-  const q2=query(ref(db,'groupChat'),orderByChild('ts'),limitToLast(100));
-  onValue(q2,snap=>{
-    cachedGroupMsgs=[];
-    snap.forEach(ch=>cachedGroupMsgs.push({id:ch.key,...ch.val()}));
+  const q2 = query(ref(db,'groupChat'), orderByChild('ts'), limitToLast(100));
+  
+  onValue(q2, snap => {
+    cachedGroupMsgs = [];
+    snap.forEach(ch => {
+      cachedGroupMsgs.push({id: ch.key, ...ch.val()});
+    });
+
+    // একাধিকবার রেন্ডার চেষ্টা (DOM রেডি না থাকলে সমস্যা হয়)
     renderGroup(cachedGroupMsgs);
-    // retry after delay in case DOM not ready yet
-    setTimeout(()=>renderGroup(cachedGroupMsgs),200);
-  },(err)=>{
-    console.error('DB listen error:',err);
-    toast('❌ Database: '+err.message);
+    setTimeout(() => renderGroup(cachedGroupMsgs), 150);
+    setTimeout(() => renderGroup(cachedGroupMsgs), 400);
+  }, (err) => {
+    console.error('Listen Error:', err);
+    toast('❌ Database Listen Error');
   });
-  onValue(ref(db,'typing'),snap=>{
-    const d=snap.val()||{};
-    const ty=Object.entries(d).filter(([id,v])=>id!==me?.memberId&&v?.typing).map(([,v])=>v.name?.split(' ')[0]);
-    const tr=document.getElementById('typingRow');
-    document.getElementById('typingLbl').textContent=(ty.join(', ')||'')+'  টাইপ করছেন...';
-    tr.classList.toggle('show',ty.length>0);
+
+  // Typing listener
+  onValue(ref(db,'typing'), snap => {
+    const d = snap.val() || {};
+    const ty = Object.entries(d)
+      .filter(([id,v]) => id !== me?.memberId && v?.typing)
+      .map(([,v]) => v.name?.split(' ')[0] || '');
+    
+    const tr = document.getElementById('typingRow');
+    const lbl = document.getElementById('typingLbl');
+    if(lbl) lbl.textContent = (ty.join(', ') || '') + ' টাইপ করছেন...';
+    if(tr) tr.classList.toggle('show', ty.length > 0);
   });
 }
 
 function renderGroup(msgs){
-  const c=document.getElementById('groupMsgs');
-  if(!c){console.warn('groupMsgs not found');return;}
-  let html='<div class="sys-msg">EverGreen Group Chat 🌿</div>';
-  let lastD='';
-  msgs.forEach(m=>{
-    const d=new Date(m.ts||Date.now());
-    const ds=d.toLocaleDateString('bn-BD',{year:'numeric',month:'long',day:'numeric'});
-    if(ds!==lastD){html+=`<div class="date-pill"><span>${ds}</span></div>`;lastD=ds}
-    const isMe=m.senderId===me?.memberId;
-    const t=d.toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'});
-    const ini=(m.senderName||'?')[0].toUpperCase();
-    const bg=aColor(m.senderId);
-    const avEl=safeAvatar(m.senderPhoto,ini,bg,'34px','14px','msg-av');
-    if(m.type==='image'){
-      html+=`<div class="msg-wrap ${isMe?'me':'them'}">
-        ${!isMe?avEl:''}
+  const c = document.getElementById('groupMsgs');
+  if(!c) {
+    console.warn('groupMsgs element not found');
+    return;
+  }
+
+  let html = '<div class="sys-msg">EverGreen Group Chat 🌿</div>';
+  let lastD = '';
+
+  msgs.forEach(m => {
+    const d = new Date(m.ts || Date.now());
+    const ds = d.toLocaleDateString('bn-BD', {year:'numeric', month:'long', day:'numeric'});
+    
+    if(ds !== lastD){
+      html += `<div class="date-pill"><span>${ds}</span></div>`;
+      lastD = ds;
+    }
+
+    const isMe = m.senderId === me?.memberId;
+    const t = d.toLocaleTimeString('bn-BD', {hour:'2-digit', minute:'2-digit'});
+    const ini = (m.senderName || '?')[0].toUpperCase();
+    const bg = aColor(m.senderId);
+
+    const avEl = safeAvatar(m.senderPhoto, ini, bg, '34px', '14px', 'msg-av');
+
+    if(m.type === 'image' && m.url){
+      html += `<div class="msg-wrap ${isMe ? 'me' : 'them'}">
+        ${!isMe ? avEl : ''}
         <div class="msg-col">
-          ${!isMe?`<div class="msg-name">${esc(m.senderName)}</div>`:''}
+          ${!isMe ? `<div class="msg-name">${esc(m.senderName)}</div>` : ''}
           <div class="msg-img-bubble"><img src="${m.url}" onclick="openIV('${m.url}')" loading="lazy"></div>
-          <div class="bubble-foot"><span class="bubble-time">${t}</span>${isMe?'<span class="bubble-tick">✓✓</span>':''}</div>
-        </div></div>`;
-    }else{
-      html+=`<div class="msg-wrap ${isMe?'me':'them'}">
-        ${!isMe?avEl:''}
+          <div class="bubble-foot"><span class="bubble-time">${t}</span>${isMe ? '<span class="bubble-tick">✓✓</span>' : ''}</div>
+        </div>
+      </div>`;
+    } else {
+      html += `<div class="msg-wrap ${isMe ? 'me' : 'them'}">
+        ${!isMe ? avEl : ''}
         <div class="msg-col">
-          ${!isMe?`<div class="msg-name">${esc(m.senderName)}</div>`:''}
-          <div class="bubble"><div class="bubble-text">${esc(m.text||'')}</div>
-          <div class="bubble-foot"><span class="bubble-time">${t}</span>${isMe?'<span class="bubble-tick">✓✓</span>':''}</div></div>
-        </div></div>`;
+          ${!isMe ? `<div class="msg-name">${esc(m.senderName)}</div>` : ''}
+          <div class="bubble">
+            <div class="bubble-text">${esc(m.text || '')}</div>
+            <div class="bubble-foot">
+              <span class="bubble-time">${t}</span>
+              ${isMe ? '<span class="bubble-tick">✓✓</span>' : ''}
+            </div>
+          </div>
+        </div>
+      </div>`;
     }
   });
-  c.innerHTML=html;
-  // scroll to bottom
-  setTimeout(()=>{ c.scrollTop=c.scrollHeight; },50);
+
+  c.innerHTML = html;
+  
+  // আরও শক্তিশালী স্ক্রল + রেন্ডার
+  setTimeout(() => {
+    c.scrollTop = c.scrollHeight;
+  }, 50);
+
+  setTimeout(() => {
+    c.scrollTop = c.scrollHeight;
+  }, 300);
 }
 
-window.sendGroup=async function(){
-  const inp=document.getElementById('msgIn');
-  const txt=inp.value.trim();
-  if(!txt){toast('❌ মেসেজ খালি');return;}
-  if(!me){toast('❌ লগইন করুন');return;}
-  if(!db){toast('❌ Database সংযোগ নেই');return;}
-  const tempTxt=txt;
-  inp.value='';resize(inp);clearTyping();
+window.sendGroup = async function(){
+  const inp = document.getElementById('msgIn');
+  const txt = inp.value.trim();
+  if(!txt){ toast('❌ মেসেজ খালি'); return; }
+  if(!me){ toast('❌ লগইন করুন'); return; }
+
+  const tempTxt = txt;
+  inp.value = ''; 
+  resize(inp); 
+  clearTyping();
+
   try{
-    await push(ref(db,'groupChat'),{
-      text:tempTxt,
-      senderId:me.memberId,
-      senderName:me.name,
-      senderPhoto:me.photo||'',
-      ts:Date.now(),
-      type:'text'
+    const newMsg = {
+      text: tempTxt,
+      senderId: me.memberId,
+      senderName: me.name,
+      senderPhoto: me.photo || '',
+      ts: Date.now(),
+      type: 'text'
+    };
+
+    await push(ref(db, 'groupChat'), newMsg);
+
+    // 🔥 তাৎক্ষণিক রেন্ডার
+    cachedGroupMsgs.push(newMsg);
+    renderGroup(cachedGroupMsgs);
+
+    // lastMsg আপডেট
+    set(ref(db, 'lastMsg'), {
+      sender: me.name,
+      text: tempTxt.substring(0, 60),
+      ts: Date.now(),
+      senderId: me.memberId
     });
-    set(ref(db,'lastMsg'),{sender:me.name,text:tempTxt.substring(0,60),ts:Date.now(),senderId:me.memberId});
-  }catch(err){
-    console.error('Send error:',err);
-    toast('❌ '+err.message);
-    inp.value=tempTxt; // restore message on error
+
+  } catch(err){
+    console.error('Send error:', err);
+    toast('❌ ' + err.message);
+    inp.value = tempTxt;
   }
 };
 
-window.sendImg=async function(inp){
-  const file=inp.files[0];if(!file||!me)return;
+window.sendImg = async function(inp){
+  const file = inp.files[0];
+  if(!file || !me) return;
+  
   toast('📤 ছবি আপলোড হচ্ছে...');
   try{
-    const ir=sr(st,`chat/${me.memberId}_${Date.now()}`);
-    await uploadBytes(ir,file);
-    const url=await getDownloadURL(ir);
-    await push(ref(db,'groupChat'),{type:'image',url,senderId:me.memberId,senderName:me.name,senderPhoto:me.photo||'',ts:Date.now()});
-    toast('✅ ছবি পাঠানো হয়েছে');
-  }catch{toast('❌ ছবি পাঠাতে সমস্যা')}
-  inp.value='';
+    const ir = sr(st, `chat/${me.memberId}_${Date.now()}`);
+    await uploadBytes(ir, file);
+    const url = await getDownloadURL(ir);
+
+    const newMsg = {
+      type: 'image',
+      url: url,
+      senderId: me.memberId,
+      senderName: me.name,
+      senderPhoto: me.photo || '',
+      ts: Date.now()
+    };
+
+    await push(ref(db, 'groupChat'), newMsg);
+    
+    // 🔥 তাৎক্ষণিক রেন্ডার
+    cachedGroupMsgs.push(newMsg);
+    renderGroup(cachedGroupMsgs);
+    
+    toast('✅ ছবি পাঠানো হয়েছে');
+  } catch(e){
+    console.error(e);
+    toast('❌ ছবি পাঠাতে সমস্যা');
+  }
+  inp.value = '';
 };
 
 window.onType=function(){
