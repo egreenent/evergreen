@@ -544,7 +544,11 @@ window.addEventListener('load',async()=>{
   setLD(20);
   const s=localStorage.getItem('eg_u');
   if(s){
-    try{me=JSON.parse(s);setLD(60);await boot();setLD(100);setTimeout(()=>{document.getElementById('loader').classList.add('hide');showApp()},500)}
+    try{me=JSON.parse(s);setLD(60);
+      document.getElementById('loader').classList.add('hide');
+      showApp();
+      await boot();
+      setLD(100);}
     catch{localStorage.removeItem('eg_u');setLD(100);setTimeout(()=>{document.getElementById('loader').classList.add('hide');showLogin()},500)}
   }else{setLD(100);setTimeout(()=>{document.getElementById('loader').classList.add('hide');showLogin()},600)}
 });
@@ -553,12 +557,14 @@ function showLogin(){document.getElementById('loginScreen').style.display='flex'
 function showApp(){
   const app=document.getElementById('app');
   app.style.display='flex';
-  // Re-render cached messages after app becomes visible
-  setTimeout(()=>{
-    if(cachedGroupMsgs && cachedGroupMsgs.length>0){
-      renderGroup(cachedGroupMsgs);
-    }
-  },200);
+  // Re-render after app is visible — multiple attempts
+  [100,300,600,1000].forEach(delay=>{
+    setTimeout(()=>{
+      if(cachedGroupMsgs && cachedGroupMsgs.length>0){
+        renderGroup(cachedGroupMsgs);
+      }
+    },delay);
+  });
 }
 
 // ── MAKE PIC (DOM-based, no HTML injection) ──
@@ -603,9 +609,9 @@ window.doLogin=async function(){
     if(String(d.profile.password).trim()!==pw){err.style.color='#d62828';err.textContent='❌ পাসওয়ার্ড ভুল।';return}
     me=d.profile;localStorage.setItem('eg_u',JSON.stringify(me));
     err.textContent='✅ লগইন সফল!';
-    await boot();
     document.getElementById('loginScreen').style.display='none';
-    showApp();
+    showApp(); // show first
+    await boot(); // then load data
   }catch{err.style.color='#d62828';err.textContent='❌ সার্ভার এরর।'}
 };
 document.getElementById('lpass').onkeydown=e=>{if(e.key==='Enter')doLogin()};
@@ -763,6 +769,8 @@ function listenGroup(){
     cachedGroupMsgs=[];
     snap.forEach(ch=>cachedGroupMsgs.push({id:ch.key,...ch.val()}));
     renderGroup(cachedGroupMsgs);
+    // retry after delay in case DOM not ready yet
+    setTimeout(()=>renderGroup(cachedGroupMsgs),200);
   },(err)=>{
     console.error('DB listen error:',err);
     toast('❌ Database: '+err.message);
