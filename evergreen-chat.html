@@ -983,30 +983,32 @@ window.closePm=function(){
   pmId=null;if(pmUnsub){pmUnsub();pmUnsub=null}
 };
 
-function renderPm(msgs){
-  const c=document.getElementById('pmMsgs');
-  if(!c) return;
-  let html='<div class="sys-msg">🔒 প্রাইভেট চ্যাট</div>';
-  msgs.forEach(m=>{
-    // support both old (sid/txt) and new (senderId/text) field names
+function renderPm(msgs) {
+  const c = document.getElementById('pmMsgs');
+  if (!c) return;
+
+  let html = '<div class="sys-msg">🔒 প্রাইভেট চ্যাট</div>';
+  msgs.forEach(m => {
     const senderId = m.senderId || m.sid || '';
-    const text     = m.text     || m.txt || '';
+    const text = m.text || m.txt || '';
     const isMe = senderId === me?.memberId;
-    const t = new Date(m.ts||Date.now()).toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'});
-    html+=`<div class="msg-wrap ${isMe?'me':'them'}">
+    const t = new Date(m.ts || Date.now()).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
+
+    html += `<div class="msg-wrap ${isMe ? 'me' : 'them'}">
       <div class="msg-col">
         <div class="bubble">
           <div class="bubble-text">${esc(text)}</div>
           <div class="bubble-foot">
             <span class="bubble-time">${t}</span>
-            ${isMe?'<span class="bubble-tick">✓✓</span>':''}
+            ${isMe ? '<span class="bubble-tick">✓✓</span>' : ''}
           </div>
         </div>
       </div>
     </div>`;
   });
-  c.innerHTML=html;
-  setTimeout(()=>{ c.scrollTop=c.scrollHeight; },50);
+
+  c.innerHTML = html;
+  setTimeout(() => { c.scrollTop = c.scrollHeight; }, 50);
 }
 
   // renderPm এর পরে যোগ করুন
