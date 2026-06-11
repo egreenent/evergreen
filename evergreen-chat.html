@@ -1009,23 +1009,67 @@ function renderPm(msgs){
   setTimeout(()=>{ c.scrollTop=c.scrollHeight; },50);
 }
 
-window.sendPm=async function(){
-  const inp=document.getElementById('pmIn');
-  const txt=inp.value.trim();
-  if(!txt||!me||!pmId)return;
-  const tempTxt=txt;
-  inp.value='';resize(inp);
-  try{
-    const ck=[me.memberId,pmId].sort().join('_');
-    await push(ref(db,`pm/${ck}`),{
-      text:tempTxt,
-      senderId:me.memberId,
-      senderName:me.name,
-      ts:Date.now()
-    });
-  }catch(err){
-    console.error('PM send error:',err);
-    toast('❌ '+err.message);
+  // renderPm এর পরে যোগ করুন
+function addMessageToUI(msg) {
+  const c = document.getElementById('pmMsgs');
+  if (!c) return;
+
+  const senderId = msg.senderId || msg.sid || '';
+  const text = msg.text || msg.txt || '';
+  const isMe = senderId === me?.memberId;
+  const t = new Date(msg.ts || Date.now()).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
+
+  const msgHTML = `<div class="msg-wrap ${isMe ? 'me' : 'them'}">
+    <div class="msg-col">
+      <div class="bubble">
+        <div class="bubble-text">${esc(text)}</div>
+        <div class="bubble-foot">
+          <span class="bubble-time">${t}</span>
+          ${isMe ? '<span class="bubble-tick">✓✓</span>' : ''}
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  // শুধু নতুন মেসেজ যোগ করা (sys-msg রাখা)
+  if (c.children.length === 1 && c.firstChild.classList.contains('sys-msg')) {
+    c.innerHTML += msgHTML;
+  } else {
+    c.insertAdjacentHTML('beforeend', msgHTML);
+  }
+
+  c.scrollTop = c.scrollHeight;
+}
+
+  
+window.sendPm = async function() {
+  const inp = document.getElementById('pmIn');
+  const txt = inp.value.trim();
+  if (!txt || !me || !pmId) return;
+
+  const tempTxt = txt;
+  inp.value = '';
+  resize(inp);
+
+  const ck = [me.memberId, pmId].sort().join('_');
+  const newMsg = {
+    text: tempTxt,
+    senderId: me.memberId,
+    senderName: me.name,
+    ts: Date.now()
+  };
+
+  try {
+    await push(ref(db, `pm/${ck}`), newMsg);
+    
+    // সাথে সাথে সেন্ডারের UI-তে দেখানো
+    addMessageToUI(newMsg);
+    
+    toast('✅ মেসেজ পাঠানো হয়েছে');
+  } catch (err) {
+    console.error('PM send error:', err);
+    toast('❌ ' + err.message);
+    inp.value = tempTxt; // error হলে মেসেজ ফেরত
   }
 };
 
