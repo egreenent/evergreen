@@ -1011,7 +1011,7 @@ function renderPm(msgs) {
   setTimeout(() => { c.scrollTop = c.scrollHeight; }, 50);
 }
 
-  // renderPm এর পরে যোগ করুন
+// বর্তমান addMessageToUI ফাংশনটি রিপ্লেস করুন এই দিয়ে:
 function addMessageToUI(msg) {
   const c = document.getElementById('pmMsgs');
   if (!c) return;
@@ -1033,9 +1033,10 @@ function addMessageToUI(msg) {
     </div>
   </div>`;
 
-  // শুধু নতুন মেসেজ যোগ করা (sys-msg রাখা)
-  if (c.children.length === 1 && c.firstChild.classList.contains('sys-msg')) {
-    c.innerHTML += msgHTML;
+  // আরও নিরাপদ লজিক
+  const sysMsg = c.querySelector('.sys-msg');
+  if (sysMsg && c.children.length === 1) {
+    c.innerHTML = sysMsg.outerHTML + msgHTML;
   } else {
     c.insertAdjacentHTML('beforeend', msgHTML);
   }
