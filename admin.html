@@ -749,12 +749,12 @@ border-radius:8px;
 
 
 <div class="section">
-<h2>Recent Payments</h2>
+<h2>Recent Payments <span style="font-size:13px;color:#888;font-weight:400">(সর্বশেষ ১০টি)</span></h2>
 
 <div id="recentPayments"></div>
 
-<div class="table-container">
-<table class="table">
+<div class="table-container" style="max-height:420px;overflow-y:auto;border-radius:10px;border:1px solid #e5e5e5;">
+<table class="table" style="margin-bottom:0">
 <thead>
 <tr>
 <th>Receipt No</th>
@@ -1217,12 +1217,15 @@ async function loadPayments() {
         let tableHtml = '';
         let recentHtml = '';
 
-        payments.forEach((p, index) => {
+        // সর্বোচ্চ ১০টা dashboard table-এ দেখাবে
+        const recentTen = payments.slice(0, 10);
+
+        recentTen.forEach((p, index) => {
             const statusStyle = String(p.status).toLowerCase() === 'paid' 
                 ? 'background:#d1e7dd; color:#0f5132;' 
                 : 'background:#f8d7da; color:#842029;';
 
-            // ড্যাশবোর্ড ও পেমেন্ট সেকশনের মেইন টেবিল
+            // Dashboard মেইন টেবিল — শুধু প্রথম ১০টা
             tableHtml += `
                 <tr>
                     <td><strong>${p.receipt || 'N/A'}</strong></td>
@@ -1233,7 +1236,7 @@ async function loadPayments() {
                 </tr>
             `;
 
-            // ড্যাশবোর্ডের ডানদিকের ছোট রিসেন্ট পেমেন্ট বক্সের জন্য (সর্বোচ্চ ৪ টি)
+            // ড্যাশবোর্ডের ছোট recent বক্স — সর্বোচ্চ ৪টা
             if (index < 4) {
                 recentHtml += `
                     <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;">
@@ -1243,6 +1246,16 @@ async function loadPayments() {
                 `;
             }
         });
+
+        // বাকি সংখ্যা দেখানো
+        if (payments.length > 10) {
+            tableHtml += `
+                <tr>
+                    <td colspan="5" style="text-align:center;padding:12px;color:#0b6623;font-weight:600;background:#f0f9f3;border-top:2px solid #d4edda">
+                        👆 সর্বশেষ ১০টি দেখানো হচ্ছে। বাকি ${payments.length - 10}টি দেখতে Payments সেকশনে যান।
+                    </td>
+                </tr>`;
+        }
 
         if (tableBody) tableBody.innerHTML = tableHtml;
         if (recentDiv) recentDiv.innerHTML = recentHtml;
