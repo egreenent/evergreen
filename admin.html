@@ -1793,7 +1793,9 @@ async function loadDueMembers() {
 }
 
 // ══════════════════════════════════════
-// PAY DUE NOW — একক সদস্যের due clear
+// PAY DUE NOW — পুরোনো Due row কে Paid করবে
+// নতুন রিসিট জেনারেট হবে না, যদি Sheet-এ আগে থেকে
+// এই মাসের জন্য একটা Due/Pending row থাকে
 // ══════════════════════════════════════
 async function payDueNow(memberId, name, fee, month) {
     if (!confirm(`${name} (${memberId}) এর ${month} মাসের ৳${fee} পেমেন্ট করবেন?`)) return;
@@ -1805,17 +1807,16 @@ async function payDueNow(memberId, name, fee, month) {
         name:     name,
         month:    month,
         amount:   fee,
-        fine:     fine,
-        status:   'Paid'
+        fine:     fine
     };
 
     try {
         await fetch(API_URL, {
             method: 'POST',
             mode: 'no-cors',
-            body: JSON.stringify({ action: 'addPayment', ...payment })
+            body: JSON.stringify({ action: 'payExistingDue', ...payment })
         });
-        alert(`✅ ${name} এর ${month} মাসের পেমেন্ট সফলভাবে সেভ হয়েছে!`);
+        alert(`✅ ${name} এর ${month} মাসের পেমেন্ট সফলভাবে সম্পন্ন হয়েছে!`);
         // Reload payments then refresh due list
         await loadPayments();
         loadDueMembers();
