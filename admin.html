@@ -710,6 +710,11 @@ border-radius:8px;
 <h2 id="totalPayments">0</h2>
 </div>
 
+<div class="card" style="border-left:4px solid #d62828">
+<h3>Total Due <span style="font-size:11px;color:#999;font-weight:400">(এই মাস)</span></h3>
+<h2 id="totalDue" style="color:#d62828">৳ 0</h2>
+</div>
+
 <div class="card">
 <h3>Active Members</h3>
 <h2 id="activeMembers">0</h2>
@@ -835,6 +840,10 @@ Save Member
             style="flex:1;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;transition:.2s">
             ⚠️ বকেয়া সদস্য
         </button>
+        <button id="tabBtnSearch" onclick="switchPayTab('search')"
+            style="flex:1;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;transition:.2s">
+            🔍 মেম্বার সার্চ
+        </button>
     </div>
 
     <div class="filter-wrapper">
@@ -958,6 +967,59 @@ Save Member
             </table>
         </div>
     </div>
+
+    <!-- MEMBER SEARCH SECTION -->
+    <div id="memberSearchSection" style="display:none;margin-top:10px">
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:20px">
+            <div style="flex:1;min-width:220px">
+                <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">Member ID লিখুন</label>
+                <input type="text" id="searchMemberId" placeholder="যেমন: ege0101"
+                    style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none"
+                    onkeydown="if(event.key==='Enter') searchMemberPayments()">
+            </div>
+            <button onclick="searchMemberPayments()" style="padding:11px 22px;background:#0b6623;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer">🔍 সার্চ করুন</button>
+        </div>
+
+        <!-- Member Info Card -->
+        <div id="searchMemberInfo" style="display:none;background:#f0f9f3;border:2px solid #d4edda;border-radius:12px;padding:16px 20px;margin-bottom:20px">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+                <div>
+                    <h3 id="searchMemberName" style="margin:0;color:#0b6623;font-size:19px"></h3>
+                    <p id="searchMemberMeta" style="margin:4px 0 0;color:#666;font-size:13px"></p>
+                </div>
+                <div style="display:flex;gap:20px">
+                    <div style="text-align:center">
+                        <div style="font-size:12px;color:#666">মোট পরিশোধিত</div>
+                        <div id="searchMemberTotalPaid" style="font-size:18px;font-weight:700;color:#0b6623">৳ 0</div>
+                    </div>
+                    <div style="text-align:center">
+                        <div style="font-size:12px;color:#666">মোট রিসিট</div>
+                        <div id="searchMemberTotalReceipts" style="font-size:18px;font-weight:700;color:#0b6623">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="admin-payment-table">
+                <thead>
+                    <tr>
+                        <th>Receipt No</th>
+                        <th>মাস</th>
+                        <th>পরিমাণ</th>
+                        <th>জরিমানা</th>
+                        <th>পেমেন্ট তারিখ</th>
+                        <th>স্ট্যাটাস</th>
+                        <th>রসিদ (URL)</th>
+                    </tr>
+                </thead>
+                <tbody id="searchMemberTableBody">
+                    <tr><td colspan="7" style="text-align:center;color:#888;padding:30px">Member ID লিখে "সার্চ করুন" চাপুন</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 
 </div>
 
@@ -1278,6 +1340,7 @@ async function updateDashboard() {
         if(document.getElementById('activeMembers')) document.getElementById('activeMembers').innerText = d.activeMembers;
         if(document.getElementById('totalPayments')) document.getElementById('totalPayments').innerText = d.totalPayments;
         if(document.getElementById('totalCollection')) document.getElementById('totalCollection').innerText = "৳ " + d.totalCollection.toLocaleString();
+        if(document.getElementById('totalDue')) document.getElementById('totalDue').innerText = "৳ " + (d.totalDue || 0).toLocaleString();
     } catch(error) {
         console.error("Error updating dashboard:", error);
     }
@@ -1705,24 +1768,115 @@ function filterPaymentData() {
 function switchPayTab(tab) {
     const pdfArea    = document.getElementById('pdfPrintArea');
     const dueArea    = document.getElementById('dueMembersSection');
+    const searchArea = document.getElementById('memberSearchSection');
     const filterWrap = document.querySelector('.filter-wrapper');
     const btnPaid    = document.getElementById('tabBtnPaid');
     const btnDue     = document.getElementById('tabBtnDue');
+    const btnSearch  = document.getElementById('tabBtnSearch');
+
+    // সব বাটন রিসেট
+    [btnPaid, btnDue, btnSearch].forEach(b => { b.style.background = '#f0f0f0'; b.style.color = '#555'; });
+
+    // সব সেকশন hide
+    pdfArea.style.display    = 'none';
+    filterWrap.style.display = 'none';
+    dueArea.style.display    = 'none';
+    searchArea.style.display = 'none';
 
     if (tab === 'paid') {
         pdfArea.style.display    = 'block';
         filterWrap.style.display = 'flex';
-        dueArea.style.display    = 'none';
         btnPaid.style.background = '#0b6623'; btnPaid.style.color = '#fff';
-        btnDue.style.background  = '#f0f0f0'; btnDue.style.color  = '#555';
-    } else {
-        pdfArea.style.display    = 'none';
-        filterWrap.style.display = 'none';
-        dueArea.style.display    = 'block';
-        btnDue.style.background  = '#0b6623'; btnDue.style.color = '#fff';
-        btnPaid.style.background = '#f0f0f0'; btnPaid.style.color  = '#555';
+    } else if (tab === 'due') {
+        dueArea.style.display   = 'block';
+        btnDue.style.background = '#0b6623'; btnDue.style.color = '#fff';
         loadDueMembers();
+    } else {
+        searchArea.style.display = 'block';
+        btnSearch.style.background = '#0b6623'; btnSearch.style.color = '#fff';
+        setTimeout(() => document.getElementById('searchMemberId').focus(), 100);
     }
+}
+
+// ══════════════════════════════════════
+// SEARCH MEMBER PAYMENT HISTORY
+// ══════════════════════════════════════
+function searchMemberPayments() {
+    const input    = document.getElementById('searchMemberId').value.trim().toLowerCase();
+    const tbody    = document.getElementById('searchMemberTableBody');
+    const infoBox  = document.getElementById('searchMemberInfo');
+
+    if (!input) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#888;padding:30px">Member ID লিখে "সার্চ করুন" চাপুন</td></tr>';
+        infoBox.style.display = 'none';
+        return;
+    }
+
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#0b6623">⏳ খোঁজা হচ্ছে...</td></tr>';
+    infoBox.style.display = 'none';
+
+    if (!members || members.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#888;padding:20px">সদস্য তথ্য লোড হয়নি। পেজ রিফ্রেশ করুন।</td></tr>';
+        return;
+    }
+
+    // সদস্য খুঁজুন
+    const member = members.find(m => String(m.memberId || '').trim().toLowerCase() === input);
+
+    if (!member) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#d62828;padding:30px;font-weight:600">❌ "${input}" আইডির কোনো সদস্য পাওয়া যায়নি।</td></tr>`;
+        return;
+    }
+
+    // এই সদস্যের সব পেমেন্ট
+    const memberPayments = (payments || []).filter(p =>
+        String(p.memberId || p.id || '').trim().toLowerCase() === input
+    );
+
+    // Info card আপডেট
+    document.getElementById('searchMemberName').textContent = `👤 ${member.name} (${member.memberId})`;
+    document.getElementById('searchMemberMeta').textContent =
+        `📱 ${member.phone || '-'}  |  💰 মাসিক ফি: ৳${Number(member.monthlyFee || 0).toLocaleString()}  |  স্ট্যাটাস: ${member.status || '-'}`;
+
+    let totalPaid = 0;
+    memberPayments.forEach(p => {
+        if (String(p.status).toLowerCase() === 'paid') {
+            totalPaid += Number(p.amount || 0);
+        }
+    });
+
+    document.getElementById('searchMemberTotalPaid').textContent     = '৳ ' + totalPaid.toLocaleString();
+    document.getElementById('searchMemberTotalReceipts').textContent = memberPayments.length;
+    infoBox.style.display = 'block';
+
+    if (memberPayments.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#888;padding:30px">এই সদস্যের কোনো পেমেন্ট রেকর্ড নেই।</td></tr>`;
+        return;
+    }
+
+    // টেবিল render — সর্বশেষ আগে
+    let html = '';
+    [...memberPayments].reverse().forEach(p => {
+        const statusStyle = String(p.status).toLowerCase() === 'paid'
+            ? 'background:#d1e7dd;color:#0f5132;'
+            : 'background:#f8d7da;color:#842029;';
+
+        const receiptLink = p.receiptUrl
+            ? `<a href="${p.receiptUrl}" target="_blank" style="color:#0b6623;font-weight:600">📄 দেখুন</a>`
+            : '-';
+
+        html += `<tr>
+            <td><strong>${p.receipt || p.receiptNo || '-'}</strong></td>
+            <td>${p.month || p.monthStr || '-'}</td>
+            <td>৳ ${Number(p.amount || 0).toLocaleString()}</td>
+            <td>৳ ${Number(p.fine || 0).toLocaleString()}</td>
+            <td>${p.date || p.paymentDate || '-'}</td>
+            <td><span style="padding:4px 10px;border-radius:15px;font-size:12px;${statusStyle}">${p.status || '-'}</span></td>
+            <td>${receiptLink}</td>
+        </tr>`;
+    });
+
+    tbody.innerHTML = html;
 }
 
 // ══════════════════════════════════════
