@@ -973,7 +973,7 @@ Save Member
         <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:20px">
             <div style="flex:1;min-width:220px">
                 <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">Member ID লিখুন</label>
-                <input type="text" id="searchMemberId" placeholder="যেমন: ege0101"
+                <input type="text" id="paySearchMemberId" placeholder="যেমন: ege0101"
                     style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none"
                     onkeydown="if(event.key==='Enter') searchMemberPayments()">
             </div>
@@ -1794,7 +1794,7 @@ function switchPayTab(tab) {
     } else {
         searchArea.style.display = 'block';
         btnSearch.style.background = '#0b6623'; btnSearch.style.color = '#fff';
-        setTimeout(() => document.getElementById('searchMemberId').focus(), 100);
+        setTimeout(() => document.getElementById('paySearchMemberId').focus(), 100);
     }
 }
 
@@ -1802,7 +1802,7 @@ function switchPayTab(tab) {
 // SEARCH MEMBER PAYMENT HISTORY
 // ══════════════════════════════════════
 function searchMemberPayments() {
-    const input    = document.getElementById('searchMemberId').value.trim().toLowerCase();
+    const input    = document.getElementById('paySearchMemberId').value.trim().toLowerCase();
     const tbody    = document.getElementById('searchMemberTableBody');
     const infoBox  = document.getElementById('searchMemberInfo');
 
