@@ -673,6 +673,7 @@ border-radius:8px;
 <a href="#" onclick="showSection('downloadsSection', this)">📥 Downloads</a>
 <a href="#" onclick="showSection('analyticsSection', this)">📊 Analytics</a>
 <a href="#" onclick="showSection('settingsSection', this)">⚙ Settings</a>
+<a href="#" onclick="showSection('oldRecordsSection', this); loadOldRecords();">📂 পুরোনো হিসাব</a>
 
 <a href="javascript:void(0);" onclick="logout()">🚪 Logout</a>
 
@@ -973,7 +974,7 @@ Save Member
         <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:20px">
             <div style="flex:1;min-width:220px">
                 <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">Member ID লিখুন</label>
-                <input type="text" id="paySearchMemberId" placeholder="যেমন: ege0101"
+                <input type="text" id="searchMemberId" placeholder="যেমন: ege0101"
                     style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none"
                     onkeydown="if(event.key==='Enter') searchMemberPayments()">
             </div>
@@ -1093,7 +1094,7 @@ Save Member
 
 <div class="form-group">
 <label>Admin Email</label>
-<input type="email" value="egreenfs@gmail.com">
+<input type="email" value="admin@example.com">
 </div>
 
 <button class="submit-btn">Save Settings</button>
@@ -1102,6 +1103,159 @@ Save Member
 
 </div>
 
+</div>
+
+<!-- OLD RECORDS SECTION -->
+<div class="page-section" id="oldRecordsSection">
+<div class="section">
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;border-bottom:2px solid #edf2ed;padding-bottom:12px;flex-wrap:wrap;gap:12px">
+    <span style="color:#0b6623;font-size:24px;font-weight:700">📂 পুরোনো হিসাব</span>
+    <button onclick="document.getElementById('addOldRecordModal').style.display='flex'"
+      style="background:#0b6623;color:#fff;border:none;padding:12px 22px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer">
+      ➕ নতুন হিসাব যোগ করুন
+    </button>
+  </div>
+
+  <!-- ফিল্টার -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px;background:#f8f9fa;padding:16px;border-radius:12px">
+    <div>
+      <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:5px">বছর</label>
+      <select id="orFilterYear" style="padding:9px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;outline:none">
+        <option value="all">সব বছর</option>
+        <option value="2022">2022</option>
+        <option value="2023">2023</option>
+        <option value="2024">2024</option>
+        <option value="2025">2025</option>
+        <option value="2026">2026</option>
+      </select>
+    </div>
+    <div>
+      <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:5px">মাস</label>
+      <select id="orFilterMonth" style="padding:9px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;outline:none">
+        <option value="all">সব মাস</option>
+        <option>January</option><option>February</option><option>March</option>
+        <option>April</option><option>May</option><option>June</option>
+        <option>July</option><option>August</option><option>September</option>
+        <option>October</option><option>November</option><option>December</option>
+      </select>
+    </div>
+    <div>
+      <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:5px">Member ID</label>
+      <input type="text" id="orFilterMemberId" placeholder="যেমন: ege0101"
+        style="padding:9px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;outline:none;width:160px">
+    </div>
+    <button onclick="filterOldRecords()"
+      style="padding:10px 20px;background:#0b6623;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">
+      🔍 ফিল্টার
+    </button>
+    <button onclick="filterOldRecords('reset')"
+      style="padding:10px 20px;background:#f0f0f0;color:#555;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
+      ↺ রিসেট
+    </button>
+
+    <!-- Summary -->
+    <div id="orSummary" style="margin-left:auto;background:#edf9f0;border:2px solid #d4edda;border-radius:10px;padding:10px 18px;display:none">
+      <span style="font-size:13px;color:#555">মোট এন্ট্রি: <strong id="orTotalCount" style="color:#0b6623">০</strong></span>
+      <span style="margin-left:16px;font-size:13px;color:#555">মোট টাকা: <strong id="orTotalAmount" style="color:#0b6623">৳ ০</strong></span>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container" style="max-height:500px;overflow-y:auto;border-radius:10px;border:1px solid #e5e5e5">
+    <table class="admin-payment-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Member ID</th>
+          <th>সদস্যের নাম</th>
+          <th>বছর</th>
+          <th>মাস</th>
+          <th>পরিমাণ (৳)</th>
+          <th>বিবরণ</th>
+          <th>Entry Date</th>
+        </tr>
+      </thead>
+      <tbody id="oldRecordsTableBody">
+        <tr><td colspan="8" style="text-align:center;padding:30px;color:#888">লোড হচ্ছে...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</div>
+
+<!-- ADD OLD RECORD MODAL -->
+<div id="addOldRecordModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:30px;width:500px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);border-top:5px solid #0b6623">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+      <h2 style="color:#0b6623;font-size:20px">➕ নতুন পুরোনো হিসাব যোগ</h2>
+      <span onclick="document.getElementById('addOldRecordModal').style.display='none'"
+        style="font-size:24px;cursor:pointer;color:#888;line-height:1">✕</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+      <div style="grid-column:1/-1">
+        <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">Member ID <span style="color:#d62828">*</span></label>
+        <input type="text" id="orMemberId" placeholder="যেমন: ege0101"
+          oninput="autoFillOldMemberName(this.value)"
+          style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none">
+      </div>
+
+      <div style="grid-column:1/-1">
+        <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">সদস্যের নাম</label>
+        <input type="text" id="orMemberName" placeholder="Member ID দিলে auto আসবে"
+          style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none;background:#f8f8f8">
+      </div>
+
+      <div>
+        <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">বছর <span style="color:#d62828">*</span></label>
+        <select id="orYear" style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none">
+          <option value="">বছর সিলেক্ট করুন</option>
+          <option>2022</option><option>2023</option><option>2024</option>
+          <option>2025</option><option>2026</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">মাস <span style="color:#d62828">*</span></label>
+        <select id="orMonth" style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none">
+          <option value="">মাস সিলেক্ট করুন</option>
+          <option>January</option><option>February</option><option>March</option>
+          <option>April</option><option>May</option><option>June</option>
+          <option>July</option><option>August</option><option>September</option>
+          <option>October</option><option>November</option><option>December</option>
+        </select>
+      </div>
+
+      <div style="grid-column:1/-1">
+        <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">পরিমাণ (টাকা) <span style="color:#d62828">*</span></label>
+        <input type="number" id="orAmount" placeholder="০"
+          style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none">
+      </div>
+
+      <div style="grid-column:1/-1">
+        <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">বিবরণ</label>
+        <input type="text" id="orDescription" placeholder="যেমন: মাসিক চাঁদা, ভর্তি ফি ইত্যাদি"
+          style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none">
+      </div>
+
+    </div>
+
+    <div id="orSaveMsg" style="text-align:center;font-size:14px;font-weight:600;margin:12px 0;min-height:20px"></div>
+
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button onclick="saveOldRecord()"
+        style="flex:1;background:#0b6623;color:#fff;border:none;padding:14px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer">
+        ✅ সেভ করুন
+      </button>
+      <button onclick="document.getElementById('addOldRecordModal').style.display='none'"
+        style="flex:1;background:#f0f0f0;color:#555;border:none;padding:14px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer">
+        বাতিল
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- MEMBER MODAL -->
@@ -1794,7 +1948,7 @@ function switchPayTab(tab) {
     } else {
         searchArea.style.display = 'block';
         btnSearch.style.background = '#0b6623'; btnSearch.style.color = '#fff';
-        setTimeout(() => document.getElementById('paySearchMemberId').focus(), 100);
+        setTimeout(() => document.getElementById('searchMemberId').focus(), 100);
     }
 }
 
@@ -1802,7 +1956,7 @@ function switchPayTab(tab) {
 // SEARCH MEMBER PAYMENT HISTORY
 // ══════════════════════════════════════
 function searchMemberPayments() {
-    const input    = document.getElementById('paySearchMemberId').value.trim().toLowerCase();
+    const input    = document.getElementById('searchMemberId').value.trim().toLowerCase();
     const tbody    = document.getElementById('searchMemberTableBody');
     const infoBox  = document.getElementById('searchMemberInfo');
 
@@ -1977,6 +2131,142 @@ async function payDueNow(memberId, name, fee, month) {
     } catch(err) {
         alert('❌ পেমেন্ট সেভ করতে সমস্যা হয়েছে।');
         console.error(err);
+    }
+}
+
+// ══════════════════════════════════════════════
+// পুরোনো হিসাব — JAVASCRIPT
+// ══════════════════════════════════════════════
+
+let allOldRecords = [];
+
+// লোড করা
+async function loadOldRecords() {
+    const tbody = document.getElementById('oldRecordsTableBody');
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:#0b6623">⏳ লোড হচ্ছে...</td></tr>';
+    try {
+        const res = await fetch(`${API_URL}?action=getOldRecords`);
+        allOldRecords = await res.json();
+        if (allOldRecords.error) throw new Error(allOldRecords.error);
+        renderOldRecords(allOldRecords);
+    } catch(err) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#d62828;padding:20px">❌ লোড ব্যর্থ: ${err.message}</td></tr>`;
+    }
+}
+
+// Render
+function renderOldRecords(list) {
+    const tbody   = document.getElementById('oldRecordsTableBody');
+    const summary = document.getElementById('orSummary');
+
+    if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#888;padding:30px">কোনো হিসাব পাওয়া যায়নি।</td></tr>';
+        summary.style.display = 'none';
+        return;
+    }
+
+    const total = list.reduce((s, r) => s + (Number(r.amount) || 0), 0);
+    document.getElementById('orTotalCount').textContent  = list.length;
+    document.getElementById('orTotalAmount').textContent = '৳ ' + total.toLocaleString();
+    summary.style.display = 'flex';
+
+    let html = '';
+    list.forEach((r, i) => {
+        html += `<tr>
+            <td>${i + 1}</td>
+            <td><strong>${r.memberId || '-'}</strong></td>
+            <td>${r.name || '-'}</td>
+            <td>${r.year || '-'}</td>
+            <td>${r.month || '-'}</td>
+            <td style="font-weight:700;color:#0b6623">৳ ${Number(r.amount || 0).toLocaleString()}</td>
+            <td>${r.description || '-'}</td>
+            <td style="font-size:12px;color:#888">${r.entryDate || '-'}</td>
+        </tr>`;
+    });
+    tbody.innerHTML = html;
+}
+
+// ফিল্টার
+function filterOldRecords(mode) {
+    if (mode === 'reset') {
+        document.getElementById('orFilterYear').value     = 'all';
+        document.getElementById('orFilterMonth').value    = 'all';
+        document.getElementById('orFilterMemberId').value = '';
+        renderOldRecords(allOldRecords);
+        return;
+    }
+    const year   = document.getElementById('orFilterYear').value.toLowerCase();
+    const month  = document.getElementById('orFilterMonth').value.toLowerCase();
+    const mid    = document.getElementById('orFilterMemberId').value.trim().toLowerCase();
+
+    const filtered = allOldRecords.filter(r => {
+        const matchYear  = year  === 'all' || String(r.year  || '').toLowerCase() === year;
+        const matchMonth = month === 'all' || String(r.month || '').toLowerCase() === month;
+        const matchMid   = !mid  || String(r.memberId || '').toLowerCase().includes(mid);
+        return matchYear && matchMonth && matchMid;
+    });
+    renderOldRecords(filtered);
+}
+
+// Member ID দিলে নাম auto fill
+function autoFillOldMemberName(val) {
+    const found = members.find(m => String(m.memberId || '').toLowerCase() === val.trim().toLowerCase());
+    document.getElementById('orMemberName').value = found ? found.name : '';
+}
+
+// সেভ করা
+async function saveOldRecord() {
+    const memberId    = document.getElementById('orMemberId').value.trim();
+    const memberName  = document.getElementById('orMemberName').value.trim();
+    const year        = document.getElementById('orYear').value;
+    const month       = document.getElementById('orMonth').value;
+    const amount      = document.getElementById('orAmount').value;
+    const description = document.getElementById('orDescription').value.trim();
+    const msgEl       = document.getElementById('orSaveMsg');
+
+    if (!memberId || !year || !month || !amount) {
+        msgEl.style.color = '#d62828';
+        msgEl.textContent = '❌ Member ID, বছর, মাস ও পরিমাণ আবশ্যক।';
+        return;
+    }
+
+    msgEl.style.color = '#0b6623';
+    msgEl.textContent = '⏳ সেভ হচ্ছে...';
+
+    try {
+        await fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                action:      'addOldRecord',
+                memberId:    memberId.toUpperCase(),
+                name:        memberName,
+                year:        year,
+                month:       month,
+                amount:      amount,
+                description: description
+            })
+        });
+
+        msgEl.textContent = '✅ সফলভাবে সেভ হয়েছে!';
+
+        // Form clear
+        ['orMemberId','orMemberName','orAmount','orDescription'].forEach(id => {
+            document.getElementById(id).value = '';
+        });
+        document.getElementById('orYear').value  = '';
+        document.getElementById('orMonth').value = '';
+
+        // Reload records
+        setTimeout(async () => {
+            document.getElementById('addOldRecordModal').style.display = 'none';
+            msgEl.textContent = '';
+            await loadOldRecords();
+        }, 1200);
+
+    } catch(err) {
+        msgEl.style.color = '#d62828';
+        msgEl.textContent = '❌ সেভ করতে সমস্যা হয়েছে।';
     }
 }
 
