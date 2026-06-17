@@ -669,7 +669,7 @@ border-radius:8px;
 <a href="#" onclick="showSection('dashboardSection', this)" class="active">🏠 Dashboard</a>
 <a href="#" onclick="showSection('membersSection', this)">👥 Members</a>
 <a href="#" onclick="showSection('paymentsSection', this); fetchLivePaymentData();">💰 Payments</a>
-<a href="#" onclick="showSection('oldRecordsSection', this); loadOldRecords();">📂 পুরোনো হিসাব</a>
+<a href="#" onclick="showSection('oldRecordsSection', this); loadOldRecords();">📂 Old Records</a>
 <a href="#" onclick="showSection('noticesSection', this)">📢 Notices</a>
 <a href="#" onclick="showSection('downloadsSection', this)">📥 Downloads</a>
 <a href="#" onclick="showSection('analyticsSection', this)">📊 Analytics</a>
@@ -1104,14 +1104,14 @@ Save Member
 
 </div>
 
-</div>
+
 
 <!-- OLD RECORDS SECTION -->
 <div class="page-section" id="oldRecordsSection">
 <div class="section">
 
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;border-bottom:2px solid #edf2ed;padding-bottom:12px;flex-wrap:wrap;gap:12px">
-    <span style="color:#0b6623;font-size:24px;font-weight:700">📂 পুরোনো হিসাব</span>
+    <span style="color:#0b6623;font-size:24px;font-weight:700">📂 Old Records</span>
     <button onclick="document.getElementById('addOldRecordModal').style.display='flex'"
       style="background:#0b6623;color:#fff;border:none;padding:12px 22px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer">
       ➕ নতুন হিসাব যোগ করুন
@@ -1258,6 +1258,9 @@ Save Member
     </div>
   </div>
 </div>
+  
+</div>
+
 
 <!-- MEMBER MODAL -->
 
