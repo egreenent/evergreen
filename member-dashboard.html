@@ -503,6 +503,35 @@ font-size:32px;
 </div>
 
 <div class="section">
+<h2>📂 পুরোনো হিসাব (Old Records)</h2>
+<div id="oldRecordsSummary" style="display:none;background:#eef5ee;border-radius:14px;padding:16px 20px;margin-bottom:18px;display:flex;gap:24px;flex-wrap:wrap;align-items:center">
+  <div>
+    <div style="font-size:13px;color:#666">মোট এন্ট্রি</div>
+    <div id="orMemberTotalCount" style="font-size:20px;font-weight:700;color:#0b6623">0</div>
+  </div>
+  <div>
+    <div style="font-size:13px;color:#666">মোট টাকা</div>
+    <div id="orMemberTotalAmount" style="font-size:20px;font-weight:700;color:#0b6623">৳ 0</div>
+  </div>
+</div>
+<div class="table-wrapper">
+<table class="payment-table">
+<thead>
+<tr>
+<th>Year</th>
+<th>Month</th>
+<th>Amount</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody id="oldRecordsTableBody">
+<tr><td colspan="4" style="text-align:center;color:#888;padding:20px">লোড হচ্ছে...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="section">
 <h2>Online Payment</h2>
 <div class="payment-buttons">
 <button>bKash Payment</button>
@@ -684,8 +713,55 @@ window.onload = function() {
     }
     document.getElementById("memberIdText").innerText = "ID: " + loggedInId;
     fetchMemberDashboardData(loggedInId);
+    fetchOldRecords(loggedInId);
     setupProfilePopupEvents();
 };
+
+// ── পুরোনো হিসাব (Old Records) লোড করা ──
+async function fetchOldRecords(memberId) {
+    const tbody = document.getElementById('oldRecordsTableBody');
+    try {
+        const res = await fetch(`${API_URL}?action=getOldRecords`);
+        const all = await res.json();
+
+        if (all.error || !Array.isArray(all)) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;padding:20px">কোনো তথ্য পাওয়া যায়নি।</td></tr>';
+            return;
+        }
+
+        // শুধু এই member-এর রেকর্ড ফিল্টার করা
+        const myRecords = all.filter(r =>
+            String(r.memberId || '').trim().toLowerCase() === String(memberId).trim().toLowerCase()
+        );
+
+        if (myRecords.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;padding:20px">আপনার কোনো পুরোনো হিসাব নেই।</td></tr>';
+            return;
+        }
+
+        // Summary
+        const total = myRecords.reduce((s, r) => s + (Number(r.amount) || 0), 0);
+        document.getElementById('orMemberTotalCount').innerText  = myRecords.length;
+        document.getElementById('orMemberTotalAmount').innerText = '৳ ' + total.toLocaleString();
+        document.getElementById('oldRecordsSummary').style.display = 'flex';
+
+        // Table render
+        let html = '';
+        myRecords.forEach(r => {
+            html += `<tr>
+                <td>${r.year || '-'}</td>
+                <td>${r.month || '-'}</td>
+                <td>৳ ${Number(r.amount || 0).toLocaleString()}</td>
+                <td>${r.description || '-'}</td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
+
+    } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#d62828;padding:20px">তথ্য লোড করতে সমস্যা হয়েছে।</td></tr>';
+        console.error(err);
+    }
+}
 
 async function fetchMemberDashboardData(memberId) {
     try {
