@@ -670,6 +670,7 @@ border-radius:8px;
 <a href="#" onclick="showSection('membersSection', this)">👥 Members</a>
 <a href="#" onclick="showSection('paymentsSection', this); fetchLivePaymentData();">💰 Payments</a>
 <a href="#" onclick="showSection('oldRecordsSection', this); loadOldRecords();">📂 Old Records</a>
+<a href="#" onclick="showSection('expensesSection', this); loadExpensesSection();">💸 Expenses</a>
 <a href="#" onclick="showSection('noticesSection', this)">📢 Notices</a>
 <a href="#" onclick="showSection('downloadsSection', this)">📥 Downloads</a>
 <a href="#" onclick="showSection('analyticsSection', this)">📊 Analytics</a>
@@ -1184,7 +1185,7 @@ Save Member
   </div>
 
 </div>
-</div>
+
 
 <!-- ADD OLD RECORD MODAL -->
 <div id="addOldRecordModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
@@ -1261,6 +1262,147 @@ Save Member
   
 </div>
 
+<!-- ═══════════════ EXPENSES SECTION ═══════════════ -->
+<div class="page-section" id="expensesSection">
+<div class="section">
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:2px solid #edf2ed;padding-bottom:12px;flex-wrap:wrap;gap:12px">
+    <span style="color:#0b6623;font-size:24px;font-weight:700">💸 Expenses (খরচের হিসাব)</span>
+    <button onclick="document.getElementById('addExpenseModal').style.display='flex'"
+      style="background:#0b6623;color:#fff;border:none;padding:12px 22px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer">
+      ➕ নতুন খরচ যোগ করুন
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div style="display:flex;gap:10px;margin-bottom:20px">
+    <button id="expTabBtnAll" onclick="switchExpenseTab('all')"
+      style="flex:1;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;background:#0b6623;color:#fff;transition:.2s">
+      📋 সমস্ত খরচ
+    </button>
+    <button id="expTabBtnMember" onclick="switchExpenseTab('member')"
+      style="flex:1;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;transition:.2s">
+      👤 মেম্বার-ভিত্তিক হিসাব
+    </button>
+  </div>
+
+  <!-- ── PART 1: সমস্ত খরচ ── -->
+  <div id="expensesAllPart">
+
+    <div id="expSummaryAll" style="background:#edf9f0;border:2px solid #d4edda;border-radius:12px;padding:16px 20px;margin-bottom:18px;display:none;align-items:center;gap:24px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:13px;color:#555">মোট খরচ এন্ট্রি</div>
+        <div id="expTotalCount" style="font-size:20px;font-weight:700;color:#0b6623">0</div>
+      </div>
+      <div>
+        <div style="font-size:13px;color:#555">সর্বমোট খরচ</div>
+        <div id="expGrandTotal" style="font-size:20px;font-weight:700;color:#d62828">৳ 0</div>
+      </div>
+    </div>
+
+    <div class="table-container" style="max-height:500px;overflow-y:auto;border-radius:10px;border:1px solid #e5e5e5">
+      <table class="admin-payment-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>তারিখ</th>
+            <th>বিবরণ</th>
+            <th>পরিমাণ (৳)</th>
+            <th>Entry Date</th>
+          </tr>
+        </thead>
+        <tbody id="expensesAllTableBody">
+          <tr><td colspan="5" style="text-align:center;padding:30px;color:#888">লোড হচ্ছে...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── PART 2: মেম্বার-ভিত্তিক ভাগ ── -->
+  <div id="expensesMemberPart" style="display:none">
+
+    <div id="expSummaryShares" style="background:#fff8e6;border:2px solid #ffe9a8;border-radius:12px;padding:16px 20px;margin-bottom:18px;display:none;align-items:center;gap:24px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:13px;color:#666">সর্বমোট খরচ</div>
+        <div id="shareTotalExpense" style="font-size:19px;font-weight:700;color:#d62828">৳ 0</div>
+      </div>
+      <div>
+        <div style="font-size:13px;color:#666">মোট শেয়ার সংখ্যা</div>
+        <div id="shareTotalShares" style="font-size:19px;font-weight:700;color:#0b6623">0</div>
+      </div>
+      <div>
+        <div style="font-size:13px;color:#666">প্রতি শেয়ার খরচ</div>
+        <div id="sharePerShareCost" style="font-size:19px;font-weight:700;color:#0b6623">৳ 0</div>
+      </div>
+    </div>
+
+    <div class="table-container" style="max-height:500px;overflow-y:auto;border-radius:10px;border:1px solid #e5e5e5">
+      <table class="admin-payment-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Member ID</th>
+            <th>সদস্যের নাম</th>
+            <th>মাসিক ফি</th>
+            <th>শেয়ার সংখ্যা</th>
+            <th>তার ভাগের খরচ (৳)</th>
+          </tr>
+        </thead>
+        <tbody id="expensesMemberTableBody">
+          <tr><td colspan="6" style="text-align:center;padding:30px;color:#888">লোড হচ্ছে...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ADD EXPENSE MODAL -->
+<div id="addExpenseModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:30px;width:460px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.3);border-top:5px solid #0b6623">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+      <h2 style="color:#0b6623;font-size:20px">➕ নতুন খরচ যোগ করুন</h2>
+      <span onclick="document.getElementById('addExpenseModal').style.display='none'"
+        style="font-size:24px;cursor:pointer;color:#888;line-height:1">✕</span>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <div>
+        <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">তারিখ <span style="color:#d62828">*</span></label>
+        <input type="date" id="expDate"
+          style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none">
+      </div>
+
+      <div>
+        <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">বিবরণ <span style="color:#d62828">*</span></label>
+        <input type="text" id="expDescription" placeholder="যেমন: অফিস ভাড়া, বিদ্যুৎ বিল ইত্যাদি"
+          style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none">
+      </div>
+
+      <div>
+        <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">পরিমাণ (টাকা) <span style="color:#d62828">*</span></label>
+        <input type="number" id="expAmount" placeholder="০"
+          style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;outline:none">
+      </div>
+
+    </div>
+
+    <div id="expSaveMsg" style="text-align:center;font-size:14px;font-weight:600;margin:12px 0;min-height:20px"></div>
+
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button onclick="saveExpense()"
+        style="flex:1;background:#0b6623;color:#fff;border:none;padding:14px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer">
+        ✅ সেভ করুন
+      </button>
+      <button onclick="document.getElementById('addExpenseModal').style.display='none'"
+        style="flex:1;background:#f0f0f0;color:#555;border:none;padding:14px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer">
+        বাতিল
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- MEMBER MODAL -->
 
@@ -2266,6 +2408,165 @@ async function saveOldRecord() {
             document.getElementById('addOldRecordModal').style.display = 'none';
             msgEl.textContent = '';
             await loadOldRecords();
+        }, 1200);
+
+    } catch(err) {
+        msgEl.style.color = '#d62828';
+        msgEl.textContent = '❌ সেভ করতে সমস্যা হয়েছে।';
+    }
+}
+
+// ══════════════════════════════════════════════
+// খরচ (EXPENSES) — JAVASCRIPT
+// ══════════════════════════════════════════════
+
+let allExpenses = [];
+
+// সেকশন প্রথমবার খুললে দুটো ডাটাই লোড করা
+function loadExpensesSection() {
+    loadAllExpenses();
+    switchExpenseTab('all');
+}
+
+// Tab Switch
+function switchExpenseTab(tab) {
+    const btnAll    = document.getElementById('expTabBtnAll');
+    const btnMember = document.getElementById('expTabBtnMember');
+    const partAll    = document.getElementById('expensesAllPart');
+    const partMember = document.getElementById('expensesMemberPart');
+
+    if (tab === 'all') {
+        partAll.style.display    = 'block';
+        partMember.style.display = 'none';
+        btnAll.style.background    = '#0b6623'; btnAll.style.color    = '#fff';
+        btnMember.style.background = '#f0f0f0'; btnMember.style.color = '#555';
+    } else {
+        partAll.style.display    = 'none';
+        partMember.style.display = 'block';
+        btnMember.style.background = '#0b6623'; btnMember.style.color = '#fff';
+        btnAll.style.background    = '#f0f0f0'; btnAll.style.color    = '#555';
+        loadMemberExpenseShares();
+    }
+}
+
+// ── PART 1: সমস্ত খরচ লোড ──
+async function loadAllExpenses() {
+    const tbody = document.getElementById('expensesAllTableBody');
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#0b6623">⏳ লোড হচ্ছে...</td></tr>';
+    try {
+        const res = await fetch(`${API_URL}?action=getExpenses`);
+        allExpenses = await res.json();
+        if (allExpenses.error) throw new Error(allExpenses.error);
+        renderAllExpenses(allExpenses);
+    } catch(err) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#d62828;padding:20px">❌ লোড ব্যর্থ: ${err.message}</td></tr>`;
+    }
+}
+
+function renderAllExpenses(list) {
+    const tbody   = document.getElementById('expensesAllTableBody');
+    const summary = document.getElementById('expSummaryAll');
+
+    if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;padding:30px">কোনো খরচ এন্ট্রি নেই।</td></tr>';
+        summary.style.display = 'none';
+        return;
+    }
+
+    const total = list.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+    document.getElementById('expTotalCount').textContent = list.length;
+    document.getElementById('expGrandTotal').textContent = '৳ ' + total.toLocaleString();
+    summary.style.display = 'flex';
+
+    let html = '';
+    list.forEach((e, i) => {
+        html += `<tr>
+            <td>${i + 1}</td>
+            <td>${e.date || '-'}</td>
+            <td>${e.description || '-'}</td>
+            <td style="font-weight:700;color:#d62828">৳ ${Number(e.amount || 0).toLocaleString()}</td>
+            <td style="font-size:12px;color:#888">${e.entryDate || '-'}</td>
+        </tr>`;
+    });
+    tbody.innerHTML = html;
+}
+
+// ── PART 2: মেম্বার-ভিত্তিক ভাগ লোড ──
+async function loadMemberExpenseShares() {
+    const tbody = document.getElementById('expensesMemberTableBody');
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#0b6623">⏳ হিসাব করা হচ্ছে...</td></tr>';
+    try {
+        const res = await fetch(`${API_URL}?action=getMemberExpenseShares`);
+        const d = await res.json();
+        if (d.error) throw new Error(d.error);
+
+        // Summary
+        document.getElementById('shareTotalExpense').textContent  = '৳ ' + (d.totalExpense || 0).toLocaleString();
+        document.getElementById('shareTotalShares').textContent   = d.totalShares || 0;
+        document.getElementById('sharePerShareCost').textContent  = '৳ ' + (d.perShareCost || 0).toLocaleString();
+        document.getElementById('expSummaryShares').style.display = 'flex';
+
+        if (!d.members || !d.members.length) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:30px">কোনো Active member পাওয়া যায়নি।</td></tr>';
+            return;
+        }
+
+        let html = '';
+        d.members.forEach((m, i) => {
+            html += `<tr>
+                <td>${i + 1}</td>
+                <td><strong>${m.memberId}</strong></td>
+                <td>${m.name}</td>
+                <td>৳ ${Number(m.monthlyFee).toLocaleString()}</td>
+                <td>${m.shares}</td>
+                <td style="font-weight:700;color:#0b6623">৳ ${Number(m.shareAmount).toLocaleString()}</td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
+
+    } catch(err) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#d62828;padding:20px">❌ লোড ব্যর্থ: ${err.message}</td></tr>`;
+    }
+}
+
+// ── খরচ সেভ করা ──
+async function saveExpense() {
+    const date        = document.getElementById('expDate').value;
+    const description  = document.getElementById('expDescription').value.trim();
+    const amount       = document.getElementById('expAmount').value;
+    const msgEl        = document.getElementById('expSaveMsg');
+
+    if (!date || !description || !amount) {
+        msgEl.style.color = '#d62828';
+        msgEl.textContent = '❌ তারিখ, বিবরণ ও পরিমাণ আবশ্যক।';
+        return;
+    }
+
+    msgEl.style.color = '#0b6623';
+    msgEl.textContent = '⏳ সেভ হচ্ছে...';
+
+    try {
+        await fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                action:      'addExpense',
+                date:        date,
+                description: description,
+                amount:      amount
+            })
+        });
+
+        msgEl.textContent = '✅ সফলভাবে সেভ হয়েছে!';
+
+        document.getElementById('expDate').value        = '';
+        document.getElementById('expDescription').value = '';
+        document.getElementById('expAmount').value       = '';
+
+        setTimeout(async () => {
+            document.getElementById('addExpenseModal').style.display = 'none';
+            msgEl.textContent = '';
+            await loadAllExpenses();
         }, 1200);
 
     } catch(err) {
