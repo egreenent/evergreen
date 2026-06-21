@@ -54,6 +54,80 @@ align-items:center;
 gap:20px;
 }
 
+/* ── SIDE TAB NAVIGATION ── */
+.tab-nav{
+margin-top:25px;
+display:flex;
+gap:10px;
+background:#fff;
+padding:10px;
+border-radius:18px;
+box-shadow:0 8px 20px rgba(0,0,0,.06);
+overflow-x:auto;
+}
+
+.tab-btn{
+flex:1;
+min-width:130px;
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:6px;
+padding:14px 10px;
+border:none;
+background:none;
+border-radius:14px;
+cursor:pointer;
+font-family:'Poppins',sans-serif;
+color:#666;
+font-weight:600;
+font-size:14px;
+transition:.25s;
+white-space:nowrap;
+}
+
+.tab-btn .tab-icon{
+font-size:24px;
+}
+
+.tab-btn:hover{
+background:#edf5ee;
+}
+
+.tab-btn.active{
+background:#0b6623;
+color:#fff;
+box-shadow:0 6px 16px rgba(11,102,35,.35);
+}
+
+.tab-panel{
+display:none;
+}
+
+.tab-panel.active{
+display:block;
+animation:fadeInTab .3s ease;
+}
+
+@keyframes fadeInTab{
+from{opacity:0;transform:translateY(8px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+@media(max-width:700px){
+.tab-nav{
+flex-wrap:nowrap;
+}
+.tab-btn{
+min-width:90px;
+font-size:12px;
+padding:12px 6px;
+}
+.tab-btn .tab-icon{
+font-size:20px;
+}
+}
+
 .member-id-box{
 background:rgba(255,255,255,.18);
 padding:16px 28px;
@@ -470,11 +544,33 @@ font-size:32px;
 </div>
 </div>
 
+<!-- ═══════ TAB NAVIGATION ═══════ -->
+<div class="tab-nav">
+<button class="tab-btn active" data-tab="tab-notice" onclick="switchMemberTab('tab-notice', this)">
+<span class="tab-icon">📢</span><span>Notice</span>
+</button>
+<button class="tab-btn" data-tab="tab-downloads" onclick="switchMemberTab('tab-downloads', this)">
+<span class="tab-icon">📥</span><span>Downloads</span>
+</button>
+<button class="tab-btn" data-tab="tab-payments" onclick="switchMemberTab('tab-payments', this)">
+<span class="tab-icon">💳</span><span>Payment History</span>
+</button>
+<button class="tab-btn" data-tab="tab-oldrecords" onclick="switchMemberTab('tab-oldrecords', this)">
+<span class="tab-icon">📂</span><span>Old Records</span>
+</button>
+<button class="tab-btn" data-tab="tab-onlinepay" onclick="switchMemberTab('tab-onlinepay', this)">
+<span class="tab-icon">💰</span><span>Online Payment</span>
+</button>
+</div>
+
+<div class="tab-panel active" id="tab-notice">
 <div class="section">
 <h2>Notice Board</h2>
 <div class="notice-item" id="noticeBox">No Notice Available</div>
 </div>
+</div>
 
+<div class="tab-panel" id="tab-downloads">
 <div class="section">
 <h2>Downloads</h2>
 <div class="download-box">
@@ -482,7 +578,9 @@ font-size:32px;
 <a id="idCard" href="#" target="_blank" class="download-btn">🪪 ID Card</a>
 </div>
 </div>
+</div>
 
+<div class="tab-panel" id="tab-payments">
 <div class="section">
 <h2>Payment History</h2>
 <div class="table-wrapper">
@@ -501,9 +599,11 @@ font-size:32px;
 </table>
 </div>
 </div>
+</div>
 
+<div class="tab-panel" id="tab-oldrecords">
 <div class="section">
-<h2>📂 Old Records (পুরোনো হিসাব )</h2>
+<h2>📂 পুরোনো হিসাব (Old Records)</h2>
 <div id="oldRecordsSummary" style="display:none;background:#eef5ee;border-radius:14px;padding:16px 20px;margin-bottom:18px;display:flex;gap:24px;flex-wrap:wrap;align-items:center">
   <div>
     <div style="font-size:13px;color:#666">মোট এন্ট্রি</div>
@@ -532,11 +632,33 @@ font-size:32px;
 </div>
 
 <div class="section">
+<h2>💸 খরচের ভাগের হিসাব (My Expense Share)</h2>
+<div id="expenseShareSummary" style="display:none;background:#fff8e6;border:2px solid #ffe9a8;border-radius:14px;padding:16px 20px;margin-bottom:18px;display:flex;gap:24px;flex-wrap:wrap;align-items:center">
+  <div>
+    <div style="font-size:13px;color:#666">আমার শেয়ার সংখ্যা</div>
+    <div id="myShares" style="font-size:20px;font-weight:700;color:#0b6623">0</div>
+  </div>
+  <div>
+    <div style="font-size:13px;color:#666">প্রতি শেয়ার খরচ</div>
+    <div id="myPerShareCost" style="font-size:20px;font-weight:700;color:#0b6623">৳ 0</div>
+  </div>
+  <div>
+    <div style="font-size:13px;color:#666">আমার মোট ভাগ</div>
+    <div id="myShareAmount" style="font-size:22px;font-weight:700;color:#d62828">৳ 0</div>
+  </div>
+</div>
+<div id="expenseShareLoading" style="text-align:center;color:#888;padding:20px">লোড হচ্ছে...</div>
+</div>
+</div>
+
+<div class="tab-panel" id="tab-onlinepay">
+<div class="section">
 <h2>Online Payment</h2>
 <div class="payment-buttons">
 <button>bKash Payment</button>
 <button>Nagad Payment</button>
 <button>Rocket Payment</button>
+</div>
 </div>
 </div>
 
@@ -714,8 +836,52 @@ window.onload = function() {
     document.getElementById("memberIdText").innerText = "ID: " + loggedInId;
     fetchMemberDashboardData(loggedInId);
     fetchOldRecords(loggedInId);
+    fetchMyExpenseShare(loggedInId);
     setupProfilePopupEvents();
 };
+
+// ── TAB SWITCHING ──
+function switchMemberTab(tabId, btnEl) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btnEl.classList.add('active');
+}
+
+// ── আমার খরচের ভাগ (Expense Share) লোড করা ──
+async function fetchMyExpenseShare(memberId) {
+    const loadingEl = document.getElementById('expenseShareLoading');
+    const summaryEl = document.getElementById('expenseShareSummary');
+    try {
+        const res = await fetch(`${API_URL}?action=getMemberExpenseShares`);
+        const d = await res.json();
+
+        if (d.error || !d.members) {
+            loadingEl.textContent = 'এই মুহূর্তে কোনো খরচের তথ্য নেই।';
+            return;
+        }
+
+        const myData = d.members.find(m =>
+            String(m.memberId || '').trim().toLowerCase() === String(memberId).trim().toLowerCase()
+        );
+
+        if (!myData) {
+            loadingEl.textContent = 'আপনার জন্য কোনো খরচের ভাগ পাওয়া যায়নি।';
+            return;
+        }
+
+        document.getElementById('myShares').innerText        = myData.shares;
+        document.getElementById('myPerShareCost').innerText  = '৳ ' + (d.perShareCost || 0).toLocaleString();
+        document.getElementById('myShareAmount').innerText   = '৳ ' + (myData.shareAmount || 0).toLocaleString();
+
+        summaryEl.style.display = 'flex';
+        loadingEl.style.display = 'none';
+
+    } catch (err) {
+        loadingEl.textContent = 'তথ্য লোড করতে সমস্যা হয়েছে।';
+        console.error(err);
+    }
+}
 
 // ── পুরোনো হিসাব (Old Records) লোড করা ──
 async function fetchOldRecords(memberId) {
