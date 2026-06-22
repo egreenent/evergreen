@@ -603,7 +603,7 @@ font-size:32px;
 
 <div class="tab-panel" id="tab-oldrecords">
 <div class="section">
-<h2>📂 Old Records (পুরোনো হিসাব)</h2>
+<h2>📂 পুরোনো হিসাব (Old Records)</h2>
 <div id="oldRecordsSummary" style="display:none;background:#eef5ee;border-radius:14px;padding:16px 20px;margin-bottom:18px;display:flex;gap:24px;flex-wrap:wrap;align-items:center">
   <div>
     <div style="font-size:13px;color:#666">মোট এন্ট্রি</div>
@@ -632,7 +632,7 @@ font-size:32px;
 </div>
 
 <div class="section">
-<h2>💸 My Expense Share (খরচের ভাগের হিসাব)</h2>
+<h2>💸 খরচের ভাগের হিসাব (My Expense Share)</h2>
 <div id="expenseShareSummary" style="display:none;background:#fff8e6;border:2px solid #ffe9a8;border-radius:14px;padding:16px 20px;margin-bottom:18px;display:flex;gap:24px;flex-wrap:wrap;align-items:center">
   <div>
     <div style="font-size:13px;color:#666">আমার শেয়ার সংখ্যা</div>
@@ -795,31 +795,183 @@ font-size:32px;
 </div>
 
 
-<div id="profilePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; overflow-y:auto;">
-    <div style="background:#fff; width:600px; max-width:90%; margin:30px auto; padding:30px; border-radius:10px; position:relative; box-shadow:0 0 20px rgba(0,0,0,0.5);">
-        <span id="closePopup" style="position:absolute; top:15px; right:20px; font-size:30px; color:#aaa; cursor:pointer;">&times;</span>
-        <h2 style="text-align:center; color:#0b6623; margin-bottom:20px;">📋 সদস্য প্রোফাইল</h2>
-        <div style="text-align:center;">
-            <img id="popupPhoto" src="" style="width:120px; height:120px; border-radius:50%; border:3px solid #0b6623; margin-bottom:15px; object-fit: cover;">
-            <h3 id="popupName"></h3>
-            <p><strong>Member ID:</strong> <span id="popupMemberId"></span></p>
-        </div>
-        <div style="margin-top:20px; color: #333;">
-            <p>📞 <strong>Phone:</strong> <span id="popupPhone"></span></p>
-            <p>📧 <strong>Email:</strong> <span id="popupEmail"></span></p>
-            <p>📜 <strong>NID:</strong> <span id="popupNid"></span></p>
-            <p>🅰️ <strong>Blood Group:</strong> <span id="popupBlood"></span></p>
-            <p>📍 <strong>Address:</strong> <span id="popupAddress"></span></p>
-            <p>📅 <strong>Join Date:</strong> <span id="popupJoinDate"></span></p>
-            <p>৳ <strong>Monthly Fee:</strong> <span id="popupFee"></span></p>
-            <p>👤 <strong>Nominee Name:</strong> <span id="popupNomineeName"></span></p>
-            <p>📞 <strong>Nominee Phone:</strong> <span id="popupNomineePhone"></span></p>
-        </div>
-        <div style="margin-top:20px; text-align:center;">
-            <a href="#" id="popupIdCard" target="_blank" style="padding:10px 20px; background:#0b6623; color:#fff; text-decoration:none; border-radius:5px; margin-right:10px;">Download ID Card</a>
-            <p style="margin-top:15px;"><strong>Signature:</strong><br><img id="popupSignature" src="" style="max-width:200px; height:auto;"></p>
-        </div>
+<div id="profilePopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;overflow-y:auto;padding:20px">
+  <div style="background:#fff;width:680px;max-width:100%;margin:20px auto;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#0b5d2a,#128c3e);padding:22px 28px;display:flex;justify-content:space-between;align-items:center">
+      <h2 style="color:#fff;font-size:20px;font-weight:700;margin:0">📋 সদস্য প্রোফাইল</h2>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button id="editToggleBtn" onclick="toggleProfileEdit()"
+          style="background:rgba(255,255,255,.2);color:#fff;border:2px solid rgba(255,255,255,.4);padding:8px 18px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s">
+          ✏️ Edit
+        </button>
+        <span id="closePopup" style="font-size:28px;color:rgba(255,255,255,.7);cursor:pointer;line-height:1">&times;</span>
+      </div>
     </div>
+
+    <!-- Photo + Name -->
+    <div style="background:#f8fdf8;padding:20px 28px;display:flex;align-items:center;gap:20px;border-bottom:1px solid #e5e5e5">
+      <img id="popupPhoto" src="" alt=""
+        style="width:90px;height:90px;border-radius:50%;border:3px solid #0b6623;object-fit:cover;background:#eee">
+      <div>
+        <h3 id="popupName" style="color:#0b5d2a;font-size:20px;font-weight:700;margin:0"></h3>
+        <p style="color:#888;font-size:14px;margin:4px 0 0"><strong>Member ID:</strong> <span id="popupMemberId" style="color:#0b6623;font-weight:700"></span></p>
+      </div>
+    </div>
+
+    <!-- VIEW MODE -->
+    <div id="profileViewMode" style="padding:24px 28px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+
+        <div style="background:#f8f9fa;border-radius:10px;padding:12px 16px">
+          <div style="font-size:11px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:4px">📞 Phone</div>
+          <div id="popupPhone" style="font-size:15px;font-weight:600;color:#222"></div>
+        </div>
+
+        <div style="background:#f8f9fa;border-radius:10px;padding:12px 16px">
+          <div style="font-size:11px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:4px">📧 Email</div>
+          <div id="popupEmail" style="font-size:15px;font-weight:600;color:#222"></div>
+        </div>
+
+        <div style="background:#f8f9fa;border-radius:10px;padding:12px 16px">
+          <div style="font-size:11px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:4px">🪪 NID</div>
+          <div id="popupNid" style="font-size:15px;font-weight:600;color:#222"></div>
+        </div>
+
+        <div style="background:#f8f9fa;border-radius:10px;padding:12px 16px">
+          <div style="font-size:11px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:4px">🩸 Blood Group</div>
+          <div id="popupBlood" style="font-size:15px;font-weight:600;color:#222"></div>
+        </div>
+
+        <div style="background:#f8f9fa;border-radius:10px;padding:12px 16px;grid-column:span 2">
+          <div style="font-size:11px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:4px">📍 Address</div>
+          <div id="popupAddress" style="font-size:15px;font-weight:600;color:#222"></div>
+        </div>
+
+        <div style="background:#f8f9fa;border-radius:10px;padding:12px 16px">
+          <div style="font-size:11px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:4px">📅 Join Date</div>
+          <div id="popupJoinDate" style="font-size:15px;font-weight:600;color:#222"></div>
+        </div>
+
+        <div style="background:#f8f9fa;border-radius:10px;padding:12px 16px">
+          <div style="font-size:11px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:4px">💰 Monthly Fee</div>
+          <div id="popupFee" style="font-size:15px;font-weight:600;color:#0b6623"></div>
+        </div>
+
+        <div style="background:#f8f9fa;border-radius:10px;padding:12px 16px">
+          <div style="font-size:11px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:4px">👤 Nominee Name</div>
+          <div id="popupNomineeName" style="font-size:15px;font-weight:600;color:#222"></div>
+        </div>
+
+        <div style="background:#f8f9fa;border-radius:10px;padding:12px 16px">
+          <div style="font-size:11px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:4px">📞 Nominee Phone</div>
+          <div id="popupNomineePhone" style="font-size:15px;font-weight:600;color:#222"></div>
+        </div>
+
+      </div>
+
+      <div style="margin-top:16px;text-align:center">
+        <a href="#" id="popupIdCard" target="_blank"
+          style="display:inline-block;padding:10px 22px;background:#0b6623;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;font-size:14px">
+          🪪 Download ID Card
+        </a>
+      </div>
+    </div>
+
+    <!-- EDIT MODE -->
+    <div id="profileEditMode" style="display:none;padding:24px 28px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+
+        <div style="grid-column:span 2">
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px">Member ID (পরিবর্তন করা যাবে না)</label>
+          <input id="peditMemberId" readonly
+            style="width:100%;padding:11px 14px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;background:#f0f0f0;color:#888;outline:none">
+        </div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px">Full Name</label>
+          <input id="peditName" type="text"
+            style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;outline:none;transition:.2s"
+            onfocus="this.style.borderColor='#0b6623'" onblur="this.style.borderColor='#ddd'">
+        </div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px">Phone Number</label>
+          <input id="peditPhone" type="text"
+            style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;outline:none;transition:.2s"
+            onfocus="this.style.borderColor='#0b6623'" onblur="this.style.borderColor='#ddd'">
+        </div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px">Email Address</label>
+          <input id="peditEmail" type="email"
+            style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;outline:none;transition:.2s"
+            onfocus="this.style.borderColor='#0b6623'" onblur="this.style.borderColor='#ddd'">
+        </div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px">NID / Passport</label>
+          <input id="peditNid" type="text"
+            style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;outline:none;transition:.2s"
+            onfocus="this.style.borderColor='#0b6623'" onblur="this.style.borderColor='#ddd'">
+        </div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px">Blood Group</label>
+          <select id="peditBlood"
+            style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;outline:none;background:#fff">
+            <option value="">Select</option>
+            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+            <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px">Join Date</label>
+          <input id="peditJoinDate" type="text"
+            style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;outline:none;transition:.2s"
+            onfocus="this.style.borderColor='#0b6623'" onblur="this.style.borderColor='#ddd'">
+        </div>
+
+        <div style="grid-column:span 2">
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px">Address</label>
+          <input id="peditAddress" type="text"
+            style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;outline:none;transition:.2s"
+            onfocus="this.style.borderColor='#0b6623'" onblur="this.style.borderColor='#ddd'">
+        </div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px">Nominee Name</label>
+          <input id="peditNomineeName" type="text"
+            style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;outline:none;transition:.2s"
+            onfocus="this.style.borderColor='#0b6623'" onblur="this.style.borderColor='#ddd'">
+        </div>
+
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px">Nominee Phone</label>
+          <input id="peditNomineePhone" type="text"
+            style="width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;outline:none;transition:.2s"
+            onfocus="this.style.borderColor='#0b6623'" onblur="this.style.borderColor='#ddd'">
+        </div>
+
+      </div>
+
+      <div id="peditSaveMsg" style="text-align:center;font-size:14px;font-weight:600;min-height:20px;margin:12px 0"></div>
+
+      <div style="display:flex;gap:12px;margin-top:6px">
+        <button onclick="saveMemberProfileEdit()"
+          style="flex:1;background:#0b6623;color:#fff;border:none;padding:14px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;transition:.2s">
+          💾 সেভ করুন (Google Sheet)
+        </button>
+        <button onclick="toggleProfileEdit()"
+          style="flex:1;background:#f0f0f0;color:#555;border:none;padding:14px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer">
+          বাতিল
+        </button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 
