@@ -1533,6 +1533,139 @@ function setupProfilePopupEvents() {
     });
 }
 
+// ── EDIT বাটন: View ↔ Edit মোড সুইচ ──
+function toggleProfileEdit() {
+    const viewMode = document.getElementById('profileViewMode');
+    const editMode = document.getElementById('profileEditMode');
+    const editBtn  = document.getElementById('editToggleBtn');
+    const isEditing = editMode.style.display !== 'none';
+
+    if (isEditing) {
+        // Edit থেকে View মোডে ফিরে যাও
+        editMode.style.display = 'none';
+        viewMode.style.display = 'block';
+        editBtn.innerHTML = '✏️ Edit';
+    } else {
+        // View থেকে Edit মোডে যাও এবং ফিলআপ করো
+        const m = window.currentMemberData;
+        if (!m) { alert('সদস্য তথ্য লোড হয়নি। একটু অপেক্ষা করুন।'); return; }
+
+        document.getElementById('peditMemberId').value      = m.memberId   || '';
+        document.getElementById('peditName').value          = m.name        || '';
+        document.getElementById('peditPhone').value         = m.phone       || '';
+        document.getElementById('peditEmail').value         = m.email       || '';
+        document.getElementById('peditNid').value           = m.nid         || '';
+        document.getElementById('peditAddress').value       = m.address     || '';
+        document.getElementById('peditNomineeName').value   = m.nomineeName || '';
+        document.getElementById('peditNomineePhone').value  = m.nomineePhone|| '';
+        document.getElementById('peditJoinDate').value      = m.joinDate    || '';
+
+        // Blood group select সেট করা
+        const bloodSel = document.getElementById('peditBlood');
+        for (let i = 0; i < bloodSel.options.length; i++) {
+            if (bloodSel.options[i].value === m.blood) {
+                bloodSel.selectedIndex = i;
+                break;
+            }
+        }
+
+        document.getElementById('peditSaveMsg').textContent = '';
+        viewMode.style.display = 'none';
+        editMode.style.display = 'block';
+        editBtn.innerHTML = '← Back';
+    }
+}
+
+// ── প্রোফাইল সেভ করা (editMember → Google Sheet) ──
+async function saveMemberProfileEdit() {
+    const msgEl = document.getElementById('peditSaveMsg');
+    const memberId = document.getElementById('peditMemberId').value.trim();
+
+    if (!memberId) {
+        msgEl.textContent = '❌ Member ID পাওয়া যাচ্ছে না।';
+        msgEl.style.color = '#c0392b';
+        return;
+    }
+
+    const updatedData = {
+        action:        'editMember',
+        memberId:      memberId,
+        name:          document.getElementById('peditName').value.trim(),
+        phone:         document.getElementById('peditPhone').value.trim(),
+        email:         document.getElementById('peditEmail').value.trim(),
+        nid:           document.getElementById('peditNid').value.trim(),
+        blood:         document.getElementById('peditBlood').value,
+        address:       document.getElementById('peditAddress').value.trim(),
+        nomineeName:   document.getElementById('peditNomineeName').value.trim(),
+        nomineePhone:  document.getElementById('peditNomineePhone').value.trim(),
+        joinDate:      document.getElementById('peditJoinDate').value.trim(),
+        // পরিবর্তন না হওয়া ফিল্ড — currentMemberData থেকে রাখা
+        monthlyFee:    window.currentMemberData?.monthlyFee  || '',
+        password:      window.currentMemberData?.password    || '',
+        photo:         window.currentMemberData?.photo       || '',
+        signatureUrl:  window.currentMemberData?.signatureUrl|| '',
+        pdfUrl:        window.currentMemberData?.pdfUrl      || '',
+        idCardUrl:     window.currentMemberData?.idCardUrl   || '',
+        status:        window.currentMemberData?.status      || 'Active',
+    };
+
+    msgEl.textContent = '⏳ সেভ হচ্ছে...';
+    msgEl.style.color = '#0b5d2a';
+
+    try {
+        const res = await fetch(API_URL, {
+            method: 'POST',
+            mode:   'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedData)
+        });
+
+        // no-cors: response body পড়া যায় না, সফল ধরে নেওয়া হয়
+        // currentMemberData লোকালি আপডেট করো
+        Object.assign(window.currentMemberData, {
+            name:         updatedData.name,
+            phone:        updatedData.phone,
+            email:        updatedData.email,
+            nid:          updatedData.nid,
+            blood:        updatedData.blood,
+            address:      updatedData.address,
+            nomineeName:  updatedData.nomineeName,
+            nomineePhone: updatedData.nomineePhone,
+            joinDate:     updatedData.joinDate,
+        });
+
+        // View mode-এ দেখানো ফিল্ডগুলো আপডেট করো
+        document.getElementById('popupName').innerText         = updatedData.name;
+        document.getElementById('popupPhone').innerText        = updatedData.phone;
+        document.getElementById('popupEmail').innerText        = updatedData.email;
+        document.getElementById('popupNid').innerText          = updatedData.nid;
+        document.getElementById('popupBlood').innerText        = updatedData.blood;
+        document.getElementById('popupAddress').innerText      = updatedData.address;
+        document.getElementById('popupNomineeName').innerText  = updatedData.nomineeName;
+        document.getElementById('popupNomineePhone').innerText = updatedData.nomineePhone;
+        document.getElementById('popupJoinDate').innerText     = updatedData.joinDate;
+
+        // Dashboard header-এও নাম আপডেট
+        if (document.getElementById('memberName'))
+            document.getElementById('memberName').innerText = updatedData.name;
+        if (document.getElementById('memberPhone'))
+            document.getElementById('memberPhone').innerText = '📞 ' + updatedData.phone;
+        if (document.getElementById('memberEmail'))
+            document.getElementById('memberEmail').innerText = '📧 ' + updatedData.email;
+
+        msgEl.textContent = '✅ সফলভাবে সেভ হয়েছে!';
+        msgEl.style.color = '#0b5d2a';
+
+        // ২ সেকেন্ড পর View মোডে ফিরে যাও
+        setTimeout(() => toggleProfileEdit(), 2000);
+
+    } catch (err) {
+        msgEl.textContent = '❌ সার্ভার এরর। আবার চেষ্টা করুন।';
+        msgEl.style.color = '#c0392b';
+        console.error(err);
+    }
+}
+
 function closePassModal() {
     document.getElementById('passwordModal').style.display = 'none';
     document.getElementById('currentPass').value = '';
