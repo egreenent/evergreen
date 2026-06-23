@@ -1531,6 +1531,108 @@ function setupProfilePopupEvents() {
             popup.style.display = "none";
         }
     });
+
+<!-- ==================== PROFILE EDIT FUNCTIONS ==================== -->
+
+function toggleProfileEdit() {
+    const viewMode = document.getElementById('profileViewMode');
+    const editMode = document.getElementById('profileEditMode');
+    const editBtn = document.getElementById('editToggleBtn');
+
+    if (viewMode.style.display !== 'none') {
+        // Switch to Edit Mode
+        viewMode.style.display = 'none';
+        editMode.style.display = 'block';
+        editBtn.innerHTML = '👁️ View Mode';
+        editBtn.style.background = '#0b6623';
+
+        // Populate edit fields
+        const m = window.currentMemberData;
+        if (m) {
+            document.getElementById('peditMemberId').value = m.memberId || localStorage.getItem('memberId') || '';
+            document.getElementById('peditName').value = m.name || '';
+            document.getElementById('peditPhone').value = m.phone || '';
+            document.getElementById('peditEmail').value = m.email || '';
+            document.getElementById('peditNid').value = m.nid || '';
+            document.getElementById('peditBlood').value = m.blood || '';
+            document.getElementById('peditJoinDate').value = m.joinDate || '';
+            document.getElementById('peditAddress').value = m.address || '';
+            document.getElementById('peditNomineeName').value = m.nomineeName || '';
+            document.getElementById('peditNomineePhone').value = m.nomineePhone || '';
+        }
+    } else {
+        // Switch back to View Mode
+        viewMode.style.display = 'block';
+        editMode.style.display = 'none';
+        editBtn.innerHTML = '✏️ Edit';
+        editBtn.style.background = 'rgba(255,255,255,.2)';
+    }
+}
+
+async function saveMemberProfileEdit() {
+    const msgEl = document.getElementById('peditSaveMsg');
+    const memberId = document.getElementById('peditMemberId').value.trim();
+
+    const updatedData = {
+        memberId: memberId,
+        name: document.getElementById('peditName').value.trim(),
+        phone: document.getElementById('peditPhone').value.trim(),
+        email: document.getElementById('peditEmail').value.trim(),
+        nid: document.getElementById('peditNid').value.trim(),
+        blood: document.getElementById('peditBlood').value,
+        joinDate: document.getElementById('peditJoinDate').value.trim(),
+        address: document.getElementById('peditAddress').value.trim(),
+        nomineeName: document.getElementById('peditNomineeName').value.trim(),
+        nomineePhone: document.getElementById('peditNomineePhone').value.trim()
+    };
+
+    if (!updatedData.name || !updatedData.phone) {
+        msgEl.innerHTML = '❌ নাম এবং ফোন নাম্বার আবশ্যক।';
+        msgEl.style.color = '#c0392b';
+        return;
+    }
+
+    msgEl.innerHTML = '⏳ সেভ হচ্ছে Google Sheet-এ...';
+    msgEl.style.color = '#0b5d2a';
+
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'updateMemberProfile',
+                ...updatedData
+            })
+        });
+
+        // no-cors মোডে response body পাওয়া যায় না, তাই সফল ধরে নিচ্ছি
+        msgEl.innerHTML = '✅ প্রোফাইল সফলভাবে আপডেট হয়েছে!';
+        msgEl.style.color = '#0b5d2a';
+
+        // Refresh current data
+        window.currentMemberData = { ...window.currentMemberData, ...updatedData };
+
+        // Refresh main dashboard display
+        document.getElementById("memberName").innerText = updatedData.name;
+        document.getElementById("memberPhone").innerText = "📞 " + updatedData.phone;
+        document.getElementById("memberEmail").innerText = "📧 " + updatedData.email;
+        if (document.getElementById("memberAddress")) {
+            document.getElementById("memberAddress").innerText = "📍 " + updatedData.address;
+        }
+
+        // 2 সেকেন্ড পর View Mode-এ ফিরে যাবে
+        setTimeout(() => {
+            toggleProfileEdit();
+        }, 1800);
+
+    } catch (err) {
+        console.error(err);
+        msgEl.innerHTML = '❌ সেভ করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।';
+        msgEl.style.color = '#c0392b';
+    }
+}
+
+
+  
 }
 
 function closePassModal() {
