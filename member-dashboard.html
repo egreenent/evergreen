@@ -1515,7 +1515,13 @@ function setupProfilePopupEvents() {
             
             if(m.photo) document.getElementById("popupPhoto").src = m.photo;
             if(m.signatureUrl) document.getElementById("popupSignature").src = m.signatureUrl; 
-            if(document.getElementById("popupIdCard")) document.getElementById("popupIdCard").href = m.idCardUrl || '#';
+            if(document.getElementById("popupIdCard")) {
+                document.getElementById("popupIdCard").href = "#";
+                document.getElementById("popupIdCard").onclick = function(e) {
+                    e.preventDefault();
+                    generateIDCard();
+                };
+            }
             
             document.getElementById("profilePopup").style.display = "block";
         });
