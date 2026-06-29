@@ -2891,54 +2891,122 @@ async function saveExpense() {
 }
 
 function downloadPaymentPDF() {
-    const year = document.getElementById('filterYear').value;
-    const month = document.getElementById('filterMonth').value;
-    const titleText = document.getElementById('pdfReportTitle');
+    // ── Downloads সেকশন থেকে ডাকা হলে শুধু সেই member-এর data ──
+    if (dlCurrentMember) {
+        const m  = dlCurrentMember;
+        const myPays = (payments || []).filter(p =>
+            String(p.memberId || p.receipt || '').trim().toLowerCase() === String(m.memberId || '').trim().toLowerCase() ||
+            String(p.id || '').trim().toLowerCase() === String(m.memberId || '').trim().toLowerCase()
+        );
 
-    if(titleText) {
-        titleText.style.display = "block";
-        titleText.innerText = `EverGreen Enterprise - Financial Payment Report (${month}/${year})`;
-    }
+        // সব payments array normalize
+        const allPays = (window.rawPaymentDatabase || []).filter(p =>
+            String(p.id || '').trim().toLowerCase() === String(m.memberId || '').trim().toLowerCase()
+        );
 
-    // Print-based PDF — সবচেয়ে নির্ভরযোগ্য পদ্ধতি
-    const printContent = document.getElementById('pdfPrintArea').innerHTML;
-    const printWin = window.open('', '_blank', 'width=1100,height=800');
-    printWin.document.write(`
-        <!DOCTYPE html><html><head>
-        <meta charset="UTF-8">
-        <title>Payment_Report_${month}_${year}</title>
+        const rows = allPays.length > 0 ? allPays : myPays;
+        const totalPaid = rows.filter(p => String(p.status||p.Status||'').toLowerCase() === 'paid')
+                              .reduce((s, p) => s + (Number(p.amount||p.Amount) || 0), 0);
+
+        let tableRows = '';
+        rows.forEach((p, i) => {
+            const st = String(p.status || p.Status || 'Pending');
+            const stClass = st.toLowerCase() === 'paid' ? 'status-paid' : 'status-pending';
+            tableRows += `<tr>
+                <td>${i + 1}</td>
+                <td>${p.receiptNo || p.receipt || '-'}</td>
+                <td>${p.monthStr || p.month || '-'}</td>
+                <td>৳ ${Number(p.amount || p.Amount || 0).toLocaleString()}</td>
+                <td>৳ ${Number(p.fine || p.Fine || 0).toLocaleString()}</td>
+                <td>${p.paymentDate || p.date || '-'}</td>
+                <td><span class="status-pill ${stClass}">${st}</span></td>
+            </tr>`;
+        });
+
+        const printWin = window.open('', '_blank', 'width=900,height=700');
+        printWin.document.write(`<!DOCTYPE html><html><head>
+        <meta charset="UTF-8"><title>Payment_Report_${m.memberId}</title>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
         <style>
-            * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
-            body { padding: 20px; color: #1e293b; }
-            @media print {
-                @page { margin: 10mm; size: A4 landscape; }
-                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            }
-            table { width:100%; border-collapse:collapse; font-size:12px; }
-            th { background:#0b6623; color:#fff; padding:10px 12px; text-align:left; font-weight:600; }
-            td { padding:9px 12px; border-bottom:1px solid #edf2ed; color:#333; }
-            tr:hover { background:#f9fbf9; }
-            .status-pill { padding:3px 10px; border-radius:50px; font-size:11px; font-weight:600; display:inline-block; }
-            .status-paid { background:rgba(34,197,94,0.15); color:#22c55e; }
-            .status-pending { background:rgba(255,59,48,0.15); color:#ff3b30; }
-            .payment-summary-cards { display:flex; gap:15px; margin-bottom:20px; }
-            .summary-mini-card { background:#fff; padding:15px 20px; border-radius:10px; border:1px solid #eee; border-left:5px solid #0b6623; flex:1; }
-            .summary-mini-card.dues { border-left-color:#ff3b30; }
-            .summary-mini-card h4 { font-size:11px; color:#666; text-transform:uppercase; margin-bottom:4px; }
-            .summary-mini-card p { font-size:20px; font-weight:700; color:#111; }
-            #pdfReportTitle { display:block !important; color:#0b6623; margin-bottom:15px; font-size:16px; font-weight:700; }
-            .no-data-message { text-align:center; padding:30px; color:#888; }
-        </style>
-        </head><body>
-        ${printContent}
-        <script>
-            window.onload = function() { window.print(); window.onafterprint = function(){ window.close(); }; };
-        <\/script>
-        </body></html>
-    `);
-    printWin.document.close();
+            *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+            body{padding:28px;color:#1e293b}
+            @media print{@page{margin:10mm;size:A4}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+            .header{display:flex;align-items:center;gap:16px;border-bottom:3px solid #0b6623;padding-bottom:16px;margin-bottom:20px}
+            .header img{width:56px;height:56px;object-fit:contain;border-radius:8px}
+            .header h1{font-size:20px;font-weight:700;color:#0b6623;margin-bottom:2px}
+            .header p{font-size:12px;color:#666}
+            .member-info{background:#f4faf4;border-radius:10px;padding:14px 18px;margin-bottom:18px;display:flex;gap:32px;flex-wrap:wrap}
+            .member-info div{font-size:13px;color:#555}.member-info b{color:#0b6623;display:block;font-size:11px;margin-bottom:2px}
+            .summary{display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+            .scard{flex:1;min-width:140px;background:#fff;border:1px solid #e0e0e0;border-left:4px solid #0b6623;border-radius:8px;padding:12px 16px}
+            .scard.due{border-left-color:#d62828}
+            .scard h4{font-size:10px;color:#888;text-transform:uppercase;margin-bottom:4px}
+            .scard p{font-size:18px;font-weight:700;color:#111}
+            table{width:100%;border-collapse:collapse;font-size:12px}
+            th{background:#0b6623;color:#fff;padding:10px 12px;text-align:left;font-weight:600}
+            td{padding:9px 12px;border-bottom:1px solid #eee;color:#333}
+            .status-pill{padding:3px 10px;border-radius:50px;font-size:11px;font-weight:600;display:inline-block}
+            .status-paid{background:rgba(34,197,94,.15);color:#16a34a}
+            .status-pending{background:rgba(220,38,38,.1);color:#d62828}
+            .footer{margin-top:20px;font-size:10px;color:#aaa;text-align:center;border-top:1px solid #eee;padding-top:10px}
+        </style></head><body>
+        <div class="header">
+            <img src="logo.png" onerror="this.style.display='none'">
+            <div><h1>EverGreen Enterprise</h1><p>Member Payment Report · ${new Date().toLocaleDateString('en-GB')}</p></div>
+        </div>
+        <div class="member-info">
+            <div><b>Member ID</b>${m.memberId}</div>
+            <div><b>Name</b>${m.name}</div>
+            <div><b>Phone</b>${m.phone || 'N/A'}</div>
+            <div><b>Status</b>${m.status || 'Active'}</div>
+        </div>
+        <div class="summary">
+            <div class="scard"><h4>মোট রসিদ</h4><p>${rows.length} টি</p></div>
+            <div class="scard"><h4>মোট পরিশোধ</h4><p>৳ ${totalPaid.toLocaleString()}</p></div>
+            <div class="scard due"><h4>Monthly Fee</h4><p>৳ ${Number(m.monthlyFee || 0).toLocaleString()}</p></div>
+        </div>
+        <table>
+            <thead><tr><th>#</th><th>Receipt No</th><th>Month</th><th>Amount</th><th>Fine</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody>${tableRows || '<tr><td colspan="7" style="text-align:center;color:#888;padding:20px">কোনো payment রেকর্ড নেই</td></tr>'}</tbody>
+        </table>
+        <div class="footer">© 2026 EverGreen Enterprise · এই রিপোর্টটি সিস্টেম থেকে স্বয়ংক্রিয়ভাবে তৈরি হয়েছে</div>
+        <script>window.onload=function(){window.print();window.onafterprint=function(){window.close();};};<\/script>
+        </body></html>`);
+        printWin.document.close();
+        return;
+    }
 
+    // ── Payments সেকশন থেকে ডাকা হলে — আগের মতো সব data ──
+    const year = document.getElementById('filterYear') ? document.getElementById('filterYear').value : '';
+    const month = document.getElementById('filterMonth') ? document.getElementById('filterMonth').value : '';
+    const titleText = document.getElementById('pdfReportTitle');
+    if(titleText) { titleText.style.display = "block"; titleText.innerText = `EverGreen Enterprise - Financial Payment Report (${month}/${year})`; }
+    const printContent = document.getElementById('pdfPrintArea').innerHTML;
+    const printWin = window.open('', '_blank', 'width=1100,height=800');
+    printWin.document.write(`<!DOCTYPE html><html><head>
+        <meta charset="UTF-8"><title>Payment_Report_${month}_${year}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+            body{padding:20px;color:#1e293b}
+            @media print{@page{margin:10mm;size:A4 landscape}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+            table{width:100%;border-collapse:collapse;font-size:12px}
+            th{background:#0b6623;color:#fff;padding:10px 12px;text-align:left;font-weight:600}
+            td{padding:9px 12px;border-bottom:1px solid #edf2ed;color:#333}
+            .status-pill{padding:3px 10px;border-radius:50px;font-size:11px;font-weight:600;display:inline-block}
+            .status-paid{background:rgba(34,197,94,.15);color:#22c55e}
+            .status-pending{background:rgba(255,59,48,.15);color:#ff3b30}
+            .payment-summary-cards{display:flex;gap:15px;margin-bottom:20px}
+            .summary-mini-card{background:#fff;padding:15px 20px;border-radius:10px;border:1px solid #eee;border-left:5px solid #0b6623;flex:1}
+            .summary-mini-card.dues{border-left-color:#ff3b30}
+            .summary-mini-card h4{font-size:11px;color:#666;text-transform:uppercase;margin-bottom:4px}
+            .summary-mini-card p{font-size:20px;font-weight:700;color:#111}
+            #pdfReportTitle{display:block !important;color:#0b6623;margin-bottom:15px;font-size:16px;font-weight:700}
+        </style></head><body>
+        ${printContent}
+        <script>window.onload=function(){window.print();window.onafterprint=function(){window.close();};};<\/script>
+        </body></html>`);
+    printWin.document.close();
     if(titleText) titleText.style.display = "none";
 }
 
