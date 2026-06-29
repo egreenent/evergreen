@@ -1714,7 +1714,10 @@ function printReceipt(month, amount, fine) {
         .footer{text-align:center;font-size:11px;color:#888;margin-top:24px}
         @media print{body{padding:20px}}
     </style></head><body>
-    <div class="logo">🌿 EverGreen Enterprise</div>
+    <div class="logo">
+        <img src="logo.png" alt="Logo" style="width:60px;height:60px;object-fit:contain;border-radius:10px;display:block;margin:0 auto 8px" onerror="this.style.display='none'">
+        EverGreen Enterprise
+    </div>
     <div class="sub">Membership Payment Receipt</div>
     <div class="title">Payment Receipt</div>
     <div class="row"><span>Member Name</span><b>${m.name || 'N/A'}</b></div>
