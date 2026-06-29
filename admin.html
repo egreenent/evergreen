@@ -673,7 +673,7 @@ border-radius:8px;
 <a href="#" onclick="showSection('expensesSection', this); loadExpensesSection();">💸 Expenses</a>
 <a href="#" onclick="showSection('noticesSection', this)">📢 Notices</a>
 <a href="#" onclick="showSection('downloadsSection', this)">📥 Downloads</a>
-<a href="#" onclick="showSection('analyticsSection', this)">📊 Analytics</a>
+<a href="#" onclick="showSection('analyticsSection', this); loadAnalytics();">📊 Analytics</a>
 <a href="#" onclick="showSection('settingsSection', this)">⚙ Settings</a>
 
 
@@ -1043,66 +1043,117 @@ Save Member
 <!-- DOWNLOADS -->
 
 <div class="page-section" id="downloadsSection">
-
 <div class="section">
 <h2>📥 Downloads</h2>
+<p style="color:#666;font-size:14px;margin-bottom:20px">Member ID দিয়ে যেকোনো সদস্যের ডকুমেন্ট ডাউনলোড করুন</p>
 
-<div class="quick-actions">
-<div class="action-btn">Download ID Card</div>
-<div class="action-btn">Download PDF</div>
-<div class="action-btn">Download Certificate</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;align-items:flex-end">
+  <div style="flex:1;min-width:200px">
+    <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px">Member ID</label>
+    <input id="dlMemberId" type="text" placeholder="যেমন: ege0101"
+      style="width:100%;padding:12px 15px;border:2px solid #0b6623;border-radius:10px;font-size:15px;outline:none">
+  </div>
+  <button onclick="loadMemberDownloads()"
+    style="background:#0b6623;color:#fff;border:none;padding:13px 24px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap">
+    🔍 খুঁজুন
+  </button>
 </div>
 
+<div id="dlResult" style="display:none;background:#f4faf4;border:1px solid #b2dbb9;border-radius:14px;padding:20px">
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+    <img id="dlPhoto" src="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #0b6623">
+    <div>
+      <div id="dlName" style="font-size:18px;font-weight:700;color:#0b6623"></div>
+      <div id="dlId" style="font-size:13px;color:#666"></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap">
+    <button onclick="dlGenerateIdCard()" style="background:#0b6623;color:#fff;border:none;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">🪪 ID Card Download</button>
+    <button id="dlPdfBtn" onclick="dlOpenPdf()" style="background:#1565c0;color:#fff;border:none;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">📄 Membership PDF</button>
+    <button onclick="downloadPaymentPDF()" style="background:#6a1b9a;color:#fff;border:none;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">📊 Payment Report PDF</button>
+  </div>
 </div>
 
+<div id="dlError" style="display:none;color:#d62828;font-weight:600;padding:12px;background:#fff0f0;border-radius:10px"></div>
+</div>
 </div>
 
 <!-- ANALYTICS -->
 
 <div class="page-section" id="analyticsSection">
+<div class="section">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <span style="color:#0b6623;font-size:22px;font-weight:700">📊 Analytics — Live Report</span>
+    <button onclick="loadAnalytics()" style="background:#0b6623;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">🔄 Refresh</button>
+  </div>
 
-<div class="analytics-grid">
+  <!-- Summary Cards -->
+  <div class="analytics-grid" style="margin-bottom:24px">
+    <div class="analytics-box">
+      <h3>এই মাসে সংগ্রহ</h3>
+      <h2 id="anaMonthly">লোড হচ্ছে...</h2>
+    </div>
+    <div class="analytics-box">
+      <h3>মোট সংগ্রহ (সব সময়)</h3>
+      <h2 id="anaTotal">লোড হচ্ছে...</h2>
+    </div>
+    <div class="analytics-box">
+      <h3>বকেয়া সদস্য (এই মাস)</h3>
+      <h2 id="anaDueCount">লোড হচ্ছে...</h2>
+    </div>
+    <div class="analytics-box">
+      <h3>Active / Inactive</h3>
+      <h2 id="anaActiveRatio">লোড হচ্ছে...</h2>
+    </div>
+  </div>
 
-<div class="analytics-box">
-<h3>Monthly Collection</h3>
-<h2>৳ 0</h2>
+  <!-- প্রতি সদস্যের পেমেন্ট সারসংক্ষেপ -->
+  <h3 style="color:#0b6623;margin-bottom:14px;font-size:17px">👤 প্রতি সদস্যের পেমেন্ট সারসংক্ষেপ</h3>
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:14px" id="anaMemberTable">
+      <thead>
+        <tr style="background:#0b6623;color:#fff">
+          <th style="padding:10px 14px;text-align:left">Member ID</th>
+          <th style="padding:10px 14px;text-align:left">নাম</th>
+          <th style="padding:10px 14px;text-align:right">মোট প্রদান</th>
+          <th style="padding:10px 14px;text-align:center">রসিদ সংখ্যা</th>
+          <th style="padding:10px 14px;text-align:center">এই মাস</th>
+        </tr>
+      </thead>
+      <tbody id="anaMemberTableBody">
+        <tr><td colspan="5" style="text-align:center;padding:20px;color:#888">লোড হচ্ছে...</td></tr>
+      </tbody>
+    </table>
+  </div>
 </div>
-
-<div class="analytics-box">
-<h3>Due Members</h3>
-<h2>0</h2>
-</div>
-
-<div class="analytics-box">
-<h3>Active vs Due</h3>
-<h2>0 / 0</h2>
-</div>
-
-</div>
-
 </div>
 
 <!-- SETTINGS -->
 
 <div class="page-section" id="settingsSection">
-
 <div class="section">
 <h2>⚙ Settings</h2>
+<p style="color:#666;font-size:14px;margin-bottom:20px">Admin পাসওয়ার্ড পরিবর্তন করুন</p>
 
 <div class="form-group">
-<label>Organization Name</label>
-<input type="text" value="EverGreen Enterprise">
+  <label>Admin ID</label>
+  <input type="text" id="settingAdminId" placeholder="আপনার Admin ID">
 </div>
-
 <div class="form-group">
-<label>Admin Email</label>
-<input type="email" value="egreenfs@gmail.com">
+  <label>বর্তমান পাসওয়ার্ড</label>
+  <input type="password" id="settingCurrentPass" placeholder="বর্তমান পাসওয়ার্ড">
 </div>
-
-<button class="submit-btn">Save Settings</button>
-
+<div class="form-group">
+  <label>নতুন পাসওয়ার্ড</label>
+  <input type="password" id="settingNewPass" placeholder="নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)">
 </div>
-
+<div class="form-group">
+  <label>নতুন পাসওয়ার্ড নিশ্চিত করুন</label>
+  <input type="password" id="settingConfirmPass" placeholder="আবার নতুন পাসওয়ার্ড লিখুন">
+</div>
+<div id="settingMsg" style="display:none;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:14px;font-weight:500"></div>
+<button class="submit-btn" onclick="saveAdminPassword()">💾 পাসওয়ার্ড পরিবর্তন করুন</button>
+</div>
 </div>
 
 
@@ -1502,9 +1553,12 @@ function displayMembers(dataList) {
                         ${m.status || 'Active'}
                     </span>
                 </td>
-                <td>
-                    <button onclick="openEditModal('${m.memberId}')" style="background:#0b6b2d; color:#fff; border:none; padding:5px 12px; border-radius:4px; cursor:pointer; font-size:12px; font-weight:600; transition:0.2s;">
+                <td style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+                    <button onclick="openEditModal('${m.memberId}')" style="background:#0b6b2d;color:#fff;border:none;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600;">
                         ✏️ Edit
+                    </button>
+                    <button onclick="toggleMemberStatus('${m.memberId}','${m.name}','${m.status}')" style="background:${m.status === 'Active' ? '#b91c1c' : '#0b6b2d'};color:#fff;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600;">
+                        ${m.status === 'Active' ? '🔴 Inactive' : '🟢 Active'}
                     </button>
                 </td>
             </tr>
@@ -1841,6 +1895,263 @@ async function updateMemberData() {
 /* =========================================
    ৮. LOGOUT FUNCTION (ফিক্সড করা হয়েছে)
    ========================================= */
+
+/* ══════════════════════════════════════════════════════
+   ANALYTICS — Live Data
+══════════════════════════════════════════════════════ */
+async function loadAnalytics() {
+    // Summary cards
+    try {
+        const res = await fetch(API_URL + '?action=dashboard');
+        const d   = await res.json();
+        const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        const curMonth   = monthNames[new Date().getMonth()];
+
+        // এই মাসের collection
+        const monthlyPaid = (payments || []).filter(p => {
+            const ms = String(p.month || p.monthStr || '').toLowerCase();
+            return String(p.status || '').toLowerCase() === 'paid' && ms.includes(curMonth.toLowerCase());
+        }).reduce((s, p) => s + (Number(p.amount) || 0), 0);
+
+        document.getElementById('anaMonthly').textContent    = '৳ ' + monthlyPaid.toLocaleString();
+        document.getElementById('anaTotal').textContent      = '৳ ' + (d.totalCollection || 0).toLocaleString();
+
+        // বকেয়া সদস্য গণনা
+        const paidIds = new Set(
+            (payments || []).filter(p => {
+                const ms = String(p.month || p.monthStr || '').toLowerCase();
+                return String(p.status || '').toLowerCase() === 'paid' && ms.includes(curMonth.toLowerCase());
+            }).map(p => String(p.memberId || p.id || '').trim().toLowerCase())
+        );
+        const dueCount = (members || []).filter(m =>
+            String(m.status || '').toLowerCase() === 'active' &&
+            !paidIds.has(String(m.memberId || '').trim().toLowerCase())
+        ).length;
+
+        document.getElementById('anaDueCount').textContent   = dueCount + ' জন';
+        document.getElementById('anaActiveRatio').textContent = (d.activeMembers || 0) + ' / ' + ((d.totalMembers || 0) - (d.activeMembers || 0));
+    } catch(e) { console.error('Analytics summary error:', e); }
+
+    // প্রতি সদস্যের table
+    const tbody = document.getElementById('anaMemberTableBody');
+    if (!members || members.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;padding:20px">সদস্য তথ্য লোড হয়নি। Dashboard-এ গিয়ে ফিরে আসুন।</td></tr>';
+        return;
+    }
+    const monthNames2 = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const curMonth2   = monthNames2[new Date().getMonth()];
+    const paidThisMonth = new Set(
+        (payments || []).filter(p => {
+            const ms = String(p.month || p.monthStr || '').toLowerCase();
+            return String(p.status || '').toLowerCase() === 'paid' && ms.includes(curMonth2.toLowerCase());
+        }).map(p => String(p.memberId || p.id || '').trim().toLowerCase())
+    );
+
+    let html = '';
+    members.forEach(m => {
+        const myPays = (payments || []).filter(p =>
+            String(p.memberId || p.id || '').trim().toLowerCase() === String(m.memberId || '').trim().toLowerCase() &&
+            String(p.status || '').toLowerCase() === 'paid'
+        );
+        const total = myPays.reduce((s, p) => s + (Number(p.amount) || 0), 0);
+        const paidNow = paidThisMonth.has(String(m.memberId || '').trim().toLowerCase());
+        html += `<tr style="border-bottom:1px solid #eee">
+            <td style="padding:10px 14px;font-weight:600;color:#0b6623">${m.memberId}</td>
+            <td style="padding:10px 14px">${m.name}</td>
+            <td style="padding:10px 14px;text-align:right;font-weight:700">৳ ${total.toLocaleString()}</td>
+            <td style="padding:10px 14px;text-align:center">${myPays.length}</td>
+            <td style="padding:10px 14px;text-align:center">
+                <span style="padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:${paidNow ? '#d1e7dd' : '#f8d7da'};color:${paidNow ? '#0f5132' : '#842029'}">
+                    ${paidNow ? '✅ দিয়েছেন' : '⚠️ বাকি'}
+                </span>
+            </td>
+        </tr>`;
+    });
+    tbody.innerHTML = html || '<tr><td colspan="5" style="text-align:center;padding:20px">কোনো ডাটা নেই</td></tr>';
+}
+
+/* ══════════════════════════════════════════════════════
+   SETTINGS — Admin Password Change
+══════════════════════════════════════════════════════ */
+async function saveAdminPassword() {
+    const adminId   = document.getElementById('settingAdminId').value.trim();
+    const curPass   = document.getElementById('settingCurrentPass').value.trim();
+    const newPass   = document.getElementById('settingNewPass').value.trim();
+    const confPass  = document.getElementById('settingConfirmPass').value.trim();
+    const msgEl     = document.getElementById('settingMsg');
+
+    const showMsg = (txt, ok) => {
+        msgEl.textContent = txt;
+        msgEl.style.background = ok ? '#d1e7dd' : '#f8d7da';
+        msgEl.style.color      = ok ? '#0f5132' : '#842029';
+        msgEl.style.border     = ok ? '1px solid #b2dbb9' : '1px solid #f5c2c7';
+        msgEl.style.display    = 'block';
+    };
+
+    if (!adminId || !curPass || !newPass) return showMsg('⚠️ সব ঘর পূরণ করুন।', false);
+    if (newPass.length < 6)              return showMsg('⚠️ নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে।', false);
+    if (newPass !== confPass)            return showMsg('⚠️ নতুন পাসওয়ার্ড দুটি মিলছে না।', false);
+
+    showMsg('⏳ যাচাই হচ্ছে...', true);
+
+    try {
+        await fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({ action: 'changeAdminPassword', adminId, currentPassword: curPass, newPassword: newPass })
+        });
+        showMsg('✅ পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে! পরের লগইনে নতুন পাসওয়ার্ড ব্যবহার করুন।', true);
+        document.getElementById('settingCurrentPass').value = '';
+        document.getElementById('settingNewPass').value     = '';
+        document.getElementById('settingConfirmPass').value = '';
+    } catch(e) {
+        showMsg('❌ সার্ভার সংযোগে সমস্যা হয়েছে।', false);
+    }
+}
+
+/* ══════════════════════════════════════════════════════
+   MEMBER STATUS TOGGLE — Active ↔ Inactive
+══════════════════════════════════════════════════════ */
+async function toggleMemberStatus(memberId, name, currentStatus) {
+    const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+    const emoji     = newStatus === 'Active' ? '🟢' : '🔴';
+    if (!confirm(`${emoji} ${name} (${memberId})-কে ${newStatus} করবেন?`)) return;
+
+    const m = members.find(u => String(u.memberId).trim() === String(memberId).trim());
+    if (!m) return alert('সদস্য তথ্য পাওয়া যায়নি!');
+
+    try {
+        await fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                action: 'editMember',
+                memberId:      m.memberId,
+                name:          m.name,
+                phone:         m.phone,
+                email:         m.email        || '',
+                nid:           m.nid          || '',
+                blood:         m.blood        || '',
+                address:       m.address      || '',
+                nomineeName:   m.nomineeName  || '',
+                nomineePhone:  m.nomineePhone || '',
+                joinDate:      m.joinDate     || '',
+                monthlyFee:    m.monthlyFee   || 0,
+                password:      m.password     || '',
+                photo:         m.photo        || '',
+                signatureUrl:  m.signatureUrl || '',
+                pdfUrl:        m.pdfUrl       || '',
+                idCardUrl:     m.idCardUrl    || '',
+                status:        newStatus
+            })
+        });
+        alert(`✅ ${name}-কে ${newStatus} করা হয়েছে!`);
+        fetchMembers();
+    } catch(e) {
+        alert('❌ আপডেট করতে সমস্যা হয়েছে।');
+    }
+}
+
+/* ══════════════════════════════════════════════════════
+   DOWNLOADS — Member ID Card & PDF
+══════════════════════════════════════════════════════ */
+let dlCurrentMember = null;
+
+function loadMemberDownloads() {
+    const id    = document.getElementById('dlMemberId').value.trim().toLowerCase();
+    const resEl = document.getElementById('dlResult');
+    const errEl = document.getElementById('dlError');
+    resEl.style.display = 'none';
+    errEl.style.display = 'none';
+
+    if (!id) { errEl.textContent = '⚠️ Member ID দিন।'; errEl.style.display = 'block'; return; }
+
+    const m = (members || []).find(u => String(u.memberId || '').trim().toLowerCase() === id);
+    if (!m) { errEl.textContent = '❌ এই ID-তে কোনো সদস্য পাওয়া যায়নি।'; errEl.style.display = 'block'; return; }
+
+    dlCurrentMember = m;
+    document.getElementById('dlPhoto').src   = m.photo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(m.name) + '&background=0b6623&color=fff&size=200';
+    document.getElementById('dlName').textContent = m.name;
+    document.getElementById('dlId').textContent   = m.memberId;
+
+    const pdfBtn = document.getElementById('dlPdfBtn');
+    if (m.pdfUrl) { pdfBtn.style.display = 'inline-block'; }
+    else          { pdfBtn.style.display = 'none'; }
+
+    resEl.style.display = 'block';
+}
+
+function dlGenerateIdCard() {
+    if (!dlCurrentMember) return;
+    const m = dlCurrentMember;
+    const photoSrc = m.photo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(m.name || 'M') + '&background=0b6623&color=fff&size=200';
+    const win = window.open('', '_blank');
+    win.document.write(`<!DOCTYPE html><html><head><title>ID Card - ${m.name}</title>
+    <style>
+    body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#edf2ef;font-family:'Segoe UI',sans-serif}
+    .card{width:340px;background:linear-gradient(135deg,#0b6623 0%,#1a8f3c 100%);border-radius:18px;padding:28px 24px;color:#fff;box-shadow:0 12px 40px rgba(0,0,0,0.25);text-align:center}
+    .org{font-size:14px;font-weight:700;letter-spacing:1px;opacity:0.9;margin-bottom:4px}
+    .title{font-size:11px;opacity:0.75;margin-bottom:18px}
+    img{width:90px;height:90px;border-radius:50%;border:3px solid rgba(255,255,255,0.7);object-fit:cover;margin-bottom:12px}
+    h2{font-size:20px;font-weight:700;margin:0 0 4px}
+    .mid{background:rgba(255,255,255,0.15);border-radius:8px;padding:6px 14px;display:inline-block;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:14px}
+    .info{font-size:12px;opacity:0.85;line-height:1.9;text-align:left}
+    .info b{display:inline-block;width:80px;opacity:0.7}
+    .footer{margin-top:18px;font-size:10px;opacity:0.65;border-top:1px solid rgba(255,255,255,0.2);padding-top:10px}
+    @media print{body{background:#fff}}
+    </style></head><body>
+    <div class="card">
+        <div class="org">🌿 EverGreen Enterprise</div>
+        <div class="title">MEMBER IDENTITY CARD</div>
+        <img src="${photoSrc}" onerror="this.src='https://ui-avatars.com/api/?name=M&background=0b6623&color=fff&size=200'">
+        <h2>${m.name || 'N/A'}</h2>
+        <div class="mid">${m.memberId || 'N/A'}</div>
+        <div class="info">
+            <div><b>Blood</b> ${m.blood || 'N/A'}</div>
+            <div><b>Phone</b> ${m.phone || 'N/A'}</div>
+            <div><b>Join Date</b> ${m.joinDate || 'N/A'}</div>
+            <div><b>Status</b> ${m.status || 'Active'}</div>
+        </div>
+        <div class="footer">© 2026 EverGreen Enterprise · Authorized Card</div>
+    </div>
+    <script>window.onload=()=>{window.print();}<\/script>
+    </body></html>`);
+    win.document.close();
+}
+
+function dlOpenPdf() {
+    if (dlCurrentMember && dlCurrentMember.pdfUrl) {
+        window.open(dlCurrentMember.pdfUrl, '_blank');
+    } else {
+        alert('এই সদস্যের PDF URL সেট করা নেই।');
+    }
+}
+
+/* ══════════════════════════════════════════════════════
+   DUE REMINDER — Copy to Clipboard
+══════════════════════════════════════════════════════ */
+function copyReminder(name, phone, month, fee) {
+    const text = `প্রিয় ${name} ভাই/আপু,
+
+আশা করি ভালো আছেন। আপনার ${month} মাসের EverGreen Enterprise সদস্যপদ চাঁদা ৳${fee} এখনো পরিশোধ হয়নি।
+
+অনুগ্রহ করে দ্রুত পরিশোধ করুন।
+
+ধন্যবাদ
+EverGreen Enterprise`;
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => alert('✅ Reminder কপি হয়েছে! WhatsApp বা SMS-এ পেস্ট করুন।'));
+    } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert('✅ Reminder কপি হয়েছে!');
+    }
+}
+
 function logout() {
     // ১. ব্রাউজারে সেভ থাকা সকল লগইন সেশন বা টোকেন ডাটা সম্পূর্ণ মুছে ফেলা
     localStorage.clear();
@@ -2239,6 +2550,10 @@ async function loadDueMembers() {
                 <button onclick="payDueNow('${m.memberId}','${m.name}','${m.monthlyFee || 1000}','${selMonth}')"
                     style="background:#0b6623;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">
                     💳 Pay করুন
+                </button>
+                <button onclick="copyReminder('${m.name}','${m.phone}','${selMonth}','${m.monthlyFee || 1000}')"
+                    style="background:#e65100;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;margin-left:4px">
+                    📋 Reminder
                 </button>
             </td>
         </tr>`;
