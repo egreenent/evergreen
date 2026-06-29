@@ -547,7 +547,7 @@ font-size:32px;
 <!-- ═══════ TAB NAVIGATION ═══════ -->
 <div class="tab-nav">
 <button class="tab-btn active" data-tab="tab-notice" onclick="switchMemberTab('tab-notice', this)">
-<span class="tab-icon">📢</span><span>Notice</span>
+<span class="tab-icon">📢</span><span>Notice</span><span id="noticeBadge" style="display:none;background:#d62828;color:#fff;border-radius:50%;font-size:10px;font-weight:700;width:16px;height:16px;line-height:16px;text-align:center;margin-left:4px">1</span>
 </button>
 <button class="tab-btn" data-tab="tab-downloads" onclick="switchMemberTab('tab-downloads', this)">
 <span class="tab-icon">📥</span><span>Downloads</span>
@@ -881,6 +881,17 @@ font-size:32px;
 
     <!-- EDIT MODE -->
     <div id="profileEditMode" style="display:none;padding:24px 28px">
+
+      <!-- Photo Upload -->
+      <div style="text-align:center;margin-bottom:20px">
+        <img id="peditPhotoPreview" src="" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #0b6623;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto">
+        <label style="background:#0b6623;color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">
+          📷 ছবি পরিবর্তন করুন
+          <input type="file" id="peditPhotoFile" accept="image/*" style="display:none" onchange="previewNewPhoto(this)">
+        </label>
+        <p style="font-size:11px;color:#888;margin-top:6px">JPG/PNG, সর্বোচ্চ 2MB</p>
+      </div>
+
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
 
         <div style="grid-column:span 2">
@@ -994,6 +1005,7 @@ window.onload = function() {
 
 // ── TAB SWITCHING ──
 function switchMemberTab(tabId, btnEl) {
+    if (tabId === 'tab-notice') hideNoticeBadge();
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
@@ -1138,6 +1150,10 @@ async function fetchMemberDashboardData(memberId) {
 
             if(result.notice && document.getElementById("noticeBox")) {
                 document.getElementById("noticeBox").innerHTML = `📢 <strong>${result.notice.title || 'Notice'}</strong><br>${result.notice.content || ''}`;
+                // Badge দেখাও যদি notice থাকে
+                if (result.notice.title && result.notice.title !== 'কোনো নোটিশ নেই') {
+                    showNoticeBadge();
+                }
             }
         }
     } catch (error) {
@@ -1159,7 +1175,8 @@ function renderPaymentTable(payments) {
         
         let actionButton = "-";
         if(currentStatus.toLowerCase() === 'paid') {
-            actionButton = `<button onclick="generateReceiptPDF('${p.month}', ${amount}, ${fine})" style="background: #0b6623; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">📄 Download</button>`;
+            actionButton = `<button onclick="generateReceiptPDF('${p.month}', ${amount}, ${fine})" style="background: #0b6623; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">📄 Download</button>
+            <button onclick="printReceipt('${p.month}', ${amount}, ${fine})" style="background: #1565c0; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; margin-left:4px;">🖨️ Print</button>`;
         } else {
             actionButton = `<span style="color: #b91c1c; font-size: 13px; font-weight: 600;">Unpaid</span>`;
         }
@@ -1515,13 +1532,7 @@ function setupProfilePopupEvents() {
             
             if(m.photo) document.getElementById("popupPhoto").src = m.photo;
             if(m.signatureUrl) document.getElementById("popupSignature").src = m.signatureUrl; 
-            if(document.getElementById("popupIdCard")) {
-                document.getElementById("popupIdCard").href = "#";
-                document.getElementById("popupIdCard").onclick = function(e) {
-                    e.preventDefault();
-                    generateIDCard();
-                };
-            }
+            if(document.getElementById("popupIdCard")) document.getElementById("popupIdCard").href = m.idCardUrl || '#';
             
             document.getElementById("profilePopup").style.display = "block";
         });
@@ -1576,6 +1587,11 @@ function toggleProfileEdit() {
         }
 
         document.getElementById('peditSaveMsg').textContent = '';
+        // Photo preview
+        const curPhoto = m.photo || '';
+        if (document.getElementById('peditPhotoPreview')) {
+            document.getElementById('peditPhotoPreview').src = curPhoto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(m.name || 'M') + '&background=0b6623&color=fff&size=200';
+        }
         viewMode.style.display = 'none';
         editMode.style.display = 'block';
         editBtn.innerHTML = '← Back';
@@ -1608,7 +1624,13 @@ async function saveMemberProfileEdit() {
         // পরিবর্তন না হওয়া ফিল্ড — currentMemberData থেকে রাখা
         monthlyFee:    window.currentMemberData?.monthlyFee  || '',
         password:      window.currentMemberData?.password    || '',
-        photo:         window.currentMemberData?.photo       || '',
+        photo:         (function() {
+            const fileInput = document.getElementById('peditPhotoFile');
+            const preview   = document.getElementById('peditPhotoPreview');
+            // যদি নতুন ছবি select করা হয় তাহলে preview src নেওয়া হবে (base64)
+            // Server upload ছাড়া base64 সরাসরি save করা হবে না — পুরোনো URL রাখা হবে
+            return window.currentMemberData?.photo || '';
+        })(),
         signatureUrl:  window.currentMemberData?.signatureUrl|| '',
         pdfUrl:        window.currentMemberData?.pdfUrl      || '',
         idCardUrl:     window.currentMemberData?.idCardUrl   || '',
@@ -1670,6 +1692,72 @@ async function saveMemberProfileEdit() {
         msgEl.style.color = '#c0392b';
         console.error(err);
     }
+}
+
+
+/* ══════════════════════════════════════════
+   🖨️ PRINT RECEIPT
+══════════════════════════════════════════ */
+function printReceipt(month, amount, fine) {
+    const m = window.currentMemberData || {};
+    const win = window.open('', '_blank');
+    const today = new Date().toLocaleDateString('en-GB');
+    win.document.write(`<!DOCTYPE html><html><head><title>Receipt - ${month}</title>
+    <style>
+        body{font-family:'Segoe UI',sans-serif;padding:40px;max-width:420px;margin:auto}
+        .logo{text-align:center;color:#0b6623;font-size:22px;font-weight:700;margin-bottom:4px}
+        .sub{text-align:center;color:#555;font-size:13px;margin-bottom:24px}
+        .title{text-align:center;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:2px;border-top:2px solid #0b6623;border-bottom:2px solid #0b6623;padding:8px 0;margin-bottom:20px}
+        .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #ddd;font-size:14px}
+        .row b{color:#0b6623}
+        .total{display:flex;justify-content:space-between;padding:12px 0;font-size:17px;font-weight:700;color:#0b6623;border-top:2px solid #0b6623;margin-top:8px}
+        .footer{text-align:center;font-size:11px;color:#888;margin-top:24px}
+        @media print{body{padding:20px}}
+    </style></head><body>
+    <div class="logo">🌿 EverGreen Enterprise</div>
+    <div class="sub">Membership Payment Receipt</div>
+    <div class="title">Payment Receipt</div>
+    <div class="row"><span>Member Name</span><b>${m.name || 'N/A'}</b></div>
+    <div class="row"><span>Member ID</span><b>${m.memberId || 'N/A'}</b></div>
+    <div class="row"><span>Month</span><b>${month}</b></div>
+    <div class="row"><span>Amount</span><b>৳ ${Number(amount).toLocaleString()}</b></div>
+    <div class="row"><span>Fine</span><b>৳ ${Number(fine || 0).toLocaleString()}</b></div>
+    <div class="row"><span>Print Date</span><b>${today}</b></div>
+    <div class="total"><span>Total Paid</span><span>৳ ${(Number(amount) + Number(fine || 0)).toLocaleString()}</span></div>
+    <div class="footer">এই রসিদটি সংরক্ষণ করুন · © 2026 EverGreen Enterprise</div>
+    <script>window.onload=()=>{window.print();}<\/script>
+    </body></html>`);
+    win.document.close();
+}
+
+/* ══════════════════════════════════════════
+   📷 PHOTO PREVIEW & UPLOAD
+══════════════════════════════════════════ */
+function previewNewPhoto(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    if (file.size > 2 * 1024 * 1024) {
+        alert('⚠️ ছবির সাইজ ২MB-এর বেশি হওয়া যাবে না।');
+        input.value = '';
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById('peditPhotoPreview').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+/* ══════════════════════════════════════════
+   🔔 NOTICE BADGE
+══════════════════════════════════════════ */
+function showNoticeBadge() {
+    const badge = document.getElementById('noticeBadge');
+    if (badge) badge.style.display = 'inline-block';
+}
+function hideNoticeBadge() {
+    const badge = document.getElementById('noticeBadge');
+    if (badge) badge.style.display = 'none';
 }
 
 function closePassModal() {
