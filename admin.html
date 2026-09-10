@@ -3019,10 +3019,6 @@ async function loadDueMembers() {
                     style="background:#0b6623;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">
                     💳 Pay করুন
                 </button>
-                <button onclick="copyReminder('${m.name}','${m.phone}','${selMonth}','${m.monthlyFee || 1000}')"
-                    style="background:#e65100;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;margin-left:4px">
-                    📋 Reminder
-                </button>
                 <button onclick="openWhatsAppReminder('${m.name}','${m.phone}','${selMonth}','${m.monthlyFee || 1000}')"
                     style="background:#25D366;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;margin-left:4px">
                     📱 WhatsApp
@@ -3448,7 +3444,11 @@ function downloadPaymentPDF() {
         return;
     }
 
-    // ── Payments সেকশন থেকে ডাকা হলে — আগের মতো সব data ──
+    // ── Payments সেকশন থেকে ডাকা হলে — আগে বর্তমান ফিল্টার অনুযায়ী টেবিল রিফ্রেশ করা হচ্ছে,
+    //    যাতে ড্রপডাউনে অন্য মাস বেছে নেওয়ার পর "Filter Data" চাপতে ভুলে গেলেও
+    //    সবসময় সঠিক (বর্তমানে সিলেক্ট করা) মাসের PDF-ই তৈরি হয় ──
+    filterPaymentData();
+
     const year = document.getElementById('filterYear') ? document.getElementById('filterYear').value : '';
     const month = document.getElementById('filterMonth') ? document.getElementById('filterMonth').value : '';
     const titleText = document.getElementById('pdfReportTitle');
