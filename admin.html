@@ -755,6 +755,11 @@ border-radius:8px;
 <h2 id="pendingCardCount" style="color:#f5a623">0</h2>
 </div>
 
+<div class="card" style="border-left:4px solid #0b6623">
+<h3>Total Share <span style="font-size:11px;color:#999;font-weight:400">(মাসিক)</span></h3>
+<h2 id="totalShare" style="color:#0b6623">৳ 0</h2>
+</div>
+
 
 </div>
 
@@ -2106,6 +2111,7 @@ async function updateDashboard() {
         if(document.getElementById('totalCollection')) document.getElementById('totalCollection').innerText = "৳ " + d.totalCollection.toLocaleString();
         if(document.getElementById('totalDue')) document.getElementById('totalDue').innerText = "৳ " + (d.totalDue || 0).toLocaleString();
         if(document.getElementById('grandTotalDue')) document.getElementById('grandTotalDue').innerText = "৳ " + (d.grandTotalDue || 0).toLocaleString();
+        if(document.getElementById('totalShare')) document.getElementById('totalShare').innerText = "৳ " + (d.totalShare || 0).toLocaleString();
     } catch(error) {
         console.error("Error updating dashboard:", error);
     }
